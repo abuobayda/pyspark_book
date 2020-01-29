@@ -1,0 +1,3426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+
+  <title>Introduction to Functions</title>
+  <meta name="description" content="        Introduction to Functions    Functions and Getting Help In this lesson, we'll be talking about functions. There are two kinds of functions in PythonB...">
+
+  <link rel="canonical" href="http://127.0.0.1:4000//pyspark/03/5/function.html">
+  <link rel="alternate" type="application/rss+xml" title="" href="http://127.0.0.1:4000//feed.xml">
+
+  <meta property="og:url"         content="http://127.0.0.1:4000//pyspark/03/5/function.html" />
+<meta property="og:type"        content="article" />
+<meta property="og:title"       content="Introduction to Functions" />
+<meta property="og:description" content="        Introduction to Functions    Functions and Getting Help In this lesson, we'll be talking about functions. There are two kinds of functions in PythonB..." />
+<meta property="og:image"       content="http://127.0.0.1:4000//images/logo/logo.png" />
+
+<meta name="twitter:card" content="summary">
+
+
+  <script type="application/ld+json">
+  {
+  "@context": "http://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": "http://127.0.0.1:4000//pyspark/03/5/function.html",
+  "headline": "Introduction to Functions",
+  "datePublished": "2020-01-27T12:08:23+02:00",
+  "dateModified": "2020-01-27T12:08:23+02:00",
+  "description": "        Introduction to Functions    Functions and Getting Help In this lesson, we'll be talking about functions. There are two kinds of functions in PythonB...",
+  "author": {
+    "@type": "Person",
+    "name": "Dr. Abuobayda Shabat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Data 100 at UC Berkeley",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://127.0.0.1:4000/",
+      "width": 60,
+      "height": 60
+    }
+  },
+  "image": {
+    "@type": "ImageObject",
+    "url": "http://127.0.0.1:4000/",
+    "height": 60,
+    "width": 60
+  }
+}
+
+  </script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+
+  <!-- <link rel="manifest" href="/manifest.json"> -->
+  <!-- <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#efae0a"> -->
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+  <meta name="theme-color" content="#233947">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="/images/logo/favicon.ico">
+
+  <!-- MathJax Config -->
+  <!-- Allow inline math using $ and automatically break long math lines -->
+<!-- (mostly) copied from nbconvert configuration -->
+<!-- https://github.com/jupyter/nbconvert/blob/master/nbconvert/templates/html/mathjax.tpl -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true,
+        processEnvironments: true
+    },
+    // Center justify equations in code and markdown cells. Elsewhere
+    // we use CSS to left justify single line equations in code cells.
+    displayAlign: 'center',
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}},
+        linebreaks: { automatic: true },
+    },
+    
+});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML' async></script>
+
+
+  <!-- DOM updating function -->
+  <script src="/assets/js/page/dom-update.js"></script>
+
+  <!-- Selectors for elements on the page -->
+  <script src="/assets/js/page/documentSelectors.js"></script>
+
+  <!-- Define some javascript variables that will be useful in other javascript -->
+  <script>
+    const site_basename = '';
+  </script>
+
+  <!-- Add AnchorJS to let headers be linked -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.min.js" async></script>
+  <script src="/assets/js/page/anchors.js" async></script>
+
+  <!-- Include Turbolinks to make page loads fast -->
+  <!-- https://github.com/turbolinks/turbolinks -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js" async></script>
+  <meta name="turbolinks-cache-control" content="no-cache">
+
+  <!-- Load nbinteract for widgets -->
+  
+
+  <!-- Load Thebelab for interactive widgets -->
+  <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+<!-- Display Thebelab button in each code cell -->
+<script>
+/**
+ * Set up thebelab button for code blocks
+ */
+
+const thebelabCellButton = id =>
+  `<a id="thebelab-cell-button-${id}" class="btn thebebtn o-tooltip--left" data-tooltip="Interactive Mode">
+    <img src="/assets/images/edit-button.svg" alt="Start thebelab interactive mode">
+  </a>`
+
+
+const addThebelabButtonToCodeCells =  () => {
+
+  const codeCells = document.querySelectorAll('div.input_area > div.highlight:not(.output) pre')
+  codeCells.forEach((codeCell, index) => {
+    const id = codeCellId(index)
+    codeCell.setAttribute('id', id)
+    if (document.getElementById("thebelab-cell-button-" + id) == null) {
+      codeCell.insertAdjacentHTML('afterend', thebelabCellButton(id));
+    }
+  })
+}
+
+initFunction(addThebelabButtonToCodeCells);
+</script>
+
+
+<script src="https://unpkg.com/thebelab@latest/lib/index.js" async></script>
+<script>
+    /**
+     * Add attributes to Thebelab blocks
+     */
+
+    const initThebelab = () => {
+        const addThebelabToCodeCells = () => {
+            console.log("Adding thebelab to code cells...");
+            // If Thebelab hasn't loaded, wait a bit and try again. This
+            // happens because we load ClipboardJS asynchronously.
+            if (window.thebelab === undefined) {
+                setTimeout(addThebelabToCodeCells, 250)
+            return
+            }
+
+            // If we already detect a Thebelab cell, don't re-run
+            if (document.querySelectorAll('div.thebelab-cell').length > 0) {
+                return;
+            }
+
+            // Find all code cells, replace with Thebelab interactive code cells
+            const codeCells = document.querySelectorAll('.input_area pre')
+            codeCells.forEach((codeCell, index) => {
+                const id = codeCellId(index)
+
+                // Clean up the language to make it work w/ CodeMirror and add it to the cell
+                dataLanguage = ""
+                dataLanguage = detectLanguage(dataLanguage);
+                codeCell.setAttribute('data-language', dataLanguage)
+                codeCell.setAttribute('data-executable', 'true')
+
+                // If the code cell is hidden, show it
+                var inputCheckbox = document.querySelector(`input#hidebtn${codeCell.id}`);
+                if (inputCheckbox !== null) {
+                    setCodeCellVisibility(inputCheckbox, 'visible');
+                }
+            });
+
+            // Remove the event listener from the page so keyboard press doesn't
+            // Change page
+            document.removeEventListener('keydown', initPageNav)
+            keyboardListener = false;
+
+            // Init thebelab
+            thebelab.bootstrap();
+
+            // Remove copy buttons since they won't work anymore
+            const copyAndThebeButtons = document.querySelectorAll('.copybtn, .thebebtn')
+            copyAndThebeButtons.forEach((button, index) => {
+                button.remove();
+            });
+
+            // Remove outputs since they'll be stale
+            const outputs = document.querySelectorAll('.output *, .output')
+            outputs.forEach((output, index) => {
+                output.remove();
+            });
+
+            // Find any cells with an initialization tag and ask ThebeLab to run them when ready
+            var thebeInitCells = document.querySelectorAll('div.tag_thebelab-init');
+            thebeInitCells.forEach((cell) => {
+                console.log("Initializing ThebeLab with cell: " + cell.id);
+                cell.querySelector('.thebelab-run-button').click();
+            });
+        }
+
+        // Add event listener for the function to modify code cells
+        const thebelabButtons = document.querySelectorAll('[id^=thebelab], [id$=thebelab]')
+        thebelabButtons.forEach((thebelabButton,index) => {
+            if (thebelabButton === null) {
+                setTimeout(initThebelab, 250)
+                return
+            };
+            thebelabButton.addEventListener('click', addThebelabToCodeCells);
+        });
+    }
+
+    // Initialize Thebelab
+    initFunction(initThebelab);
+
+// Helper function to munge the language name
+var detectLanguage = (language) => {
+    if (language.indexOf('python') > -1) {
+        language = "python";
+    }
+    return language;
+}
+</script>
+
+
+
+  <!-- Load the auto-generating TOC (non-async otherwise the TOC won't load w/ turbolinks) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js" async></script>
+  <script src="/assets/js/page/tocbot.js"></script>
+
+  <!-- Google analytics -->
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-52617120-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-52617120-7');
+</script>
+
+
+
+  <!-- Clipboard copy button -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script>
+
+  <!-- Load custom website scripts -->
+  <script src="/assets/js/scripts.js" async></script>
+
+  <!-- Load custom user CSS and JS  -->
+  <script src="/assets/custom/custom.js" async></script>
+  <link rel="stylesheet" href="/assets/custom/custom.css">
+
+  <!-- Update interact links w/ REST param, is defined in includes so we can use templates -->
+  
+<script>
+/**
+  * To auto-embed hub URLs in interact links if given in a RESTful fashion
+ */
+
+function getJsonFromUrl(url) {
+  var query = url.split('?');
+  if (query.length < 2) {
+    // No queries so just return false
+    return false;
+  }
+  query = query[1];
+  // Collect REST params into a dictionary
+  var result = {};
+  query.split("&").forEach(function(part) {
+    var item = part.split("=");
+    result[item[0]] = decodeURIComponent(item[1]);
+  });
+  return result;
+}
+    
+function dict2param(dict) {
+    params = Object.keys(dict).map(function(k) {
+        return encodeURIComponent(k) + '=' + encodeURIComponent(dict[k])
+    });
+    return params.join('&')
+}
+
+// Parse a Binder URL, converting it to the string needed for JupyterHub
+function binder2Jupyterhub(url) {
+  newUrl = {};
+  parts = url.split('v2/gh/')[1];
+  // Grab the base repo information
+  repoinfo = parts.split('?')[0];
+  var [org, repo, ref] = repoinfo.split('/');
+  newUrl['repo'] = ['https://github.com', org, repo].join('/');
+  newUrl['branch'] = ref
+  // Grab extra parameters passed
+  params = getJsonFromUrl(url);
+  if (params['filepath'] !== undefined) {
+    newUrl['subPath'] = params['filepath']
+  }
+  return dict2param(newUrl);
+}
+
+// Filter out potentially unsafe characters to prevent xss
+function safeUrl(url)
+{
+   return String(encodeURIComponent(url))
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+}
+
+function addParamToInternalLinks(hub) {
+  var links = document.querySelectorAll("a").forEach(function(link) {
+    var href = link.href;
+    // If the link is an internal link...
+    if (href.search("http://127.0.0.1:4000/") !== -1 || href.startsWith('/') || href.search("127.0.0.1:") !== -1) {
+      // Assume we're an internal link, add the hub param to it
+      var params = getJsonFromUrl(href);
+      if (params !== false) {
+        // We have REST params, so append a new one
+        params['jupyterhub'] = hub;
+      } else {
+        // Create the REST params
+        params = {'jupyterhub': hub};
+      }
+      // Update the link
+      var newHref = href.split('?')[0] + '?' + dict2param(params);
+      link.setAttribute('href', decodeURIComponent(newHref));
+    }
+  });
+  return false;
+}
+
+
+// Update interact links
+function updateInteractLink() {
+    // hack to make this work since it expects a ? in the URL
+    rest = getJsonFromUrl("?" + location.search.substr(1));
+    jupyterHubUrl = rest['jupyterhub'];
+    var hubType = null;
+    var hubUrl = null;
+    if (jupyterHubUrl !== undefined) {
+      hubType = 'jupyterhub';
+      hubUrl = jupyterHubUrl;
+    }
+
+    if (hubType !== null) {
+      // Sanitize the hubUrl
+      hubUrl = safeUrl(hubUrl);
+
+      // Add HTTP text if omitted
+      if (hubUrl.indexOf('http') < 0) {hubUrl = 'http://' + hubUrl;}
+      var interactButtons = document.querySelectorAll("button.interact-button")
+      var lastButton = interactButtons[interactButtons.length-1];
+      var link = lastButton.parentElement;
+
+      // If we've already run this, skip the link updating
+      if (link.nextElementSibling !== null) {
+        return;
+      }
+
+      // Update the link and add context div
+      var href = link.getAttribute('href');
+      if (lastButton.id === 'interact-button-binder') {
+        // If binder links exist, we need to re-work them for jupyterhub
+        if (hubUrl.indexOf('http%3A%2F%2Flocalhost') > -1) {
+          // If localhost, assume we're working from a local Jupyter server and remove `/hub`
+          first = [hubUrl, 'git-sync'].join('/')
+        } else {
+          first = [hubUrl, 'hub', 'user-redirect', 'git-sync'].join('/')
+        }
+        href = first + '?' + binder2Jupyterhub(href);
+      } else {
+        // If interact button isn't binderhub, assume it's jupyterhub
+        // If JupyterHub links, we only need to replace the hub url
+        href = href.replace("", hubUrl);
+        if (hubUrl.indexOf('http%3A%2F%2Flocalhost') > -1) {
+          // Assume we're working from a local Jupyter server and remove `/hub`
+          href = href.replace("/hub/user-redirect", "");
+        }
+      }
+      link.setAttribute('href', decodeURIComponent(href));
+
+      // Add text after interact link saying where we're launching
+      hubUrlNoHttp = decodeURIComponent(hubUrl).replace('http://', '').replace('https://', '');
+      link.insertAdjacentHTML('afterend', '<div class="interact-context">on ' + hubUrlNoHttp + '</div>');
+
+      // Update internal links so we retain the hub url
+      addParamToInternalLinks(hubUrl);
+    }
+}
+
+runWhenDOMLoaded(updateInteractLink)
+document.addEventListener('turbolinks:load', updateInteractLink)
+</script>
+
+
+  <!-- Lunr search code - will only be executed on the /search page -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.6/lunr.min.js" async></script>
+  <script>var initQuery = function() {
+  // See if we have a search box
+  var searchInput = document.querySelector('input#lunr_search');
+  if (searchInput === null) {
+    return;
+  }
+
+  // Function to parse our lunr cache
+  var idx = lunr(function () {
+    this.field('title')
+    this.field('excerpt')
+    this.field('categories')
+    this.field('tags')
+    this.ref('id')
+
+    this.pipeline.remove(lunr.trimmer)
+
+    for (var item in store) {
+      this.add({
+        title: store[item].title,
+        excerpt: store[item].excerpt,
+        categories: store[item].categories,
+        tags: store[item].tags,
+        id: item
+      })
+    }
+  });
+
+  // Run search upon keyup
+  searchInput.addEventListener('keyup', function () {
+    var resultdiv = document.querySelector('#results');
+    var query = document.querySelector("input#lunr_search").value.toLowerCase();
+    var result =
+      idx.query(function (q) {
+        query.split(lunr.tokenizer.separator).forEach(function (term) {
+          q.term(term, { boost: 100 })
+          if(query.lastIndexOf(" ") != query.length-1){
+            q.term(term, {  usePipeline: false, wildcard: lunr.Query.wildcard.TRAILING, boost: 10 })
+          }
+          if (term != ""){
+            q.term(term, {  usePipeline: false, editDistance: 1, boost: 1 })
+          }
+        })
+      });
+
+      // Empty the results div
+      while (resultdiv.firstChild) {
+        resultdiv.removeChild(resultdiv.firstChild);
+      }
+
+    resultdiv.insertAdjacentHTML('afterbegin', '<p class="results__found">'+result.length+' Result(s) found</p>');
+    for (var item in result) {
+      var ref = result[item].ref;
+      if(store[ref].teaser){
+        var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<div class="archive__item-teaser">'+
+                '<img src="'+store[ref].teaser+'" alt="">'+
+              '</div>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      else{
+    	  var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      resultdiv.insertAdjacentHTML('beforeend', searchitem);
+    }
+  });
+};
+
+initFunction(initQuery);
+</script>
+
+  <!-- Load JS that depends on site variables -->
+  <script src="/assets/js/page/copy-button.js" async></script>
+
+  <!-- Hide cell code -->
+  <script src="/assets/js/page/hide-cell.js" async></script>
+
+  <!-- Printing the screen -->
+  <!-- Include nbinteract for interactive widgets -->
+<script src="https://printjs-4de6.kxcdn.com/print.min.js" async></script>
+<script>
+printContent = () => {
+    // MathJax displays a second version of any math for assistive devices etc.
+    // This prevents double-rendering in the PDF output.
+    var ignoreAssistList = [];
+    assistives = document.querySelectorAll('.MathJax_Display span.MJX_Assistive_MathML').forEach((element, index) => {
+        var thisId = 'MathJax-assistive-' + index.toString();
+        element.setAttribute('id', thisId);
+        ignoreAssistList.push(thisId)
+    });
+
+    // Print the actual content object
+    printJS({
+        printable: 'textbook_content',
+        type: 'html',
+        css: "/assets/css/styles.css",
+        style: "#textbook_content {padding-top: 40px};",
+        scanStyles: false,
+        targetStyles: ["*"],
+        ignoreElements: ignoreAssistList,
+        documentTitle: "Made with Jupyter Book"
+    })
+};
+
+initPrint = () => {
+    document.querySelector('#interact-button-print').addEventListener('click', printContent)
+}
+
+initFunction(initPrint)
+</script>
+
+</head>
+
+  <body>
+    <!-- Include the ThebeLab config so it gets reloaded on each page -->
+    <script type="text/x-thebe-config">{
+    requestKernel: true,
+    binderOptions: {
+    repo: "jupyter/jupyter-book",
+    ref: "gh-pages",
+    },
+    codeMirrorConfig: {
+    theme: "abcdef",
+    mode: "python"
+    },
+    kernelOptions: {
+    kernelName: "python3",
+    path: "content/pyspark/03/5"
+    }
+}
+</script>
+
+    <!-- .js-show-sidebar shows sidebar by default -->
+    <div id="js-textbook" class="c-textbook js-show-sidebar">
+      
+
+
+
+<nav id="js-sidebar" class="c-textbook__sidebar">
+  <a href="https://www.zyelabs.net/"><img src="/images/logo/logo.png" class="textbook_logo" id="sidebar-logo" alt="textbook logo" data-turbolinks-permanent/></a>
+  <h2 class="c-sidebar__title"></h2>
+  <ul class="c-sidebar__chapters">
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/intro">
+        <a class="c-sidebar__entry"
+          href="/intro.html"
+        >
+          
+          Introduction
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/pyspark/big_data/Intro_to_bigdata">
+        <a class="c-sidebar__entry"
+          href="/pyspark/big_data/Intro_to_bigdata.html"
+        >
+          
+            1.
+          
+          Introduction to Big Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+        
+
+        
+
+        <ul class="c-sidebar__sections u-hidden-visually">
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/four_v">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/four_v.html"
+              >
+                
+                  1.1
+                
+                The Four V's of Big Data
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/volume">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/volume.html"
+                  >
+                    
+                      1.1.1
+                      
+                    
+                    Volume
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/variety">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/variety.html"
+                  >
+                    
+                      1.1.2
+                      
+                    
+                    Variety
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/velocity">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/velocity.html"
+                  >
+                    
+                      1.1.3
+                      
+                    
+                    Velocity
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/veracity">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/veracity.html"
+                  >
+                    
+                      1.1.4
+                      
+                    
+                    Veracity
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/data/intro">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/data/intro.html"
+              >
+                
+                  1.2
+                
+                Different Data Types
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/data/struct">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/data/struct.html"
+                  >
+                    
+                      1.2.1
+                      
+                    
+                    Structured Data
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/data/unstruct">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/data/unstruct.html"
+                  >
+                    
+                      1.2.2
+                      
+                    
+                    Un-structured Data
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/data/semi">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/data/semi.html"
+                  >
+                    
+                      1.2.3
+                      
+                    
+                    Semi-structured Data
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/key/governance">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/key/governance.html"
+              >
+                
+                  1.3
+                
+                Data Governance
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/key/security">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/key/security.html"
+              >
+                
+                  1.4
+                
+                Data Security
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/data_science/intro">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/data_science/intro.html"
+              >
+                
+                  1.5
+                
+                Introduction to Data Science
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/data_science/process">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/data_science/process.html"
+                  >
+                    
+                      1.5.1
+                      
+                    
+                    Data Science Process
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+        </ul>
+      
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/pyspark/03/programming-in-python">
+        <a class="c-sidebar__entry"
+          href="/pyspark/03/programming-in-python.html"
+        >
+          
+            2.
+          
+          Programming in Python
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+        
+
+        
+
+        <ul class="c-sidebar__sections u-hidden-visually">
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/1/Expressions">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/1/Expressions.html"
+              >
+                
+                  2.1
+                
+                Expressions
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/2/Names">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/2/Names.html"
+              >
+                
+                  2.2
+                
+                Names
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/03/2/1/Growth">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/03/2/1/Growth.html"
+                  >
+                    
+                      2.2.1
+                      
+                    
+                    Example: Growth Rates
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/3/Calls">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/3/Calls.html"
+              >
+                
+                  2.3
+                
+                Call Expressions
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/4/Introduction_to_Tables">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/4/Introduction_to_Tables.html"
+              >
+                
+                  2.4
+                
+                Introduction to Tables
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/5/function">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/5/function.html"
+              >
+                
+                  2.5
+                
+                Introduction to Functions
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/6/conditions">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/6/conditions.html"
+              >
+                
+                  2.6
+                
+                Conditions
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/7/list">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/7/list.html"
+              >
+                
+                  2.7
+                
+                List
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/8/loop">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/8/loop.html"
+              >
+                
+                  2.8
+                
+                Loops
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/9/string_dictionary">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/9/string_dictionary.html"
+              >
+                
+                  2.9
+                
+                Introduction to Data Structure
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/10/numpy">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/10/numpy.html"
+              >
+                
+                  2.10
+                
+                Introduction to Numpy
+              </a>
+            </li>
+            
+            
+          
+        </ul>
+      
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/Intro_to_pyspark">
+        <a class="c-sidebar__entry"
+          href="/Intro_to_pyspark.html"
+        >
+          
+            3.
+          
+          Introduction to PySpark
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+        
+
+        
+
+        <ul class="c-sidebar__sections u-hidden-visually">
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/02_rdd/2_Pyspark_RDD">
+              <a class="c-sidebar__entry"
+                href="/pyspark/02_rdd/2_Pyspark_RDD.html"
+              >
+                
+                  3.1
+                
+                PySpark RDD
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/02_rdd/Simple_statistical_analysis">
+              <a class="c-sidebar__entry"
+                href="/pyspark/02_rdd/Simple_statistical_analysis.html"
+              >
+                
+                  3.2
+                
+                Simple Statistical Analysis
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03_dataframe/3_functional_programming">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03_dataframe/3_functional_programming.html"
+              >
+                
+                  3.3
+                
+                Functional Programming
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03_dataframe/4_PySpark_dataframe">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03_dataframe/4_PySpark_dataframe.html"
+              >
+                
+                  3.4
+                
+                PySpark Dataframe
+              </a>
+            </li>
+            
+            
+          
+        </ul>
+      
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/pyspark/ML/1_Intro_Machine_Learning">
+        <a class="c-sidebar__entry"
+          href="/pyspark/ML/1_Intro_Machine_Learning.html"
+        >
+          
+            4.
+          
+          Introduction to Machine Learning
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+        
+
+        
+
+        <ul class="c-sidebar__sections u-hidden-visually">
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ML_Spark/2_Machine_Learning_pyspark">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ML_Spark/2_Machine_Learning_pyspark.html"
+              >
+                
+                  4.1
+                
+                Machine Learning with PySpark MLlib
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/ML/pipeline/pipeline_feature_eng">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/ML/pipeline/pipeline_feature_eng.html"
+                  >
+                    
+                      4.1.1
+                      
+                    
+                    Feature Engineering Pipeline
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/ML/pipeline/pipeline_applications">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/ML/pipeline/pipeline_applications.html"
+                  >
+                    
+                      4.1.2
+                      
+                    
+                    Pipeline Applications
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ml_app/clustering">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ml_app/clustering.html"
+              >
+                
+                  4.2
+                
+                Clustering
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ml_app/linear_regression">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ml_app/linear_regression.html"
+              >
+                
+                  4.3
+                
+                Linear Regression
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ml_app/LogisticRegression">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ml_app/LogisticRegression.html"
+              >
+                
+                  4.4
+                
+                Logistic Regression
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ml_app/Predicting_the_chances_of_infant_survival_with_ML">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ml_app/Predicting_the_chances_of_infant_survival_with_ML.html"
+              >
+                
+                  4.5
+                
+                Infant Survival Application
+              </a>
+            </li>
+            
+            
+          
+        </ul>
+      
+
+      
+    
+  </ul>
+  <p class="sidebar_footer">Powered by <a href="https://jupyterbook.org">Jupyter Book</a></p>
+</nav>
+
+      
+      <div class="c-topbar" id="top-navbar">
+  <!-- We show the sidebar by default so we use .is-active -->
+  <div class="c-topbar__buttons">
+    <button
+      id="js-sidebar-toggle"
+      class="hamburger hamburger--arrowalt is-active"
+    >
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+    </button>
+    <div class="buttons">
+<div class="download-buttons-dropdown">
+    <button id="dropdown-button-trigger" class="interact-button"><img src="/assets/images/download-solid.svg" alt="Download" /></button>
+    <div class="download-buttons">
+        <a href="/content/pyspark/03/5/function.ipynb" download>
+        <button id="interact-button-download" class="interact-button">.ipynb</button>
+        </a>
+        
+        <a id="interact-button-print"><button id="interact-button-download" class="interact-button">.pdf</button></a>
+    </div>
+</div>
+
+
+  <button id="interact-button-thebelab" class="interact-button">Thebelab</button>
+
+  
+  
+
+
+
+
+
+
+<a href="https://mybinder.org/v2/gh/jupyter/jupyter-book/gh-pages?urlpath=lab/tree/content%2Fpyspark%2F03%2F5%2Ffunction.ipynb"><button class="interact-button" id="interact-button-binder"><img class="interact-button-logo" src="/assets/images/logo_binder.svg" alt="Interact" />Interact</button></a>
+  
+
+
+</div>
+
+  </div>
+  <!-- Empty sidebar placeholder that we'll auto-fill with javascript -->
+  <aside class="sidebar__right">
+    <header><h4 class="nav__title"><img src="/assets/images/list-solid.svg" alt="Search" />   On this page</h4></header>
+    <nav class="onthispage">
+    </nav>
+  </aside>
+  <a href="/search.html" class="topbar-right-button" id="search-button">
+    <img src="/assets/images/search-solid.svg" alt="Search" />
+  </a>
+</div>
+
+      <main class="c-textbook__page" tabindex="-1">
+            <div class="c-textbook__content" id="textbook_content">
+                  <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Introduction to Functions</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Functions-and-Getting-Help">Functions and Getting Help<a class="anchor-link" href="#Functions-and-Getting-Help"> </a></h1><p>In this lesson, we'll be talking about functions. 
+There are two kinds of functions in Python</p>
+<ul>
+<li><p>Built-in functions that are provided as part of Python (input, print, type, float, int, ...)</p>
+</li>
+<li><p>Function that we define ourselves and then use.</p>
+</li>
+</ul>
+<p>In some languages, functions must be defined to always take a specific number of arguments, each having a particular type. Python functions are allowed much more flexibility. The <code>print</code> function is a good example of this:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The print function takes an input and prints it to the screen.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Each call to print starts on a new line.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;You&#39;ll often call print with strings, but you can pass any kind of value. For example, a number:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;If print is called with multiple arguments...&quot;</span><span class="p">,</span> <span class="s2">&quot;it joins them&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;(with spaces in between)&quot;</span><span class="p">,</span> <span class="s2">&quot;before printing.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;But&#39;</span><span class="p">,</span> <span class="s1">&#39;this&#39;</span><span class="p">,</span> <span class="s1">&#39;is&#39;</span><span class="p">,</span> <span class="s1">&#39;configurable&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;***&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;^^^ print can also be called with no arguments to print a blank line.&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The print function takes an input and prints it to the screen.
+Each call to print starts on a new line.
+You&#39;ll often call print with strings, but you can pass any kind of value. For example, a number:
+4
+If print is called with multiple arguments... it joins them (with spaces in between) before printing.
+But***this***is***configurable
+
+^^^ print can also be called with no arguments to print a blank line.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Function-Definition">Function Definition<a class="anchor-link" href="#Function-Definition"> </a></h3><ul>
+<li>In Python a <strong>function</strong> is some reusable code that takes <strong><em>arguments(s)</em></strong> as input does some computation and then returns a result or results.</li>
+<li>We define a <strong>function</strong> using the <strong><em>def</em></strong> reserved word</li>
+<li>We call/invoke the <strong>function</strong> by using the function name, parenthesis and <strong><em>arguments</em></strong> in an expression.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">big</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="s1">&#39;Hello world&#39;</span><span class="p">)</span>
+<span class="c1"># big --&gt; variable name</span>
+<span class="c1"># max --&gt; function name</span>
+<span class="c1"># &#39;Hello World&#39; --&gt; argument</span>
+<span class="c1"># max(&#39;Hello World&#39;) --&gt; &#39;w&#39;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">big</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;w&#39;</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tiny</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="s1">&#39;Hello world&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tiny</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> 
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Build-our-own-function">Build our own function<a class="anchor-link" href="#Build-our-own-function"> </a></h2><ul>
+<li>We create a new <strong>function</strong> using the <strong><em>def</em></strong> keyword followed by optional parameters in parenthesis. </li>
+<li>We indent the body of the function (4 spaces)</li>
+<li>This <em>defines</em> the function but <strong><em>does not</em></strong> execute the body of the function</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_remove_output">
+
+<div class="cell border-box-sizing code_cell rendered tag_remove_output">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># function syntax </span>
+<span class="k">def</span> <span class="nf">function_name</span> <span class="p">(</span><span class="n">argument</span><span class="p">(</span><span class="n">S</span><span class="p">)):</span>
+  <span class="c1">#function body</span>
+  <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Once we have defined a function, we can call (or invoke) it as many times as we like.</li>
+<li>This is the store and reuse pattern</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">print_messages</span><span class="p">():</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hi&quot;</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Hello
+Hi
+7
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Calling-the-Function">Calling the Function<a class="anchor-link" href="#Calling-the-Function"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">print_messages</span><span class="p">():</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hi&quot;</span><span class="p">)</span>
+<span class="c1"># calling the function</span>
+<span class="n">print_messages</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Hello
+Hi
+Hello World
+7
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Arguments">Arguments<a class="anchor-link" href="#Arguments"> </a></h3><ul>
+<li>An <strong>argument</strong> is a value we pass into the <strong>function</strong> as its <strong>input</strong> when we call the function </li>
+<li>We use <strong>arguments</strong> so we can direct the <strong>function</strong> to do different kinds of work when we call it at <strong>different</strong> times</li>
+<li>We put the <strong>arguments</strong> in parenthesis after the <strong><em>name</em></strong> of the function</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Parameters">Parameters<a class="anchor-link" href="#Parameters"> </a></h3><ul>
+<li>A <strong>parameter</strong> is a variable which we use <em>in</em> the function <strong>definition</strong> that is a “handle” that allows the code in the <strong>function</strong> to access the <strong>arguments</strong> for a particular <strong>function</strong> invocation.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># name is parameter</span>
+<span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Marhaba&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+<span class="c1"># &#39;Tom&#39; is the argument</span>
+<span class="n">greet</span><span class="p">(</span><span class="s1">&#39;Tom&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Marhaba Tom
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Return-Values">Return Values<a class="anchor-link" href="#Return-Values"> </a></h3><p>Often a function will take its arguments, do some computation and <strong>return</strong> a value to be used as the value of the function call in the <strong>calling expression</strong>. The <strong><em>return</em></strong> keyword is used for this.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+  <span class="k">return</span> <span class="s1">&#39;Marhaba &#39;</span> <span class="o">+</span> <span class="n">name</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">greet</span><span class="p">(</span><span class="s2">&quot;Smanga&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Marhaba Smanga
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">addtwonumbers</span><span class="p">(</span><span class="n">number1</span><span class="p">,</span> <span class="n">number2</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">number1</span><span class="o">+</span><span class="n">number2</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">addtwonumbers</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>15
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Asking-python-for-help?">Asking python for help?<a class="anchor-link" href="#Asking-python-for-help?"> </a></h2><p>I showed the <code>abs</code> function in the previous lesson, but what if you've forgotten what it does?</p>
+<p>The <code>help()</code> function is possibly the most important Python function you can learn. If you can remember how to use <code>help()</code>, you hold the key to understanding just about any other function in Python.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="nb">abs</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on built-in function abs in module builtins:
+
+abs(x, /)
+    Return the absolute value of the argument.
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When applied to a function, <code>help()</code> displays...</p>
+<ul>
+<li>the header of that function <code>abs(x, /)</code>. In this case, this tells us that <code>abs()</code> takes a single argument <code>x</code>. (The forward slash isn't important, but if you're curious, you can read about it <a href="https://stackoverflow.com/questions/24735311/python-what-does-the-slash-mean-in-the-output-of-helprange">here</a>)</li>
+<li>A brief English description of what the function does.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Common pitfall:</strong> when you're looking up a function, remember to pass in the name of the function itself, and not the result of calling that function.</p>
+<p>What happens if we invoke help on a <em>call</em> to the function <code>abs()</code>? Unhide the output of the cell below to see.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on int object:
+
+class int(object)
+ |  int([x]) -&gt; integer
+ |  int(x, base=10) -&gt; integer
+ |  
+ |  Convert a number or string to an integer, or return 0 if no arguments
+ |  are given.  If x is a number, return x.__int__().  For floating point
+ |  numbers, this truncates towards zero.
+ |  
+ |  If x is not a number or if base is given, then x must be a string,
+ |  bytes, or bytearray instance representing an integer literal in the
+ |  given base.  The literal can be preceded by &#39;+&#39; or &#39;-&#39; and be surrounded
+ |  by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.
+ |  Base 0 means to interpret the base from the string as an integer literal.
+ |  &gt;&gt;&gt; int(&#39;0b100&#39;, base=0)
+ |  4
+ |  
+ |  Methods defined here:
+ |  
+ |  __abs__(self, /)
+ |      abs(self)
+ |  
+ |  __add__(self, value, /)
+ |      Return self+value.
+ |  
+ |  __and__(self, value, /)
+ |      Return self&amp;value.
+ |  
+ |  __bool__(self, /)
+ |      self != 0
+ |  
+ |  __ceil__(...)
+ |      Ceiling of an Integral returns itself.
+ |  
+ |  __divmod__(self, value, /)
+ |      Return divmod(self, value).
+ |  
+ |  __eq__(self, value, /)
+ |      Return self==value.
+ |  
+ |  __float__(self, /)
+ |      float(self)
+ |  
+ |  __floor__(...)
+ |      Flooring an Integral returns itself.
+ |  
+ |  __floordiv__(self, value, /)
+ |      Return self//value.
+ |  
+ |  __format__(self, format_spec, /)
+ |      Default object formatter.
+ |  
+ |  __ge__(self, value, /)
+ |      Return self&gt;=value.
+ |  
+ |  __getattribute__(self, name, /)
+ |      Return getattr(self, name).
+ |  
+ |  __getnewargs__(self, /)
+ |  
+ |  __gt__(self, value, /)
+ |      Return self&gt;value.
+ |  
+ |  __hash__(self, /)
+ |      Return hash(self).
+ |  
+ |  __index__(self, /)
+ |      Return self converted to an integer, if self is suitable for use as an index into a list.
+ |  
+ |  __int__(self, /)
+ |      int(self)
+ |  
+ |  __invert__(self, /)
+ |      ~self
+ |  
+ |  __le__(self, value, /)
+ |      Return self&lt;=value.
+ |  
+ |  __lshift__(self, value, /)
+ |      Return self&lt;&lt;value.
+ |  
+ |  __lt__(self, value, /)
+ |      Return self&lt;value.
+ |  
+ |  __mod__(self, value, /)
+ |      Return self%value.
+ |  
+ |  __mul__(self, value, /)
+ |      Return self*value.
+ |  
+ |  __ne__(self, value, /)
+ |      Return self!=value.
+ |  
+ |  __neg__(self, /)
+ |      -self
+ |  
+ |  __or__(self, value, /)
+ |      Return self|value.
+ |  
+ |  __pos__(self, /)
+ |      +self
+ |  
+ |  __pow__(self, value, mod=None, /)
+ |      Return pow(self, value, mod).
+ |  
+ |  __radd__(self, value, /)
+ |      Return value+self.
+ |  
+ |  __rand__(self, value, /)
+ |      Return value&amp;self.
+ |  
+ |  __rdivmod__(self, value, /)
+ |      Return divmod(value, self).
+ |  
+ |  __repr__(self, /)
+ |      Return repr(self).
+ |  
+ |  __rfloordiv__(self, value, /)
+ |      Return value//self.
+ |  
+ |  __rlshift__(self, value, /)
+ |      Return value&lt;&lt;self.
+ |  
+ |  __rmod__(self, value, /)
+ |      Return value%self.
+ |  
+ |  __rmul__(self, value, /)
+ |      Return value*self.
+ |  
+ |  __ror__(self, value, /)
+ |      Return value|self.
+ |  
+ |  __round__(...)
+ |      Rounding an Integral returns itself.
+ |      Rounding with an ndigits argument also returns an integer.
+ |  
+ |  __rpow__(self, value, mod=None, /)
+ |      Return pow(value, self, mod).
+ |  
+ |  __rrshift__(self, value, /)
+ |      Return value&gt;&gt;self.
+ |  
+ |  __rshift__(self, value, /)
+ |      Return self&gt;&gt;value.
+ |  
+ |  __rsub__(self, value, /)
+ |      Return value-self.
+ |  
+ |  __rtruediv__(self, value, /)
+ |      Return value/self.
+ |  
+ |  __rxor__(self, value, /)
+ |      Return value^self.
+ |  
+ |  __sizeof__(self, /)
+ |      Returns size in memory, in bytes.
+ |  
+ |  __str__(self, /)
+ |      Return str(self).
+ |  
+ |  __sub__(self, value, /)
+ |      Return self-value.
+ |  
+ |  __truediv__(self, value, /)
+ |      Return self/value.
+ |  
+ |  __trunc__(...)
+ |      Truncating an Integral returns itself.
+ |  
+ |  __xor__(self, value, /)
+ |      Return self^value.
+ |  
+ |  bit_length(self, /)
+ |      Number of bits necessary to represent self in binary.
+ |      
+ |      &gt;&gt;&gt; bin(37)
+ |      &#39;0b100101&#39;
+ |      &gt;&gt;&gt; (37).bit_length()
+ |      6
+ |  
+ |  conjugate(...)
+ |      Returns self, the complex conjugate of any int.
+ |  
+ |  to_bytes(self, /, length, byteorder, *, signed=False)
+ |      Return an array of bytes representing an integer.
+ |      
+ |      length
+ |        Length of bytes object to use.  An OverflowError is raised if the
+ |        integer is not representable with the given number of bytes.
+ |      byteorder
+ |        The byte order used to represent the integer.  If byteorder is &#39;big&#39;,
+ |        the most significant byte is at the beginning of the byte array.  If
+ |        byteorder is &#39;little&#39;, the most significant byte is at the end of the
+ |        byte array.  To request the native byte order of the host system, use
+ |        `sys.byteorder&#39; as the byte order value.
+ |      signed
+ |        Determines whether two&#39;s complement is used to represent the integer.
+ |        If signed is False and a negative integer is given, an OverflowError
+ |        is raised.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Class methods defined here:
+ |  
+ |  from_bytes(bytes, byteorder, *, signed=False) from builtins.type
+ |      Return the integer represented by the given array of bytes.
+ |      
+ |      bytes
+ |        Holds the array of bytes to convert.  The argument must either
+ |        support the buffer protocol or be an iterable object producing bytes.
+ |        Bytes and bytearray are examples of built-in objects that support the
+ |        buffer protocol.
+ |      byteorder
+ |        The byte order used to represent the integer.  If byteorder is &#39;big&#39;,
+ |        the most significant byte is at the beginning of the byte array.  If
+ |        byteorder is &#39;little&#39;, the most significant byte is at the end of the
+ |        byte array.  To request the native byte order of the host system, use
+ |        `sys.byteorder&#39; as the byte order value.
+ |      signed
+ |        Indicates whether two&#39;s complement is used to represent the integer.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Static methods defined here:
+ |  
+ |  __new__(*args, **kwargs) from builtins.type
+ |      Create and return a new object.  See help(type) for accurate signature.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |  
+ |  denominator
+ |      the denominator of a rational number in lowest terms
+ |  
+ |  imag
+ |      the imaginary part of a complex number
+ |  
+ |  numerator
+ |      the numerator of a rational number in lowest terms
+ |  
+ |  real
+ |      the real part of a complex number
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Python evaluates an expression like this from the inside out. First it calculates the value of <code>abs(-2)</code>, then it provides help on whatever the value of that expression is.</p>
+<p><small>(And it turns out to have a lot to say about integers! In Python, even something as simple-seeming as an integer is actually an object with a fair amount of internal complexity. After we talk later about objects, methods, and attributes in Python, the voluminous help output above will make more sense.)</small></p>
+<p><code>abs</code> is a very simple function with a short docstring. <code>help</code> shines even more when dealing with more complex, configurable functions like <code>print</code>:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on built-in function print in module builtins:
+
+print(...)
+    print(value, ..., sep=&#39; &#39;, end=&#39;\n&#39;, file=sys.stdout, flush=False)
+    
+    Prints the values to a stream, or to sys.stdout by default.
+    Optional keyword arguments:
+    file:  a file-like object (stream); defaults to the current sys.stdout.
+    sep:   string inserted between values, default a space.
+    end:   string appended after the last value, default a newline.
+    flush: whether to forcibly flush the stream.
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;World&quot;</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Hello World </pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;World&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Hello
+World
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Another-example">Another example<a class="anchor-link" href="#Another-example"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">least_difference</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="n">diff1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">diff2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+    <span class="n">diff3</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">diff1</span><span class="p">,</span> <span class="n">diff2</span><span class="p">,</span> <span class="n">diff3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This creates a function called <code>least_difference</code>, which takes three arguments, <code>a</code>, <code>b</code>, and <code>c</code>.</p>
+<p>Functions start with a header introduced by the <code>def</code> keyword. The indented block of code following the <code>:</code> is run when the function is called.</p>
+<p><code>return</code> is another keyword uniquely associated with functions. When Python encounters a <code>return</code> statement, it exits the function immediately, and passes the value on the right hand side to the calling context.</p>
+<p>Is it clear what <code>least_difference()</code> does from the source code? If we're not sure, we can always try it out on a few examples:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span>
+    <span class="n">least_difference</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+    <span class="n">least_difference</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="n">least_difference</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="c1"># Python allows trailing commas in argument lists. How nice is that?</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>9 0 1
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Or maybe the <code>help()</code> function can tell us something about it.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">least_difference</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on function least_difference in module __main__:
+
+least_difference(a, b, c)
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Unsurprisingly, Python isn't smart enough to read my code and turn it into a nice English description. However, when I write a function, I can provide a description in what's called the <strong>docstring</strong>.</p>
+<h3 id="Docstrings">Docstrings<a class="anchor-link" href="#Docstrings"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The docstring is a triple-quoted string (which may span multiple lines) that comes immediately after the header of a function. When we call <code>help()</code> on a function, it shows the docstring.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">least_difference</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the smallest difference between any two numbers</span>
+<span class="sd">    among a, b and c.</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; least_difference(1, 5, -5)</span>
+<span class="sd">    4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diff1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">diff2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+    <span class="n">diff3</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">diff1</span><span class="p">,</span> <span class="n">diff2</span><span class="p">,</span> <span class="n">diff3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">least_difference</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on function least_difference in module __main__:
+
+least_difference(a, b, c)
+    Return the smallest difference between any two numbers
+    among a, b and c.
+    
+    &gt;&gt;&gt; least_difference(1, 5, -5)
+    4
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<blockquote><p><strong>Aside: example calls</strong>
+The last two lines of the docstring are an example function call and result. (The <code>&gt;&gt;&gt;</code> is a reference to the command prompt used in Python interactive shells.) Python doesn't run the example call - it's just there for the benefit of the reader. The convention of including 1 or more example calls in a function's docstring is far from universally observed, but it can be very effective at helping someone understand your function. For a real-world example of, see <a href="https://github.com/numpy/numpy/blob/v1.14.2/numpy/lib/twodim_base.py#L140-L194">this docstring for the numpy function <code>np.eye</code></a>.</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Docstrings are a nice way to document your code for others - or even for yourself. (How many times have you come back to some code you were working on a day ago and wondered "what was I thinking?")</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Functions-that-don't-return">Functions that don't return<a class="anchor-link" href="#Functions-that-don't-return"> </a></h2><p>What would happen if we didn't include the <code>return</code> keyword in our function?</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">least_difference</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the smallest difference between any two numbers</span>
+<span class="sd">    among a, b and c.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diff1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">diff2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+    <span class="n">diff3</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+    <span class="nb">min</span><span class="p">(</span><span class="n">diff1</span><span class="p">,</span> <span class="n">diff2</span><span class="p">,</span> <span class="n">diff3</span><span class="p">)</span>
+    
+<span class="nb">print</span><span class="p">(</span>
+    <span class="n">least_difference</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+    <span class="n">least_difference</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="n">least_difference</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>None None None
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Python allows us to define such functions. The result of calling them is the special value <code>None</code>. (This is similar to the concept of "null" in other languages.)</p>
+<p>Without a <code>return</code> statement, <code>least_difference</code> is completely pointless, but a function with side effects may do something useful without returning anything. We've already seen two examples of this: <code>print()</code> and <code>help()</code> don't return anything. We only call them for their side effects (putting some text on the screen). Other examples of useful side effects include writing to a file, or modifying an input.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mystery</span> <span class="o">=</span> <span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mystery</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+None
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Default-arguments">Default arguments<a class="anchor-link" href="#Default-arguments"> </a></h2><p>When we called <code>help(print)</code>, we saw that the <code>print</code> function has several optional arguments. For example, we can specify a value for <code>sep</code> to put some special string in between our printed arguments:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">displayProduct</span><span class="p">(</span><span class="n">RamSize</span><span class="p">,</span> <span class="n">HdSize</span><span class="p">,</span> <span class="n">company</span><span class="o">=</span><span class="s1">&#39;Hp&#39;</span><span class="p">):</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The company name = &quot;</span><span class="o">+</span><span class="n">company</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ram Size = &quot;</span><span class="o">+</span> <span class="n">RamSize</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">displayProduct</span><span class="p">(</span><span class="s2">&quot;3Gb&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The company name = Hp
+Ram Size = 3Gb
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">displayProduct</span><span class="p">(</span><span class="s2">&quot;6GB&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">company</span><span class="o">=</span><span class="s1">&#39;Toshiba&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The company name = Toshiba
+Ram Size = 6GB
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39; &lt; &#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1 &lt; 2 &lt; 3
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>But if we don't specify a value, <code>sep</code> is treated as having a default value of <code>' '</code> (a single space).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1 2 3
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Adding optional arguments with default values to the functions we define turns out to be pretty easy:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">who</span><span class="o">=</span><span class="s2">&quot;Colin&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello,&quot;</span><span class="p">,</span> <span class="n">who</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hi&quot;</span><span class="p">)</span>
+    
+<span class="n">greet</span><span class="p">()</span>
+<span class="n">greet</span><span class="p">(</span><span class="n">who</span><span class="o">=</span><span class="s2">&quot;Kaggle&quot;</span><span class="p">)</span>
+<span class="c1"># (In this case, we don&#39;t need to specify the name of the argument, because it&#39;s unambiguous.)</span>
+<span class="n">greet</span><span class="p">(</span><span class="s2">&quot;world&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Hello, Colin
+Hi
+Hello, Kaggle
+Hi
+Hello, world
+Hi
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<!-- Mention that non-default args must come before default? -->
+
+<h2 id="Functions-are-objects-too">Functions are objects too<a class="anchor-link" href="#Functions-are-objects-too"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The syntax for creating them may be different, but <code>f</code> and <code>x</code> in the code above aren't so fundamentally different. They're each variables that refer to objects. <code>x</code> refers to an object of type <code>float</code>, and <code>f</code> refers to an object of type... well, let's ask Python:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">2</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="mf">12.5</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>...though what it shows isn't super useful.</p>
+<p>Notice that the code cells above have examples of functions (<code>type</code>, and <code>print</code>) taking <em>another function</em> as input. This opens up some interesting possibilities - we can <em>call</em> the function we receive as an argument.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Call fn on arg&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">squared_call</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Call fn on the result of calling fn on arg&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="n">fn</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="n">call</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">squared_call</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> 
+    <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="c1"># &#39;\n&#39; is the newline character - it starts a new line</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>2
+4
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You probably won't often define <a href="https://en.wikipedia.org/wiki/Higher-order_function">higher order functions</a> like this yourself, but there are some existing ones (built in to Python and in libraries like pandas or numpy) that you might find useful to call. For example, <code>max</code>.</p>
+<p>By default, <code>max</code> returns the largest of its arguments. But if we pass in a function using the optional <code>key</code> argument, it returns the argument <code>x</code> that maximizes <code>key(x)</code> (aka the 'argmax').</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">mod_5</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the remainder of x after dividing by 5&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">5</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s1">&#39;Which number is biggest?&#39;</span><span class="p">,</span>
+    <span class="nb">max</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+    <span class="s1">&#39;Which number is the biggest modulo 5?&#39;</span><span class="p">,</span>
+    <span class="nb">max</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">mod_5</span><span class="p">),</span>
+    <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Which number is biggest?
+100
+Which number is the biggest modulo 5?
+14
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="mi">100</span><span class="o">%</span><span class="k">5</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="mi">51</span><span class="o">%</span><span class="k">5</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="mi">14</span><span class="o">%</span><span class="k">5</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>4</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Exercise:">Exercise:<a class="anchor-link" href="#Exercise:"> </a></h2><p>Rewrite your pay computation and create a function called <strong>computepay</strong> which takes two parameters ( hours and rate).</p>
+<ul>
+<li>Enter Hours: 35</li>
+<li>Enter Rate: 2.75 </li>
+<li>Pay: 96.25</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">computepay</span><span class="p">(</span><span class="n">hours</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">hours</span> <span class="o">*</span> <span class="n">rate</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
+            </div>
+            <div class="c-textbook__footer" id="textbook_footer">
+              
+<nav class="c-page__nav">
+  
+    
+    
+
+    <a id="js-page__nav__prev" class="c-page__nav__prev" href="/pyspark/03/4/Introduction_to_Tables.html">
+      〈 <span class="u-margin-right-tiny"></span> Introduction to Tables
+    </a>
+  
+
+  
+    
+
+    
+    <a id="js-page__nav__next" class="c-page__nav__next" href="/pyspark/03/6/conditions.html">
+      Conditions <span class="u-margin-right-tiny"></span> 〉
+    </a>
+  
+</nav>
+
+              <footer>
+  <p class="footer">This page was created by <a href="https://www.zyelabs.net/">ZyeLabs</a></p>
+</footer>
+
+            </div>
+
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

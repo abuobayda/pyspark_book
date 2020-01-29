@@ -1,0 +1,3678 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+
+  <title>PySpark RDD</title>
+  <meta name="description" content="        PySpark RDD    Introduction to Resilient Distributed Datasets (RDD)     import pysparksc = pyspark.SparkContext(appName=&quot;PySpark_RDD&quot;)    C...">
+
+  <link rel="canonical" href="http://127.0.0.1:4000//pyspark/02_rdd/2_Pyspark_RDD.html">
+  <link rel="alternate" type="application/rss+xml" title="" href="http://127.0.0.1:4000//feed.xml">
+
+  <meta property="og:url"         content="http://127.0.0.1:4000//pyspark/02_rdd/2_Pyspark_RDD.html" />
+<meta property="og:type"        content="article" />
+<meta property="og:title"       content="PySpark RDD" />
+<meta property="og:description" content="        PySpark RDD    Introduction to Resilient Distributed Datasets (RDD)     import pysparksc = pyspark.SparkContext(appName=&quot;PySpark_RDD&quot;)    C..." />
+<meta property="og:image"       content="http://127.0.0.1:4000//images/logo/logo.png" />
+
+<meta name="twitter:card" content="summary">
+
+
+  <script type="application/ld+json">
+  {
+  "@context": "http://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": "http://127.0.0.1:4000//pyspark/02_rdd/2_Pyspark_RDD.html",
+  "headline": "PySpark RDD",
+  "datePublished": "2020-01-27T12:08:23+02:00",
+  "dateModified": "2020-01-27T12:08:23+02:00",
+  "description": "        PySpark RDD    Introduction to Resilient Distributed Datasets (RDD)     import pysparksc = pyspark.SparkContext(appName=&quot;PySpark_RDD&quot;)    C...",
+  "author": {
+    "@type": "Person",
+    "name": "Dr. Abuobayda Shabat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Data 100 at UC Berkeley",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://127.0.0.1:4000/",
+      "width": 60,
+      "height": 60
+    }
+  },
+  "image": {
+    "@type": "ImageObject",
+    "url": "http://127.0.0.1:4000/",
+    "height": 60,
+    "width": 60
+  }
+}
+
+  </script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+
+  <!-- <link rel="manifest" href="/manifest.json"> -->
+  <!-- <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#efae0a"> -->
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+  <meta name="theme-color" content="#233947">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="/images/logo/favicon.ico">
+
+  <!-- MathJax Config -->
+  <!-- Allow inline math using $ and automatically break long math lines -->
+<!-- (mostly) copied from nbconvert configuration -->
+<!-- https://github.com/jupyter/nbconvert/blob/master/nbconvert/templates/html/mathjax.tpl -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true,
+        processEnvironments: true
+    },
+    // Center justify equations in code and markdown cells. Elsewhere
+    // we use CSS to left justify single line equations in code cells.
+    displayAlign: 'center',
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}},
+        linebreaks: { automatic: true },
+    },
+    
+});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML' async></script>
+
+
+  <!-- DOM updating function -->
+  <script src="/assets/js/page/dom-update.js"></script>
+
+  <!-- Selectors for elements on the page -->
+  <script src="/assets/js/page/documentSelectors.js"></script>
+
+  <!-- Define some javascript variables that will be useful in other javascript -->
+  <script>
+    const site_basename = '';
+  </script>
+
+  <!-- Add AnchorJS to let headers be linked -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.min.js" async></script>
+  <script src="/assets/js/page/anchors.js" async></script>
+
+  <!-- Include Turbolinks to make page loads fast -->
+  <!-- https://github.com/turbolinks/turbolinks -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js" async></script>
+  <meta name="turbolinks-cache-control" content="no-cache">
+
+  <!-- Load nbinteract for widgets -->
+  
+
+  <!-- Load Thebelab for interactive widgets -->
+  <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+<!-- Display Thebelab button in each code cell -->
+<script>
+/**
+ * Set up thebelab button for code blocks
+ */
+
+const thebelabCellButton = id =>
+  `<a id="thebelab-cell-button-${id}" class="btn thebebtn o-tooltip--left" data-tooltip="Interactive Mode">
+    <img src="/assets/images/edit-button.svg" alt="Start thebelab interactive mode">
+  </a>`
+
+
+const addThebelabButtonToCodeCells =  () => {
+
+  const codeCells = document.querySelectorAll('div.input_area > div.highlight:not(.output) pre')
+  codeCells.forEach((codeCell, index) => {
+    const id = codeCellId(index)
+    codeCell.setAttribute('id', id)
+    if (document.getElementById("thebelab-cell-button-" + id) == null) {
+      codeCell.insertAdjacentHTML('afterend', thebelabCellButton(id));
+    }
+  })
+}
+
+initFunction(addThebelabButtonToCodeCells);
+</script>
+
+
+<script src="https://unpkg.com/thebelab@latest/lib/index.js" async></script>
+<script>
+    /**
+     * Add attributes to Thebelab blocks
+     */
+
+    const initThebelab = () => {
+        const addThebelabToCodeCells = () => {
+            console.log("Adding thebelab to code cells...");
+            // If Thebelab hasn't loaded, wait a bit and try again. This
+            // happens because we load ClipboardJS asynchronously.
+            if (window.thebelab === undefined) {
+                setTimeout(addThebelabToCodeCells, 250)
+            return
+            }
+
+            // If we already detect a Thebelab cell, don't re-run
+            if (document.querySelectorAll('div.thebelab-cell').length > 0) {
+                return;
+            }
+
+            // Find all code cells, replace with Thebelab interactive code cells
+            const codeCells = document.querySelectorAll('.input_area pre')
+            codeCells.forEach((codeCell, index) => {
+                const id = codeCellId(index)
+
+                // Clean up the language to make it work w/ CodeMirror and add it to the cell
+                dataLanguage = ""
+                dataLanguage = detectLanguage(dataLanguage);
+                codeCell.setAttribute('data-language', dataLanguage)
+                codeCell.setAttribute('data-executable', 'true')
+
+                // If the code cell is hidden, show it
+                var inputCheckbox = document.querySelector(`input#hidebtn${codeCell.id}`);
+                if (inputCheckbox !== null) {
+                    setCodeCellVisibility(inputCheckbox, 'visible');
+                }
+            });
+
+            // Remove the event listener from the page so keyboard press doesn't
+            // Change page
+            document.removeEventListener('keydown', initPageNav)
+            keyboardListener = false;
+
+            // Init thebelab
+            thebelab.bootstrap();
+
+            // Remove copy buttons since they won't work anymore
+            const copyAndThebeButtons = document.querySelectorAll('.copybtn, .thebebtn')
+            copyAndThebeButtons.forEach((button, index) => {
+                button.remove();
+            });
+
+            // Remove outputs since they'll be stale
+            const outputs = document.querySelectorAll('.output *, .output')
+            outputs.forEach((output, index) => {
+                output.remove();
+            });
+
+            // Find any cells with an initialization tag and ask ThebeLab to run them when ready
+            var thebeInitCells = document.querySelectorAll('div.tag_thebelab-init');
+            thebeInitCells.forEach((cell) => {
+                console.log("Initializing ThebeLab with cell: " + cell.id);
+                cell.querySelector('.thebelab-run-button').click();
+            });
+        }
+
+        // Add event listener for the function to modify code cells
+        const thebelabButtons = document.querySelectorAll('[id^=thebelab], [id$=thebelab]')
+        thebelabButtons.forEach((thebelabButton,index) => {
+            if (thebelabButton === null) {
+                setTimeout(initThebelab, 250)
+                return
+            };
+            thebelabButton.addEventListener('click', addThebelabToCodeCells);
+        });
+    }
+
+    // Initialize Thebelab
+    initFunction(initThebelab);
+
+// Helper function to munge the language name
+var detectLanguage = (language) => {
+    if (language.indexOf('python') > -1) {
+        language = "python";
+    }
+    return language;
+}
+</script>
+
+
+
+  <!-- Load the auto-generating TOC (non-async otherwise the TOC won't load w/ turbolinks) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js" async></script>
+  <script src="/assets/js/page/tocbot.js"></script>
+
+  <!-- Google analytics -->
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-52617120-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-52617120-7');
+</script>
+
+
+
+  <!-- Clipboard copy button -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script>
+
+  <!-- Load custom website scripts -->
+  <script src="/assets/js/scripts.js" async></script>
+
+  <!-- Load custom user CSS and JS  -->
+  <script src="/assets/custom/custom.js" async></script>
+  <link rel="stylesheet" href="/assets/custom/custom.css">
+
+  <!-- Update interact links w/ REST param, is defined in includes so we can use templates -->
+  
+<script>
+/**
+  * To auto-embed hub URLs in interact links if given in a RESTful fashion
+ */
+
+function getJsonFromUrl(url) {
+  var query = url.split('?');
+  if (query.length < 2) {
+    // No queries so just return false
+    return false;
+  }
+  query = query[1];
+  // Collect REST params into a dictionary
+  var result = {};
+  query.split("&").forEach(function(part) {
+    var item = part.split("=");
+    result[item[0]] = decodeURIComponent(item[1]);
+  });
+  return result;
+}
+    
+function dict2param(dict) {
+    params = Object.keys(dict).map(function(k) {
+        return encodeURIComponent(k) + '=' + encodeURIComponent(dict[k])
+    });
+    return params.join('&')
+}
+
+// Parse a Binder URL, converting it to the string needed for JupyterHub
+function binder2Jupyterhub(url) {
+  newUrl = {};
+  parts = url.split('v2/gh/')[1];
+  // Grab the base repo information
+  repoinfo = parts.split('?')[0];
+  var [org, repo, ref] = repoinfo.split('/');
+  newUrl['repo'] = ['https://github.com', org, repo].join('/');
+  newUrl['branch'] = ref
+  // Grab extra parameters passed
+  params = getJsonFromUrl(url);
+  if (params['filepath'] !== undefined) {
+    newUrl['subPath'] = params['filepath']
+  }
+  return dict2param(newUrl);
+}
+
+// Filter out potentially unsafe characters to prevent xss
+function safeUrl(url)
+{
+   return String(encodeURIComponent(url))
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+}
+
+function addParamToInternalLinks(hub) {
+  var links = document.querySelectorAll("a").forEach(function(link) {
+    var href = link.href;
+    // If the link is an internal link...
+    if (href.search("http://127.0.0.1:4000/") !== -1 || href.startsWith('/') || href.search("127.0.0.1:") !== -1) {
+      // Assume we're an internal link, add the hub param to it
+      var params = getJsonFromUrl(href);
+      if (params !== false) {
+        // We have REST params, so append a new one
+        params['jupyterhub'] = hub;
+      } else {
+        // Create the REST params
+        params = {'jupyterhub': hub};
+      }
+      // Update the link
+      var newHref = href.split('?')[0] + '?' + dict2param(params);
+      link.setAttribute('href', decodeURIComponent(newHref));
+    }
+  });
+  return false;
+}
+
+
+// Update interact links
+function updateInteractLink() {
+    // hack to make this work since it expects a ? in the URL
+    rest = getJsonFromUrl("?" + location.search.substr(1));
+    jupyterHubUrl = rest['jupyterhub'];
+    var hubType = null;
+    var hubUrl = null;
+    if (jupyterHubUrl !== undefined) {
+      hubType = 'jupyterhub';
+      hubUrl = jupyterHubUrl;
+    }
+
+    if (hubType !== null) {
+      // Sanitize the hubUrl
+      hubUrl = safeUrl(hubUrl);
+
+      // Add HTTP text if omitted
+      if (hubUrl.indexOf('http') < 0) {hubUrl = 'http://' + hubUrl;}
+      var interactButtons = document.querySelectorAll("button.interact-button")
+      var lastButton = interactButtons[interactButtons.length-1];
+      var link = lastButton.parentElement;
+
+      // If we've already run this, skip the link updating
+      if (link.nextElementSibling !== null) {
+        return;
+      }
+
+      // Update the link and add context div
+      var href = link.getAttribute('href');
+      if (lastButton.id === 'interact-button-binder') {
+        // If binder links exist, we need to re-work them for jupyterhub
+        if (hubUrl.indexOf('http%3A%2F%2Flocalhost') > -1) {
+          // If localhost, assume we're working from a local Jupyter server and remove `/hub`
+          first = [hubUrl, 'git-sync'].join('/')
+        } else {
+          first = [hubUrl, 'hub', 'user-redirect', 'git-sync'].join('/')
+        }
+        href = first + '?' + binder2Jupyterhub(href);
+      } else {
+        // If interact button isn't binderhub, assume it's jupyterhub
+        // If JupyterHub links, we only need to replace the hub url
+        href = href.replace("", hubUrl);
+        if (hubUrl.indexOf('http%3A%2F%2Flocalhost') > -1) {
+          // Assume we're working from a local Jupyter server and remove `/hub`
+          href = href.replace("/hub/user-redirect", "");
+        }
+      }
+      link.setAttribute('href', decodeURIComponent(href));
+
+      // Add text after interact link saying where we're launching
+      hubUrlNoHttp = decodeURIComponent(hubUrl).replace('http://', '').replace('https://', '');
+      link.insertAdjacentHTML('afterend', '<div class="interact-context">on ' + hubUrlNoHttp + '</div>');
+
+      // Update internal links so we retain the hub url
+      addParamToInternalLinks(hubUrl);
+    }
+}
+
+runWhenDOMLoaded(updateInteractLink)
+document.addEventListener('turbolinks:load', updateInteractLink)
+</script>
+
+
+  <!-- Lunr search code - will only be executed on the /search page -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.6/lunr.min.js" async></script>
+  <script>var initQuery = function() {
+  // See if we have a search box
+  var searchInput = document.querySelector('input#lunr_search');
+  if (searchInput === null) {
+    return;
+  }
+
+  // Function to parse our lunr cache
+  var idx = lunr(function () {
+    this.field('title')
+    this.field('excerpt')
+    this.field('categories')
+    this.field('tags')
+    this.ref('id')
+
+    this.pipeline.remove(lunr.trimmer)
+
+    for (var item in store) {
+      this.add({
+        title: store[item].title,
+        excerpt: store[item].excerpt,
+        categories: store[item].categories,
+        tags: store[item].tags,
+        id: item
+      })
+    }
+  });
+
+  // Run search upon keyup
+  searchInput.addEventListener('keyup', function () {
+    var resultdiv = document.querySelector('#results');
+    var query = document.querySelector("input#lunr_search").value.toLowerCase();
+    var result =
+      idx.query(function (q) {
+        query.split(lunr.tokenizer.separator).forEach(function (term) {
+          q.term(term, { boost: 100 })
+          if(query.lastIndexOf(" ") != query.length-1){
+            q.term(term, {  usePipeline: false, wildcard: lunr.Query.wildcard.TRAILING, boost: 10 })
+          }
+          if (term != ""){
+            q.term(term, {  usePipeline: false, editDistance: 1, boost: 1 })
+          }
+        })
+      });
+
+      // Empty the results div
+      while (resultdiv.firstChild) {
+        resultdiv.removeChild(resultdiv.firstChild);
+      }
+
+    resultdiv.insertAdjacentHTML('afterbegin', '<p class="results__found">'+result.length+' Result(s) found</p>');
+    for (var item in result) {
+      var ref = result[item].ref;
+      if(store[ref].teaser){
+        var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<div class="archive__item-teaser">'+
+                '<img src="'+store[ref].teaser+'" alt="">'+
+              '</div>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      else{
+    	  var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      resultdiv.insertAdjacentHTML('beforeend', searchitem);
+    }
+  });
+};
+
+initFunction(initQuery);
+</script>
+
+  <!-- Load JS that depends on site variables -->
+  <script src="/assets/js/page/copy-button.js" async></script>
+
+  <!-- Hide cell code -->
+  <script src="/assets/js/page/hide-cell.js" async></script>
+
+  <!-- Printing the screen -->
+  <!-- Include nbinteract for interactive widgets -->
+<script src="https://printjs-4de6.kxcdn.com/print.min.js" async></script>
+<script>
+printContent = () => {
+    // MathJax displays a second version of any math for assistive devices etc.
+    // This prevents double-rendering in the PDF output.
+    var ignoreAssistList = [];
+    assistives = document.querySelectorAll('.MathJax_Display span.MJX_Assistive_MathML').forEach((element, index) => {
+        var thisId = 'MathJax-assistive-' + index.toString();
+        element.setAttribute('id', thisId);
+        ignoreAssistList.push(thisId)
+    });
+
+    // Print the actual content object
+    printJS({
+        printable: 'textbook_content',
+        type: 'html',
+        css: "/assets/css/styles.css",
+        style: "#textbook_content {padding-top: 40px};",
+        scanStyles: false,
+        targetStyles: ["*"],
+        ignoreElements: ignoreAssistList,
+        documentTitle: "Made with Jupyter Book"
+    })
+};
+
+initPrint = () => {
+    document.querySelector('#interact-button-print').addEventListener('click', printContent)
+}
+
+initFunction(initPrint)
+</script>
+
+</head>
+
+  <body>
+    <!-- Include the ThebeLab config so it gets reloaded on each page -->
+    <script type="text/x-thebe-config">{
+    requestKernel: true,
+    binderOptions: {
+    repo: "jupyter/jupyter-book",
+    ref: "gh-pages",
+    },
+    codeMirrorConfig: {
+    theme: "abcdef",
+    mode: "python"
+    },
+    kernelOptions: {
+    kernelName: "python3",
+    path: "content/pyspark/02_rdd"
+    }
+}
+</script>
+
+    <!-- .js-show-sidebar shows sidebar by default -->
+    <div id="js-textbook" class="c-textbook js-show-sidebar">
+      
+
+
+
+<nav id="js-sidebar" class="c-textbook__sidebar">
+  <a href="https://www.zyelabs.net/"><img src="/images/logo/logo.png" class="textbook_logo" id="sidebar-logo" alt="textbook logo" data-turbolinks-permanent/></a>
+  <h2 class="c-sidebar__title"></h2>
+  <ul class="c-sidebar__chapters">
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/intro">
+        <a class="c-sidebar__entry"
+          href="/intro.html"
+        >
+          
+          Introduction
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/pyspark/big_data/Intro_to_bigdata">
+        <a class="c-sidebar__entry"
+          href="/pyspark/big_data/Intro_to_bigdata.html"
+        >
+          
+            1.
+          
+          Introduction to Big Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+        
+
+        
+
+        <ul class="c-sidebar__sections u-hidden-visually">
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/four_v">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/four_v.html"
+              >
+                
+                  1.1
+                
+                The Four V's of Big Data
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/volume">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/volume.html"
+                  >
+                    
+                      1.1.1
+                      
+                    
+                    Volume
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/variety">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/variety.html"
+                  >
+                    
+                      1.1.2
+                      
+                    
+                    Variety
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/velocity">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/velocity.html"
+                  >
+                    
+                      1.1.3
+                      
+                    
+                    Velocity
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/veracity">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/veracity.html"
+                  >
+                    
+                      1.1.4
+                      
+                    
+                    Veracity
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/data/intro">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/data/intro.html"
+              >
+                
+                  1.2
+                
+                Different Data Types
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/data/struct">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/data/struct.html"
+                  >
+                    
+                      1.2.1
+                      
+                    
+                    Structured Data
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/data/unstruct">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/data/unstruct.html"
+                  >
+                    
+                      1.2.2
+                      
+                    
+                    Un-structured Data
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/data/semi">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/data/semi.html"
+                  >
+                    
+                      1.2.3
+                      
+                    
+                    Semi-structured Data
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/key/governance">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/key/governance.html"
+              >
+                
+                  1.3
+                
+                Data Governance
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/key/security">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/key/security.html"
+              >
+                
+                  1.4
+                
+                Data Security
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/data_science/intro">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/data_science/intro.html"
+              >
+                
+                  1.5
+                
+                Introduction to Data Science
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/data_science/process">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/data_science/process.html"
+                  >
+                    
+                      1.5.1
+                      
+                    
+                    Data Science Process
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+        </ul>
+      
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/pyspark/03/programming-in-python">
+        <a class="c-sidebar__entry"
+          href="/pyspark/03/programming-in-python.html"
+        >
+          
+            2.
+          
+          Programming in Python
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+        
+
+        
+
+        <ul class="c-sidebar__sections u-hidden-visually">
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/1/Expressions">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/1/Expressions.html"
+              >
+                
+                  2.1
+                
+                Expressions
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/2/Names">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/2/Names.html"
+              >
+                
+                  2.2
+                
+                Names
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/03/2/1/Growth">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/03/2/1/Growth.html"
+                  >
+                    
+                      2.2.1
+                      
+                    
+                    Example: Growth Rates
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/3/Calls">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/3/Calls.html"
+              >
+                
+                  2.3
+                
+                Call Expressions
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/4/Introduction_to_Tables">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/4/Introduction_to_Tables.html"
+              >
+                
+                  2.4
+                
+                Introduction to Tables
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/5/function">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/5/function.html"
+              >
+                
+                  2.5
+                
+                Introduction to Functions
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/6/conditions">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/6/conditions.html"
+              >
+                
+                  2.6
+                
+                Conditions
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/7/list">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/7/list.html"
+              >
+                
+                  2.7
+                
+                List
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/8/loop">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/8/loop.html"
+              >
+                
+                  2.8
+                
+                Loops
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/9/string_dictionary">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/9/string_dictionary.html"
+              >
+                
+                  2.9
+                
+                Introduction to Data Structure
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/10/numpy">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/10/numpy.html"
+              >
+                
+                  2.10
+                
+                Introduction to Numpy
+              </a>
+            </li>
+            
+            
+          
+        </ul>
+      
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/Intro_to_pyspark">
+        <a class="c-sidebar__entry"
+          href="/Intro_to_pyspark.html"
+        >
+          
+            3.
+          
+          Introduction to PySpark
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+        
+
+        
+
+        <ul class="c-sidebar__sections u-hidden-visually">
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/02_rdd/2_Pyspark_RDD">
+              <a class="c-sidebar__entry"
+                href="/pyspark/02_rdd/2_Pyspark_RDD.html"
+              >
+                
+                  3.1
+                
+                PySpark RDD
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/02_rdd/Simple_statistical_analysis">
+              <a class="c-sidebar__entry"
+                href="/pyspark/02_rdd/Simple_statistical_analysis.html"
+              >
+                
+                  3.2
+                
+                Simple Statistical Analysis
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03_dataframe/3_functional_programming">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03_dataframe/3_functional_programming.html"
+              >
+                
+                  3.3
+                
+                Functional Programming
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03_dataframe/4_PySpark_dataframe">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03_dataframe/4_PySpark_dataframe.html"
+              >
+                
+                  3.4
+                
+                PySpark Dataframe
+              </a>
+            </li>
+            
+            
+          
+        </ul>
+      
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/pyspark/ML/1_Intro_Machine_Learning">
+        <a class="c-sidebar__entry"
+          href="/pyspark/ML/1_Intro_Machine_Learning.html"
+        >
+          
+            4.
+          
+          Introduction to Machine Learning
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+        
+
+        
+
+        <ul class="c-sidebar__sections u-hidden-visually">
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ML_Spark/2_Machine_Learning_pyspark">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ML_Spark/2_Machine_Learning_pyspark.html"
+              >
+                
+                  4.1
+                
+                Machine Learning with PySpark MLlib
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/ML/pipeline/pipeline_feature_eng">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/ML/pipeline/pipeline_feature_eng.html"
+                  >
+                    
+                      4.1.1
+                      
+                    
+                    Feature Engineering Pipeline
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/ML/pipeline/pipeline_applications">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/ML/pipeline/pipeline_applications.html"
+                  >
+                    
+                      4.1.2
+                      
+                    
+                    Pipeline Applications
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ml_app/clustering">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ml_app/clustering.html"
+              >
+                
+                  4.2
+                
+                Clustering
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ml_app/linear_regression">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ml_app/linear_regression.html"
+              >
+                
+                  4.3
+                
+                Linear Regression
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ml_app/LogisticRegression">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ml_app/LogisticRegression.html"
+              >
+                
+                  4.4
+                
+                Logistic Regression
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ml_app/Predicting_the_chances_of_infant_survival_with_ML">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ml_app/Predicting_the_chances_of_infant_survival_with_ML.html"
+              >
+                
+                  4.5
+                
+                Infant Survival Application
+              </a>
+            </li>
+            
+            
+          
+        </ul>
+      
+
+      
+    
+  </ul>
+  <p class="sidebar_footer">Powered by <a href="https://jupyterbook.org">Jupyter Book</a></p>
+</nav>
+
+      
+      <div class="c-topbar" id="top-navbar">
+  <!-- We show the sidebar by default so we use .is-active -->
+  <div class="c-topbar__buttons">
+    <button
+      id="js-sidebar-toggle"
+      class="hamburger hamburger--arrowalt is-active"
+    >
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+    </button>
+    <div class="buttons">
+<div class="download-buttons-dropdown">
+    <button id="dropdown-button-trigger" class="interact-button"><img src="/assets/images/download-solid.svg" alt="Download" /></button>
+    <div class="download-buttons">
+        <a href="/content/pyspark/02_rdd/2_Pyspark_RDD.ipynb" download>
+        <button id="interact-button-download" class="interact-button">.ipynb</button>
+        </a>
+        
+        <a id="interact-button-print"><button id="interact-button-download" class="interact-button">.pdf</button></a>
+    </div>
+</div>
+
+
+  <button id="interact-button-thebelab" class="interact-button">Thebelab</button>
+
+  
+  
+
+
+
+
+
+
+<a href="https://mybinder.org/v2/gh/jupyter/jupyter-book/gh-pages?urlpath=lab/tree/content%2Fpyspark%2F02_rdd%2F2_Pyspark_RDD.ipynb"><button class="interact-button" id="interact-button-binder"><img class="interact-button-logo" src="/assets/images/logo_binder.svg" alt="Interact" />Interact</button></a>
+  
+
+
+</div>
+
+  </div>
+  <!-- Empty sidebar placeholder that we'll auto-fill with javascript -->
+  <aside class="sidebar__right">
+    <header><h4 class="nav__title"><img src="/assets/images/list-solid.svg" alt="Search" />   On this page</h4></header>
+    <nav class="onthispage">
+    </nav>
+  </aside>
+  <a href="/search.html" class="topbar-right-button" id="search-button">
+    <img src="/assets/images/search-solid.svg" alt="Search" />
+  </a>
+</div>
+
+      <main class="c-textbook__page" tabindex="-1">
+            <div class="c-textbook__content" id="textbook_content">
+                  <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">PySpark RDD</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Introduction-to-Resilient-Distributed-Datasets-(RDD)">Introduction to Resilient Distributed Datasets (RDD)<a class="anchor-link" href="#Introduction-to-Resilient-Distributed-Datasets-(RDD)"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input tag_remove_output">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input tag_remove_output">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyspark</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">pyspark</span><span class="o">.</span><span class="n">SparkContext</span><span class="p">(</span><span class="n">appName</span><span class="o">=</span><span class="s2">&quot;PySpark_RDD&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Creating-RDDs.-How-to-do-it?">Creating RDDs. How to do it?<a class="anchor-link" href="#Creating-RDDs.-How-to-do-it?"> </a></h2><p>RDD stands for Resilient Distributed Dataset, these are the elements that run and operate on multiple nodes to do parallel processing on a cluster. RDDs are immutable elements, which means once you create an RDD you cannot change it. RDDs are fault tolerant as well, hence in case of any failure, they recover automatically.</p>
+<ul>
+<li>Parallelizing an existing collection of objects</li>
+<li>External datasets:<ul>
+<li>Files in HDFS</li>
+<li>Objects in Amazon S3 bucket</li>
+<li>lines in a text le</li>
+</ul>
+</li>
+<li>From existing RDDs</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Parallelized-collection-(parallelizing)">Parallelized collection (parallelizing)<a class="anchor-link" href="#Parallelized-collection-(parallelizing)"> </a></h3><ul>
+<li><em>parallelize()</em> for creating RDDs from python list</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">numRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">helloRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="s2">&quot;Hello world&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">helloRDD</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>pyspark.rdd.RDD</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="From-external-datasets">From external datasets<a class="anchor-link" href="#From-external-datasets"> </a></h3><ul>
+<li><em>textFile()</em> for creating RDDs from external dataset</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fileRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;sample_data/README.md&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">fileRDD</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>pyspark.rdd.RDD</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Understanding-Partitioning-in-PySpark">Understanding Partitioning in PySpark<a class="anchor-link" href="#Understanding-Partitioning-in-PySpark"> </a></h2><ul>
+<li>A partition is a logical division of a large distributed data set</li>
+<li><em>parallelize()</em> method</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">numRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">numRDD</span><span class="o">.</span><span class="n">getNumPartitions</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>6</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>textFile() method</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fileRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;sample_data/README.md&quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fileRDD</span><span class="o">.</span><span class="n">getNumPartitions</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>6</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Your Turn:</p>
+<ul>
+<li>Create an RDD named RDD from a list of words.</li>
+<li>Confirm the object created is RDD.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create an RDD from a list of words</span>
+<span class="n">RDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">____</span><span class="p">([</span><span class="s2">&quot;Spark&quot;</span><span class="p">,</span> <span class="s2">&quot;is&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;framework&quot;</span><span class="p">,</span> <span class="s2">&quot;for&quot;</span><span class="p">,</span> <span class="s2">&quot;Big Data processing&quot;</span><span class="p">])</span>
+
+<span class="c1"># Print out the type of the created object</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The type of RDD is&quot;</span><span class="p">,</span> <span class="n">____</span><span class="p">(</span><span class="n">RDD</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Print the file_path.</li>
+<li>Create an RDD named fileRDD from a file_path with the file name README.md.</li>
+<li>Print the type of the fileRDD created.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">file_path</span> <span class="o">=</span> <span class="s2">&quot;sample_data/README.md&quot;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the file_path</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The file_path is&quot;</span><span class="p">,</span> <span class="n">____</span><span class="p">)</span>
+
+<span class="c1"># Create a fileRDD from file_path</span>
+<span class="n">fileRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+<span class="c1"># Check the type of fileRDD</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The file type of fileRDD is&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">____</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Find the number of partitions that support fileRDD RDD.</li>
+<li>Create an RDD named fileRDD_part from the file path but create 5 partitions.</li>
+<li>Confirm the number of partitions in the new fileRDD_part RDD.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Check the number of partitions in fileRDD</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of partitions in fileRDD is&quot;</span><span class="p">,</span> <span class="n">fileRDD</span><span class="o">.</span><span class="n">getNumPartitions</span><span class="p">)</span>
+
+<span class="c1"># Create a fileRDD_part from file_path with 5 partitions</span>
+<span class="n">fileRDD_part</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="n">____</span><span class="p">,</span> <span class="n">____</span><span class="p">)</span>
+
+<span class="c1"># Check the number of partitions in fileRDD_part</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of partitions in fileRDD_part is&quot;</span><span class="p">,</span> <span class="n">fileRDD_part</span><span class="o">.</span><span class="n">____</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Spark-operations">Spark operations<a class="anchor-link" href="#Spark-operations"> </a></h2><p>spark_operations = Transformations + Actions</p>
+<ul>
+<li>Transformations create new RDDS</li>
+<li>Actions perform computation on the RDDs</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="RDD-Transformations">RDD Transformations<a class="anchor-link" href="#RDD-Transformations"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="map()-Transformation">map() Transformation<a class="anchor-link" href="#map()-Transformation"> </a></h4><p>map() transformation applies a function to all elements in the RDD</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">RDD_map</span> <span class="o">=</span> <span class="n">RDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+<span class="c1"># Action</span>
+<span class="n">RDD_map</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[1, 4, 9, 16]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="filter()-Transformation">filter() Transformation<a class="anchor-link" href="#filter()-Transformation"> </a></h4><p>Filter transformation returns a new RDD with only the elements that pass the condition</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">RDD_filter</span> <span class="o">=</span> <span class="n">RDD</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>
+<span class="c1"># Action</span>
+<span class="n">RDD_filter</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[3, 4]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="flatMap()">flatMap()<a class="anchor-link" href="#flatMap()"> </a></h4><ul>
+<li>flatMap() transformation returns multiple values for each element in the original RDD</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="s2">&quot;hello World&quot;</span><span class="p">,</span> <span class="s2">&quot;How are you&quot;</span><span class="p">])</span>
+<span class="n">RDD_flatmap</span> <span class="o">=</span> <span class="n">RDD</span><span class="o">.</span><span class="n">flatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+<span class="c1"># Action</span>
+<span class="n">RDD_flatmap</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39;hello&#39;, &#39;World&#39;, &#39;How&#39;, &#39;are&#39;, &#39;you&#39;]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Union-()">Union ()<a class="anchor-link" href="#Union-()"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">inputRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;logs.txt&quot;</span><span class="p">)</span>
+<span class="n">errorRDD</span> <span class="o">=</span> <span class="n">inputRDD</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot;error&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+<span class="n">warningsRDD</span> <span class="o">=</span> <span class="n">inputRDD</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot;warnings&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+<span class="n">combinedRDD</span> <span class="o">=</span> <span class="n">errorRDD</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">warningsRDD</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="RDD-Actions">RDD Actions<a class="anchor-link" href="#RDD-Actions"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Operation return a value after running a computation on the RDD</li>
+<li>BasicRDD Actions<ul>
+<li>collect()</li>
+<li>take(N)</li>
+<li>first()</li>
+<li>count()</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="collect()-and-take()-Actions">collect() and take() Actions<a class="anchor-link" href="#collect()-and-take()-Actions"> </a></h4><ul>
+<li>collect() return allthe elements ofthe dataset as an array</li>
+<li>take(N) returns an array with the rst N elements ofthe dataset</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RDD_map</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[1, 4, 9, 16]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RDD_map</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[1, 4]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="first()-and-count()-Actions">first() and count() Actions<a class="anchor-link" href="#first()-and-count()-Actions"> </a></h4><ul>
+<li>first() prints the first element ofthe RDD</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RDD_map</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RDD_flatmap</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Your-Turn">Your Turn<a class="anchor-link" href="#Your-Turn"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">numbRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Create map() transformation that cubes all of the numbers in numbRDD.</li>
+<li>Collect the results in a numbers_all variable.</li>
+<li>Print the output from numbers_all variable.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create map() transformation to cube numbers</span>
+<span class="n">cubedRDD</span> <span class="o">=</span> <span class="n">numbRDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">____</span><span class="p">)</span>
+
+<span class="c1"># Collect the results</span>
+<span class="n">numbers_all</span> <span class="o">=</span> <span class="n">cubedRDD</span><span class="o">.</span><span class="n">____</span><span class="p">()</span>
+
+<span class="c1"># Print the numbers from numbers_all</span>
+<span class="k">for</span> <span class="n">numb</span> <span class="ow">in</span> <span class="n">____</span><span class="p">:</span>
+	<span class="nb">print</span><span class="p">(</span><span class="n">____</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Create filter() transformation to select the lines containing the keyword Spark.</li>
+<li>How many lines in fileRDD_filter contains the keyword Spark?</li>
+<li>Print the first four lines of the resulting RDD.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fileRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">&#39;Pyspark_RDD_q1.txt&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Filter the fileRDD to select lines with Spark keyword</span>
+<span class="n">fileRDD_filter</span> <span class="o">=</span> <span class="n">fileRDD</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="s1">&#39;Spark&#39;</span> <span class="ow">in</span> <span class="n">____</span><span class="p">)</span>
+
+<span class="c1"># How many lines are there in fileRDD?</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The total number of lines with the keyword Spark is&quot;</span><span class="p">,</span> <span class="n">fileRDD_filter</span><span class="o">.</span><span class="n">____</span><span class="p">())</span>
+
+<span class="c1"># Print the first four lines of fileRDD</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fileRDD_filter</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="n">____</span><span class="p">):</span> 
+  <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Filter the fileRDD to select lines with Spark keyword</span>
+<span class="n">fileRDD_filter</span> <span class="o">=</span> <span class="n">fileRDD</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="s1">&#39;Spark&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">)</span>
+
+<span class="c1"># How many lines are there in fileRDD?</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The total number of lines with the keyword Spark is&quot;</span><span class="p">,</span> <span class="n">fileRDD_filter</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+
+<span class="c1"># Print the first four lines of fileRDD</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fileRDD_filter</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span> 
+  <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The total number of lines with the keyword Spark is 7
+ &#39;Examples for Learning Spark&#39;,
+ &#39;Examples for the Learning Spark book. These examples require a number of libraries and as such have long build files. We have also added a stand alone example with minimal dependencies and a small build file&#39;,
+ &#39;These examples have been updated to run against Spark 1.3 so they may&#39;,
+ &#39;be slightly different than the versions in your copy of &#34;Learning Spark&#34;.&#39;,
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Pair-RDDs">Pair RDDs<a class="anchor-link" href="#Pair-RDDs"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Introduction-to-pair-RDDs-in-PySpark">Introduction to pair RDDs in PySpark<a class="anchor-link" href="#Introduction-to-pair-RDDs-in-PySpark"> </a></h3><ul>
+<li>Real life datasets are usually key/value pairs</li>
+<li>Each row is a key and maps to one or more values</li>
+<li>PairRDD is a special data structure to work with this kind of datasets</li>
+<li>PairRDD: Key is the identier and value is data</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Creating-pair-RDDs">Creating pair RDDs<a class="anchor-link" href="#Creating-pair-RDDs"> </a></h3><ul>
+<li>Two common ways to create pairRDDs<ul>
+<li>From a list of key-value tuple</li>
+<li>From a regularRDD</li>
+</ul>
+</li>
+<li>Get the data into key/value form for paired RDD</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">my_tuple</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;Sam&#39;</span><span class="p">,</span> <span class="mi">23</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Mary&#39;</span><span class="p">,</span> <span class="mi">34</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Peter&#39;</span><span class="p">,</span> <span class="mi">25</span><span class="p">)]</span>
+<span class="n">pairRDD_tuple</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="n">my_tuple</span><span class="p">)</span>
+<span class="n">pairRDD_tuple</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&#39;Sam&#39;, 23), (&#39;Mary&#39;, 34), (&#39;Peter&#39;, 25)]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Sam 23&#39;</span><span class="p">,</span> <span class="s1">&#39;Mary 34&#39;</span><span class="p">,</span><span class="s1">&#39;Peter 25&#39;</span><span class="p">]</span>
+<span class="n">regularRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="n">my_list</span><span class="p">)</span>
+<span class="n">pairRDD_RDD</span> <span class="o">=</span> <span class="n">regularRDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">pairRDD_RDD</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&#39;Sam&#39;, &#39;23&#39;), (&#39;Mary&#39;, &#39;34&#39;), (&#39;Peter&#39;, &#39;25&#39;)]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Transformations-on-pair-RDDs">Transformations on pair RDDs<a class="anchor-link" href="#Transformations-on-pair-RDDs"> </a></h3><ul>
+<li>All regular transformations work on pairRDD</li>
+<li>Have to pass functions that operate on key value pairs rather than on individual elements</li>
+<li>Examples of paired RDD Transformations<ul>
+<li>reduceByKey(func): Combine values with the same key</li>
+<li>groupByKey(): Group values with the same key</li>
+<li>sortByKey(): Return an RDD sorted by the key</li>
+<li>join(): Join two pairRDDs based on their key</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="reduceByKey()-transformation">reduceByKey() transformation<a class="anchor-link" href="#reduceByKey()-transformation"> </a></h4><ul>
+<li>reduceByKey() transformation combines values with the same key</li>
+<li>It runs parallel operations for each key in the dataset</li>
+<li>It is a transformation and not action</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">regularRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([(</span><span class="s2">&quot;Messi&quot;</span><span class="p">,</span> <span class="mi">23</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;Ronaldo&quot;</span><span class="p">,</span> <span class="mi">34</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;Neymar&quot;</span><span class="p">,</span> <span class="mi">22</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;Messi&quot;</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;Messi&quot;</span><span class="p">,</span> <span class="mi">24</span><span class="p">)])</span>
+<span class="n">pairRDD_reducebykey</span> <span class="o">=</span> <span class="n">regularRDD</span><span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">pairRDD_reducebykey</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&#39;Ronaldo&#39;, 34), (&#39;Messi&#39;, 71), (&#39;Neymar&#39;, 22)]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="sortByKey()-transformation">sortByKey() transformation<a class="anchor-link" href="#sortByKey()-transformation"> </a></h4><ul>
+<li>sortByKey() operation orders pairRDD by key</li>
+<li>It returns an RDD sorted by key in ascending or descending order</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pairRDD_reducebykey_rev</span> <span class="o">=</span> <span class="n">pairRDD_reducebykey</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">pairRDD_reducebykey_rev</span><span class="o">.</span><span class="n">sortByKey</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(71, &#39;Messi&#39;), (34, &#39;Ronaldo&#39;), (22, &#39;Neymar&#39;)]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="groupByKey()-transformation">groupByKey() transformation<a class="anchor-link" href="#groupByKey()-transformation"> </a></h4><ul>
+<li>groupbykey() groups all the values with the same key in the pair RDD</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">airports</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;US&quot;</span><span class="p">,</span><span class="s2">&quot;JFK&quot;</span><span class="p">),(</span><span class="s2">&quot;UK&quot;</span><span class="p">,</span><span class="s2">&quot;LHR&quot;</span><span class="p">),(</span><span class="s2">&quot;FR&quot;</span><span class="p">,</span><span class="s2">&quot;CDG&quot;</span><span class="p">),(</span><span class="s2">&quot;US&quot;</span><span class="p">,</span><span class="s2">&quot;SFO&quot;</span><span class="p">)]</span>
+<span class="n">regularRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="n">airports</span><span class="p">)</span>
+<span class="n">pairRDD_group</span> <span class="o">=</span> <span class="n">regularRDD</span><span class="o">.</span><span class="n">groupByKey</span><span class="p">()</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">cont</span><span class="p">,</span> <span class="n">air</span> <span class="ow">in</span> <span class="n">pairRDD_group</span><span class="p">:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">cont</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">air</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>US [&#39;JFK&#39;, &#39;SFO&#39;]
+UK [&#39;LHR&#39;]
+FR [&#39;CDG&#39;]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="join()-transformation">join() transformation<a class="anchor-link" href="#join()-transformation"> </a></h4><ul>
+<li>join() transformation joins the two pairRDDs based on their key</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RDD1</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([(</span><span class="s2">&quot;Messi&quot;</span><span class="p">,</span> <span class="mi">34</span><span class="p">),(</span><span class="s2">&quot;Ronaldo&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">),(</span><span class="s2">&quot;Neymar&quot;</span><span class="p">,</span> <span class="mi">24</span><span class="p">)])</span>
+<span class="n">RDD2</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([(</span><span class="s2">&quot;Ronaldo&quot;</span><span class="p">,</span> <span class="mi">80</span><span class="p">),(</span><span class="s2">&quot;Neymar&quot;</span><span class="p">,</span> <span class="mi">120</span><span class="p">),(</span><span class="s2">&quot;Messi&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RDD1</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">RDD2</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&#39;Neymar&#39;, (24, 120)), (&#39;Ronaldo&#39;, (32, 80)), (&#39;Messi&#39;, (34, 100))]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Your-Turn">Your Turn<a class="anchor-link" href="#Your-Turn"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Create a pair RDD named Rdd with tuples (1,2),(3,4),(3,6),(4,5).</li>
+<li>Transform the Rdd with reduceByKey() into a pair RDD Rdd_Reduced by adding the values with the same key.</li>
+<li>Collect the contents of pair RDD Rdd_Reduced and iterate to print the output.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create PairRDD Rdd with key value pairs</span>
+<span class="n">Rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="n">____</span><span class="p">])</span>
+
+<span class="c1"># Apply reduceByKey() operation on Rdd</span>
+<span class="n">Rdd_Reduced</span> <span class="o">=</span> <span class="n">Rdd</span><span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">____</span><span class="p">)</span>
+
+<span class="c1"># Iterate over the result and print the output</span>
+<span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">Rdd_Reduced</span><span class="o">.</span><span class="n">____</span><span class="p">:</span> 
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Key </span><span class="si">{}</span><span class="s2"> has </span><span class="si">{}</span><span class="s2"> Counts&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">____</span><span class="p">,</span> <span class="n">num</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create PairRDD Rdd with key value pairs</span>
+<span class="n">Rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+
+<span class="c1"># Apply reduceByKey() operation on Rdd</span>
+<span class="n">Rdd_Reduced</span> <span class="o">=</span> <span class="n">Rdd</span><span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Iterate over the result and print the output</span>
+<span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">Rdd_Reduced</span><span class="o">.</span><span class="n">collect</span><span class="p">():</span> 
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Key </span><span class="si">{}</span><span class="s2"> has </span><span class="si">{}</span><span class="s2"> Counts&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Sort the Rdd_Reduced RDD using the key in descending order.</li>
+<li>Collect the contents and iterate to print the output.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Sort the reduced RDD with the key by descending order</span>
+<span class="n">Rdd_Reduced_Sort</span> <span class="o">=</span> <span class="n">Rdd_Reduced</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Iterate over the result and print the output</span>
+<span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">Rdd_Reduced_Sort</span><span class="o">.</span><span class="n">____</span><span class="p">():</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Key </span><span class="si">{}</span><span class="s2"> has </span><span class="si">{}</span><span class="s2"> Counts&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">____</span><span class="p">,</span> <span class="n">num</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Sort the reduced RDD with the key by descending order</span>
+<span class="n">Rdd_Reduced_Sort</span> <span class="o">=</span> <span class="n">Rdd_Reduced</span><span class="o">.</span><span class="n">sortByKey</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Iterate over the result and print the output</span>
+<span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">Rdd_Reduced_Sort</span><span class="o">.</span><span class="n">collect</span><span class="p">():</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Key </span><span class="si">{}</span><span class="s2"> has </span><span class="si">{}</span><span class="s2"> Counts&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Advanced-RDD-Actions">Advanced RDD Actions<a class="anchor-link" href="#Advanced-RDD-Actions"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="reduce()-action">reduce() action<a class="anchor-link" href="#reduce()-action"> </a></h3><ul>
+<li>reduce(func) action is used for aggregating the elements of a regularRDD</li>
+<li>The function should be commutative (changing the order of the operands does not change the result) and associative</li>
+<li>An example of reduce() action in PySpark</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
+<span class="n">RDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">RDD</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>14</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="saveAsTextFile()-action">saveAsTextFile() action<a class="anchor-link" href="#saveAsTextFile()-action"> </a></h3><ul>
+<li>saveAsTextFile() action saves RDD into a text file inside a directory with each partition as a separate file</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RDD</span><span class="o">.</span><span class="n">saveAsTextFile</span><span class="p">(</span><span class="s2">&quot;tempFile&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>coalesce() method can be used to save RDD as a single text file</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RDD</span><span class="o">.</span><span class="n">coalesce</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">saveAsTextFile</span><span class="p">(</span><span class="s2">&quot;tempFile2&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Action-Operation-on-pair-RDDs">Action Operation on pair RDDs<a class="anchor-link" href="#Action-Operation-on-pair-RDDs"> </a></h3><ul>
+<li>RDD actions available for PySpark pairRDDs</li>
+<li>PairRDD actions leverage the key-value data</li>
+<li>Few examples of pairRDD actions include<ul>
+<li>countByKey()</li>
+<li>collectAsMap()</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="countByKey()-action">countByKey() action<a class="anchor-link" href="#countByKey()-action"> </a></h4><ul>
+<li>countByKey() only available for type (K,V)</li>
+<li>countByKey() action counts the number of elements for each key</li>
+<li>countByKey --&gt; returns a dictionary</li>
+<li>Example of countByKey() on a simple list</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+<span class="k">for</span> <span class="n">kee</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">rdd</span><span class="o">.</span><span class="n">countByKey</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">kee</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a 2
+b 1
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="collectAsMap()-action">collectAsMap() action<a class="anchor-link" href="#collectAsMap()-action"> </a></h4><ul>
+<li>collectAsMap() return the key-value pairs in the RDD as a dictionary</li>
+<li>Example of collectAsMap() on a simple tuple</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)])</span><span class="o">.</span><span class="n">collectAsMap</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{1: 2, 3: 4}</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Your-Turn:">Your Turn:<a class="anchor-link" href="#Your-Turn:"> </a></h2><ul>
+<li>Use the countByKey() action on the Rdd to count the unique keys and assign the result to a variable total.</li>
+<li>What is the type of total?</li>
+<li>Iterate over the total and print the keys and their counts.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Transform the rdd with countByKey()</span>
+<span class="n">total</span> <span class="o">=</span> <span class="n">Rdd</span><span class="o">.</span><span class="n">____</span><span class="p">()</span>
+
+<span class="c1"># What is the type of total?</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The type of total is&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">____</span><span class="p">))</span>
+
+<span class="c1"># Iterate over the total and print the output</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">total</span><span class="o">.</span><span class="n">____</span><span class="p">():</span> 
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">____</span><span class="p">,</span> <span class="s2">&quot;has&quot;</span><span class="p">,</span> <span class="n">____</span><span class="p">,</span> <span class="s2">&quot;counts&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Transform the rdd with countByKey()</span>
+<span class="n">total</span> <span class="o">=</span> <span class="n">Rdd</span><span class="o">.</span><span class="n">countByKey</span><span class="p">()</span>
+
+<span class="c1"># What is the type of total?</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The type of total is&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">total</span><span class="p">))</span>
+
+<span class="c1"># Iterate over the total and print the output</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">total</span><span class="o">.</span><span class="n">items</span><span class="p">():</span> 
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;has&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="s2">&quot;counts&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="William-Shakespeare">William Shakespeare<a class="anchor-link" href="#William-Shakespeare"> </a></h3><p>The volume of unstructured data (log lines, images, binary files) in existence is growing dramatically, and PySpark is an excellent framework for analyzing this type of data through RDDs.</p>
+<p>In this 3 part exercise, you will write code that calculates the most common words from Complete Works of William Shakespeare.</p>
+<p>Here are the brief steps for writing the word counting program:</p>
+<ul>
+<li>Create a base RDD from Complete_Shakespeare.txt file.</li>
+<li>Use RDD transformation to create a long list of words from each element of the base RDD.</li>
+<li>Remove stop words from your data.</li>
+<li>Create pair RDD where each element is a pair tuple of ('w', 1)</li>
+<li>Group the elements of the pair RDD by key (word) and add up their values.</li>
+<li>Swap the keys (word) and values (counts) so that keys is count and value is the word.</li>
+<li>Finally, sort the RDD by descending order and print the 10 most frequent words and their frequencies.</li>
+</ul>
+<p>In this first exercise, you'll create a base RDD from Complete_Shakespeare.txt file and transform it to create a long list of words.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">file_path</span> <span class="o">=</span> <span class="s1">&#39;Complete_Shakespeare.txt&#39;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Create an RDD called baseRDD that reads lines from file_path.</li>
+<li>Transform the baseRDD into a long list of words and create a new splitRDD.</li>
+<li>Count the total words in splitRDD.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a baseRDD from the file path</span>
+<span class="n">baseRDD</span> <span class="o">=</span> <span class="n">____</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+<span class="c1"># Split the lines of baseRDD into words</span>
+<span class="n">splitRDD</span> <span class="o">=</span> <span class="n">baseRDD</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">____</span><span class="p">())</span>
+
+<span class="c1"># Count the total number of words</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total number of words in splitRDD:&quot;</span><span class="p">,</span> <span class="n">splitRDD</span><span class="o">.</span><span class="n">____</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a baseRDD from the file path</span>
+<span class="n">baseRDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+<span class="c1"># Split the lines of baseRDD into words</span>
+<span class="n">splitRDD</span> <span class="o">=</span> <span class="n">baseRDD</span><span class="o">.</span><span class="n">flatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+<span class="c1"># Count the total number of words</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total number of words in splitRDD:&quot;</span><span class="p">,</span> <span class="n">splitRDD</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Remove-stop-words-(reduce-the-dataset)">Remove stop words (reduce the dataset)<a class="anchor-link" href="#Remove-stop-words-(reduce-the-dataset)"> </a></h3><p>Stop words are common words that are often uninteresting. For example "I", "the", "a" etc., are stop words.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stop_words</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="s1">&#39;me&#39;</span><span class="p">,</span> <span class="s1">&#39;my&#39;</span><span class="p">,</span> <span class="s1">&#39;myself&#39;</span><span class="p">,</span> <span class="s1">&#39;we&#39;</span><span class="p">,</span> <span class="s1">&#39;our&#39;</span><span class="p">,</span> <span class="s1">&#39;ours&#39;</span><span class="p">,</span> <span class="s1">&#39;ourselves&#39;</span><span class="p">,</span> <span class="s1">&#39;you&#39;</span><span class="p">,</span> <span class="s1">&#39;your&#39;</span><span class="p">,</span> <span class="s1">&#39;yours&#39;</span><span class="p">,</span> <span class="s1">&#39;yourself&#39;</span><span class="p">,</span> <span class="s1">&#39;yourselves&#39;</span><span class="p">,</span> <span class="s1">&#39;he&#39;</span><span class="p">,</span> <span class="s1">&#39;him&#39;</span><span class="p">,</span> <span class="s1">&#39;his&#39;</span><span class="p">,</span> <span class="s1">&#39;himself&#39;</span><span class="p">,</span> <span class="s1">&#39;she&#39;</span><span class="p">,</span> <span class="s1">&#39;her&#39;</span><span class="p">,</span> <span class="s1">&#39;hers&#39;</span><span class="p">,</span> <span class="s1">&#39;herself&#39;</span><span class="p">,</span> <span class="s1">&#39;it&#39;</span><span class="p">,</span> <span class="s1">&#39;its&#39;</span><span class="p">,</span> <span class="s1">&#39;itself&#39;</span><span class="p">,</span> <span class="s1">&#39;they&#39;</span><span class="p">,</span> <span class="s1">&#39;them&#39;</span><span class="p">,</span> <span class="s1">&#39;their&#39;</span><span class="p">,</span> <span class="s1">&#39;theirs&#39;</span><span class="p">,</span> <span class="s1">&#39;themselves&#39;</span><span class="p">,</span> <span class="s1">&#39;what&#39;</span><span class="p">,</span> <span class="s1">&#39;which&#39;</span><span class="p">,</span> <span class="s1">&#39;who&#39;</span><span class="p">,</span> <span class="s1">&#39;whom&#39;</span><span class="p">,</span> <span class="s1">&#39;this&#39;</span><span class="p">,</span> <span class="s1">&#39;that&#39;</span><span class="p">,</span> <span class="s1">&#39;these&#39;</span><span class="p">,</span> <span class="s1">&#39;those&#39;</span><span class="p">,</span> <span class="s1">&#39;am&#39;</span><span class="p">,</span> <span class="s1">&#39;is&#39;</span><span class="p">,</span> <span class="s1">&#39;are&#39;</span><span class="p">,</span> <span class="s1">&#39;was&#39;</span><span class="p">,</span> <span class="s1">&#39;were&#39;</span><span class="p">,</span> <span class="s1">&#39;be&#39;</span><span class="p">,</span> <span class="s1">&#39;been&#39;</span><span class="p">,</span> <span class="s1">&#39;being&#39;</span><span class="p">,</span> <span class="s1">&#39;have&#39;</span><span class="p">,</span> <span class="s1">&#39;has&#39;</span><span class="p">,</span> <span class="s1">&#39;had&#39;</span><span class="p">,</span> <span class="s1">&#39;having&#39;</span><span class="p">,</span> <span class="s1">&#39;do&#39;</span><span class="p">,</span> <span class="s1">&#39;does&#39;</span><span class="p">,</span> <span class="s1">&#39;did&#39;</span><span class="p">,</span> <span class="s1">&#39;doing&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;an&#39;</span><span class="p">,</span> <span class="s1">&#39;the&#39;</span><span class="p">,</span> <span class="s1">&#39;and&#39;</span><span class="p">,</span> <span class="s1">&#39;but&#39;</span><span class="p">,</span> <span class="s1">&#39;if&#39;</span><span class="p">,</span> <span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="s1">&#39;because&#39;</span><span class="p">,</span> <span class="s1">&#39;as&#39;</span><span class="p">,</span> <span class="s1">&#39;until&#39;</span><span class="p">,</span> <span class="s1">&#39;while&#39;</span><span class="p">,</span> <span class="s1">&#39;of&#39;</span><span class="p">,</span> <span class="s1">&#39;at&#39;</span><span class="p">,</span> <span class="s1">&#39;by&#39;</span><span class="p">,</span> <span class="s1">&#39;for&#39;</span><span class="p">,</span> <span class="s1">&#39;with&#39;</span><span class="p">,</span> <span class="s1">&#39;about&#39;</span><span class="p">,</span> <span class="s1">&#39;against&#39;</span><span class="p">,</span> <span class="s1">&#39;between&#39;</span><span class="p">,</span> <span class="s1">&#39;into&#39;</span><span class="p">,</span> <span class="s1">&#39;through&#39;</span><span class="p">,</span> <span class="s1">&#39;during&#39;</span><span class="p">,</span> <span class="s1">&#39;before&#39;</span><span class="p">,</span> <span class="s1">&#39;after&#39;</span><span class="p">,</span> <span class="s1">&#39;above&#39;</span><span class="p">,</span> <span class="s1">&#39;below&#39;</span><span class="p">,</span> <span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="s1">&#39;from&#39;</span><span class="p">,</span> <span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;out&#39;</span><span class="p">,</span> <span class="s1">&#39;on&#39;</span><span class="p">,</span> <span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="s1">&#39;over&#39;</span><span class="p">,</span> <span class="s1">&#39;under&#39;</span><span class="p">,</span> <span class="s1">&#39;again&#39;</span><span class="p">,</span> <span class="s1">&#39;further&#39;</span><span class="p">,</span> <span class="s1">&#39;then&#39;</span><span class="p">,</span> <span class="s1">&#39;once&#39;</span><span class="p">,</span> <span class="s1">&#39;here&#39;</span><span class="p">,</span> <span class="s1">&#39;there&#39;</span><span class="p">,</span> <span class="s1">&#39;when&#39;</span><span class="p">,</span> <span class="s1">&#39;where&#39;</span><span class="p">,</span> <span class="s1">&#39;why&#39;</span><span class="p">,</span> <span class="s1">&#39;how&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;any&#39;</span><span class="p">,</span> <span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="s1">&#39;each&#39;</span><span class="p">,</span> <span class="s1">&#39;few&#39;</span><span class="p">,</span> <span class="s1">&#39;more&#39;</span><span class="p">,</span> <span class="s1">&#39;most&#39;</span><span class="p">,</span> <span class="s1">&#39;other&#39;</span><span class="p">,</span> <span class="s1">&#39;some&#39;</span><span class="p">,</span> <span class="s1">&#39;such&#39;</span><span class="p">,</span> <span class="s1">&#39;no&#39;</span><span class="p">,</span> <span class="s1">&#39;nor&#39;</span><span class="p">,</span> <span class="s1">&#39;not&#39;</span><span class="p">,</span> <span class="s1">&#39;only&#39;</span><span class="p">,</span> <span class="s1">&#39;own&#39;</span><span class="p">,</span> <span class="s1">&#39;same&#39;</span><span class="p">,</span> <span class="s1">&#39;so&#39;</span><span class="p">,</span> <span class="s1">&#39;than&#39;</span><span class="p">,</span> <span class="s1">&#39;too&#39;</span><span class="p">,</span> <span class="s1">&#39;very&#39;</span><span class="p">,</span> <span class="s1">&#39;can&#39;</span><span class="p">,</span> <span class="s1">&#39;will&#39;</span><span class="p">,</span> <span class="s1">&#39;just&#39;</span><span class="p">,</span> <span class="s1">&#39;don&#39;</span><span class="p">,</span> <span class="s1">&#39;should&#39;</span><span class="p">,</span> <span class="s1">&#39;now&#39;</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Convert the words in splitRDD in lower case and then remove stop words from stop_words.</li>
+<li>Create a pair RDD tuple containing the word and the number 1 from each word element in splitRDD.</li>
+<li>Get the count of the number of occurrences of each word (word frequency) in the pair RDD using reduceByKey()</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Convert the words in lower case and remove stop words from stop_words</span>
+<span class="n">splitRDD_no_stop</span> <span class="o">=</span> <span class="n">splitRDD</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">____</span><span class="p">)</span>
+
+<span class="c1"># Create a tuple of the word and 1 </span>
+<span class="n">splitRDD_no_stop_words</span> <span class="o">=</span> <span class="n">splitRDD_no_stop</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="p">(</span><span class="n">____</span><span class="p">,</span> <span class="n">____</span><span class="p">))</span>
+
+<span class="c1"># Count of the number of occurences of each word</span>
+<span class="n">resultRDD</span> <span class="o">=</span> <span class="n">splitRDD_no_stop_words</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Convert the words in lower case and remove stop words from stop_words</span>
+<span class="n">splitRDD_no_stop</span> <span class="o">=</span> <span class="n">splitRDD</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">)</span>
+
+<span class="c1"># Create a tuple of the word and 1 </span>
+<span class="n">splitRDD_no_stop_words</span> <span class="o">=</span> <span class="n">splitRDD_no_stop</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="c1"># Count of the number of occurences of each word</span>
+<span class="n">resultRDD</span> <span class="o">=</span> <span class="n">splitRDD_no_stop_words</span><span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Print-word-frequencies">Print word frequencies<a class="anchor-link" href="#Print-word-frequencies"> </a></h3><ul>
+<li>Print the first 10 words and their frequencies from the resultRDD.</li>
+<li>Swap the keys and values in the resultRDD.</li>
+<li>Sort the keys according to descending order.</li>
+<li>Print the top 10 most frequent words and their frequencies.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Display the first 10 words and their frequencies</span>
+<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">resultRDD</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+	<span class="nb">print</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+
+<span class="c1"># Swap the keys and values </span>
+<span class="n">resultRDD_swap</span> <span class="o">=</span> <span class="n">resultRDD</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">____</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">____</span><span class="p">]))</span>
+
+<span class="c1"># Sort the keys in descending order</span>
+<span class="n">resultRDD_swap_sort</span> <span class="o">=</span> <span class="n">resultRDD_swap</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Show the top 10 most frequent words and their frequencies</span>
+<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">resultRDD_swap_sort</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="n">____</span><span class="p">):</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> has </span><span class="si">{}</span><span class="s2"> counts&quot;</span><span class="o">.</span> <span class="nb">format</span><span class="p">(</span><span class="n">____</span><span class="p">,</span> <span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Display the first 10 words and their frequencies</span>
+<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">resultRDD</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+	<span class="nb">print</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+
+<span class="c1"># Swap the keys and values </span>
+<span class="n">resultRDD_swap</span> <span class="o">=</span> <span class="n">resultRDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+<span class="c1"># Sort the keys in descending order</span>
+<span class="n">resultRDD_swap_sort</span> <span class="o">=</span> <span class="n">resultRDD_swap</span><span class="o">.</span><span class="n">sortByKey</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Show the top 10 most frequent words and their frequencies</span>
+<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">resultRDD_swap_sort</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> has </span><span class="si">{}</span><span class="s2"> counts&quot;</span><span class="o">.</span> <span class="nb">format</span><span class="p">(</span><span class="n">word</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
+            </div>
+            <div class="c-textbook__footer" id="textbook_footer">
+              
+<nav class="c-page__nav">
+  
+    
+    
+
+    <a id="js-page__nav__prev" class="c-page__nav__prev" href="/Intro_to_pyspark.html">
+      〈 <span class="u-margin-right-tiny"></span> Introduction to PySpark
+    </a>
+  
+
+  
+    
+
+    
+    <a id="js-page__nav__next" class="c-page__nav__next" href="/pyspark/02_rdd/Simple_statistical_analysis.html">
+      Simple Statistical Analysis <span class="u-margin-right-tiny"></span> 〉
+    </a>
+  
+</nav>
+
+              <footer>
+  <p class="footer">This page was created by <a href="https://www.zyelabs.net/">ZyeLabs</a></p>
+</footer>
+
+            </div>
+
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
