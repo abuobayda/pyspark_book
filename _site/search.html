@@ -8,14 +8,14 @@
   <title>Search the site</title>
   <meta name="description" content="        ">
 
-  <link rel="canonical" href="http://127.0.0.1:4000//search">
-  <link rel="alternate" type="application/rss+xml" title="" href="http://127.0.0.1:4000//feed.xml">
+  <link rel="canonical" href="http://localhost:4000/search">
+  <link rel="alternate" type="application/rss+xml" title="pyspark_book" href="http://localhost:4000/feed.xml">
 
-  <meta property="og:url"         content="http://127.0.0.1:4000//search" />
+  <meta property="og:url"         content="http://localhost:4000/search" />
 <meta property="og:type"        content="article" />
 <meta property="og:title"       content="Search the site" />
 <meta property="og:description" content="        " />
-<meta property="og:image"       content="http://127.0.0.1:4000//images/logo/logo.png" />
+<meta property="og:image"       content="http://localhost:4000/images/logo/logo.png" />
 
 <meta name="twitter:card" content="summary">
 
@@ -24,10 +24,10 @@
   {
   "@context": "http://schema.org",
   "@type": "NewsArticle",
-  "mainEntityOfPage": "http://127.0.0.1:4000//search",
+  "mainEntityOfPage": "http://localhost:4000/search",
   "headline": "Search the site",
-  "datePublished": "2020-01-27T12:08:23+02:00",
-  "dateModified": "2020-01-27T12:08:23+02:00",
+  "datePublished": "2020-01-29T10:52:07+02:00",
+  "dateModified": "2020-01-29T10:52:07+02:00",
   "description": "        ",
   "author": {
     "@type": "Person",
@@ -38,14 +38,14 @@
     "name": "Data 100 at UC Berkeley",
     "logo": {
       "@type": "ImageObject",
-      "url": "http://127.0.0.1:4000/",
+      "url": "http://localhost:4000",
       "width": 60,
       "height": 60
     }
   },
   "image": {
     "@type": "ImageObject",
-    "url": "http://127.0.0.1:4000/",
+    "url": "http://localhost:4000",
     "height": 60,
     "width": 60
   }
@@ -325,7 +325,7 @@ function addParamToInternalLinks(hub) {
   var links = document.querySelectorAll("a").forEach(function(link) {
     var href = link.href;
     // If the link is an internal link...
-    if (href.search("http://127.0.0.1:4000/") !== -1 || href.startsWith('/') || href.search("127.0.0.1:") !== -1) {
+    if (href.search("http://localhost:4000") !== -1 || href.startsWith('/') || href.search("127.0.0.1:") !== -1) {
       // Assume we're an internal link, add the hub param to it
       var params = getJsonFromUrl(href);
       if (params !== false) {
@@ -564,7 +564,7 @@ initFunction(initPrint)
 
 <nav id="js-sidebar" class="c-textbook__sidebar">
   <a href="https://www.zyelabs.net/"><img src="/images/logo/logo.png" class="textbook_logo" id="sidebar-logo" alt="textbook logo" data-turbolinks-permanent/></a>
-  <h2 class="c-sidebar__title"></h2>
+  <h2 class="c-sidebar__title">pyspark_book</h2>
   <ul class="c-sidebar__chapters">
     
       
@@ -1538,280 +1538,280 @@ initFunction(initPrint)
         "excerpt": "pyspark spark python sparkcontext none shell class version set master cluster environment object serializer gateway profiler local method apache programming language using because library data any run driver program worker nodes url appname sparkhome pyfiles batchsize batch size conf jvm jsc profilercls basicprofiler retrieve print list load overview written scala support community released tool work rdds also called pyj able achieve offers links api core initializes context majority scientists analytics experts today its rich integrating boon importing entry point functionality application starts main function gets initiated here runs operations inside executors details connects name job installation directory zip py files",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//Intro_to_pyspark.html",
+        "url": "http://localhost:4000/Intro_to_pyspark.html",
         "teaser":null},{
         "title": "Introduction",
         
         "excerpt": "big data pyspark zyelabs www abuobayda analytics foundations using mllib net author shabat linkedin com textbook developers",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//intro.html",
+        "url": "http://localhost:4000/intro.html",
         "teaser":null},{
         "title": "PySpark RDD",
         
         "excerpt": "rdd key create words transformation rdds pair print action elements actions values value data list file countbykey dataset lines transformations collect count pairrdd keys datasets pyspark returns element reducebykey same order stop creating turn named type new return pairrdds tuple into join descending reduce example collectasmap total frequencies splitrdd distributed external text method filepath filerdd partitions spark map filter operation take n ofthe variable output pairs common groupbykey sortbykey transform rddreduced iterate sort counts base remove introduction resilient operate multiple parallel change case parallelizing existing collection objects files parallelize textfile partition confirm created filerddpart operations computation function only pass flatmap",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/02_rdd/2_Pyspark_RDD.html",
+        "url": "http://localhost:4000/pyspark/02_rdd/2_Pyspark_RDD.html",
         "teaser":null},{
         "title": "Simple Statistical Analysis",
         
         "excerpt": "mean data n x statistical frac outliers y moment value hat skew sum list standard spread around std xi indicates tail median middle add index deviation points high negative distributions kurtosis measure sigma simple analysis st average values dataset ai cdots sequance numbers sort pick need entry notice key lets gets pulled into direction whereas far resistant isnt amazing nd wide low close much wider sqrt where point devision ehich sense our range variance its power rd skewness asymmetric postitve undefined left positive right zero means both sides balanced th reports shape content within higher present longer tails distribution cov",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/02_rdd/Simple_statistical_analysis.html",
+        "url": "http://localhost:4000/pyspark/02_rdd/Simple_statistical_analysis.html",
         "teaser":null},{
         "title": "Expressions",
         
         "excerpt": "expression expressions rules language python programming grammar computer operators any used programs multiplication between numerical its times languages learn learning essential same combine data example symbol value cell below twice row syntaxerror set exponentiation called values involves addition subtraction division trying happens divide much simpler human nonetheless where begin text www org basic also central sophisticated made describe pieces consists such evaluated result evaluation last case displayed rigid cannot appear not try interpret differs prescribed structures instead show error syntax indicates structure doesnt match small changes change meaning entirely space s removed because appears well formed raised power second symbols",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03/1/Expressions.html",
+        "url": "http://localhost:4000/pyspark/03/1/Expressions.html",
         "teaser":null},{
         "title": "Introduction to Numpy",
         
         "excerpt": "array numpy arrays tuple integers indexing core library scientific computing python provides high performance multidimensional object tools working grid values same type indexed nonnegative dimensions rank shape giving size along dimension functions boolean datatypes math inner product sum transpose",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03/10/numpy.html",
+        "url": "http://localhost:4000/pyspark/03/10/numpy.html",
         "teaser":null},{
         "title": "Example: Growth Rates",
         
         "excerpt": "growth rate federal initial amount years t same value year example between compute changed million annual g measurements expressed government employees us increased total increase much rates relationship quantity different times united states values subtract expenditures trillion larger ten using used equivalent taken often employed www bls gov opub mlr article industry employment output projections htm must decide treat earlier natural choice divide difference also typical ratio yields useful property dont change even units express thousands only budget fact grown slowly population period negative representing decrease manufacturing jobs decreased single accumulated gives computation names exponents likewise below passed following computes",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03/2/1/Growth.html",
+        "url": "http://localhost:4000/pyspark/03/2/1/Growth.html",
         "teaser":null},{
         "title": "Names",
         
         "excerpt": "names name value expression assigned assignment followed right only contain space given values python using statement any once substituted future expressions previously used however current changes later defined terms not change automatically must start letter both letters numbers cannot instead common underscore character replace useful its programmer choose easy interpret typically meaningful invented b example describe sales tax purchase berkeley ca following clarify meaning various quantities involved",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03/2/Names.html",
+        "url": "http://localhost:4000/pyspark/03/2/Names.html",
         "teaser":null},{
         "title": "Call Expressions",
         
         "excerpt": "functions function math example module difference expressions name expression list log base called arguments value returns python used percent values after typing x parentheses max available such built language operators between farms produced billion eggs average learning different important press tab bring logarithm docs org library html invoke named operations appears followed last three within passed final full take any maximum few default abs round into stored collection import statement provide access operator equivalent expressed using instead together compare neither obviously initial changed florida while iowa quickstats nass usda gov times absolute divided case larger greater behave part programming jupyter",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03/3/Calls.html",
+        "url": "http://localhost:4000/pyspark/03/3/Calls.html",
         "teaser":null},{
         "title": "Introduction to Tables",
         
         "excerpt": "table rows column method data order players sort columns where salary just cones only original nba team creates new name tables six row arguments select consisting specified leaves unchanged also default condition value chocolate highest work single any label must example want show drop descending optional argument used satisfy salaries cnn paid player forward sets sequence entries set few methods details here ice cream cone attributes flavor color price contains labels choosing dont dropping smaller create using sorting ascending values sorted increasing section specify code complicated world com basketball position guard power warriors display introduction apply python analyze stored structures",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03/4/Introduction_to_Tables.html",
+        "url": "http://localhost:4000/pyspark/03/4/Introduction_to_Tables.html",
         "teaser":null},{
         "title": "Introduction to Functions",
         
         "excerpt": "function python functions arguments help value example code return print docstring does abs x default input type define keyword calling argument called numpy takes result using expression optional its different examples useful computation returns def invoke name parenthesis our parameters not times pass after used key header us isnt output description even something object objects above another leastdifference dont effects lesson well kinds built float languages must defined always take having particular definition create body into put allows values often important remember just single slash youre read com english small turns simple very run statement immediately nice docstrings string lines",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03/5/function.html",
+        "url": "http://localhost:4000/pyspark/03/5/function.html",
         "teaser":null},{
         "title": "Conditions",
         
         "excerpt": "python b boolean not code operators rainlevel true function conditional values false expressions value try equal example n expression precedence above preparedforweather haveumbrella havehood isworkday statements elif else line except yes comparison using parentheses im its turns things into hours booleans bool our get operations result program operation description less greater comparisons clever too combined weve seen corresponding just order evaluated right only following lines structure often depending condition blocks indented section pay rate enter type take rather putting directly usually answer questions well through below ask question produce control flow evaluate little bit arithmetic already express virtually limitless range",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03/6/conditions.html",
+        "url": "http://localhost:4000/pyspark/03/6/conditions.html",
         "teaser":null},{
         "title": "List",
         
         "excerpt": "list lists append python values returns functions square example using range index does help stuff method tuples multiple delimiter brackets numbers types indexing syntax function slice argument its modified lets several builtin len sorted used max get also operators check item objects not just called exists name return specify represent ordered sequences defined comma separated between here few prime alt text img icons com cotton x v png put things including contain mix different access individual elements pythons bracket zero less parameter concatenating slicing todo include third step size reversing mutating mutable meaning place modify assign expression say want rename",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03/7/list.html",
+        "url": "http://localhost:4000/pyspark/03/7/list.html",
         "teaser":null},{
         "title": "Loops",
         
         "excerpt": "list range loop loops object returns indices statement its l code called iteration iterate function help pythons just len enumerate execute while because condition ends current jumps following continue top starts times sequence numbers useful example want iterable same previous tutorial documentation including output int convert not things valid elements any iterating length x tuples syntax unpacking comprehensions heres comprehension solution better repeatedly indefinite keep going until logical becomes false infinite wrong breaking break immediately test happen anywhere body keywords next ignore definite exact friend variables change through even character string turns very writing repeat action might assume truth little",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03/8/loop.html",
+        "url": "http://localhost:4000/pyspark/03/8/loop.html",
         "teaser":null},{
         "title": "Introduction to Data Structure",
         
         "excerpt": "string python strings dictionaries format value values dictionary using n us just loop str key keys character get syntax dict sequence type lets want list methods useful read docs data characters uses hello concatenate numbers still convert into int quote backslash below example print thats cool mountain br newline new pythons our weve seen functions function end default index statement iteration variable much care lists modify very ill here not pyformat info official org library html collection different similar add another pair comprehensions count method full introduction structure lesson double shot essential types literal quotes means contains fix escaping single",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03/9/string_dictionary.html",
+        "url": "http://localhost:4000/pyspark/03/9/string_dictionary.html",
         "teaser":null},{
         "title": "Programming in Python",
         
         "excerpt": "steps programming collect analyze world through data computer python dramatically improve our ability information turn lead discoveries kind careful reasoning demonstrated previous section science purpose writing program instruct carry analysis computers cannot study own must describe precisely should take order those expressed programs",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03/programming-in-python.html",
+        "url": "http://localhost:4000/pyspark/03/programming-in-python.html",
         "teaser":null},{
         "title": "Functional Programming",
         
         "excerpt": "function lambda list filter functions map mylist print anonymous python returns syntax general lets using def our less collect elements returned please takes new item numbers divisible functional programming very powerful used quite efcient create called later similar without any name e inline denition defer execution code form argument expression different between vs return statement put anywhere notation define values equals applying gt note calling apache spark driver not good idea bigdata sample take n instead also directly consider same integers want compute sum greater implement missing parts contains items evaluates true turn square result",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03_dataframe/3_functional_programming.html",
+        "url": "http://localhost:4000/pyspark/03_dataframe/3_functional_programming.html",
         "teaser":null},{
         "title": "PySpark Dataframe",
         
         "excerpt": "dataframe pyspark dataframes data rows columns create sql select using queries peopledf rdd spark table transformations filter operations count sex column both provides sparksession actions show operation where into visualization distributed library structured json dataframeapi methods entry point creating schema turn groupby orderby dropduplicates withcolumnrenamed printschema describe prints print names query plotting relational database also nature after action information e g available python api rdds interact used sparksessions method csv txt read name etc samplelist confirm output variable interacting transformation based duplicate observations peopledfsub female peopledffemale male peopledfmale easier construct done temporary peopledfnames graphs charts pandas apache collection under named",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/03_dataframe/4_PySpark_dataframe.html",
+        "url": "http://localhost:4000/pyspark/03_dataframe/4_PySpark_dataframe.html",
         "teaser":null},{
         "title": "Introduction to Machine Learning",
         
         "excerpt": "x examples spam label learning model features labeled example machine not unlabeled learn data email text output variable y regression emails input feature vdots com computer experience e t performance p classification simple dots detector trained watch explicitly program tasks lets alt cdn images medium max supervised where variables problems into problem such disease unsupervised linear project might bmatrix denotes our models between means artificial intelligence introduction ai www youtube v mjenghzxtmo field science gives systems ability without being programmed arthur samuel modern definition respect class measure its measured improves tom mitchel say watches flag based learns better filter task",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/ML/1_Intro_Machine_Learning.html",
+        "url": "http://localhost:4000/pyspark/ML/1_Intro_Machine_Learning.html",
         "teaser":null},{
         "title": "Machine Learning with PySpark MLlib",
         
         "excerpt": "data model column learning columns into machine regression flight values outcome not create text spark png categorical value tp positive sms integer our tree known alt dataset org carrier whether variables index decision accuracy logistic spam pyspark mllib such classification duration missing delayed convert want object frequent used following test build predictions matrix predicts negative frac document dummy yi com library csv between minutes removing any present numerical need class indexer numeric category define input name transformers variable type dataframe vector node training confusion tn positives fn fp precision recall ham content frequency sparse representation oreilly view definitive assets spdg",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/ML/ML_Spark/2_Machine_Learning_pyspark.html",
+        "url": "http://localhost:4000/pyspark/ML/ML_Spark/2_Machine_Learning_pyspark.html",
         "teaser":null},{
         "title": "Logistic Regression",
         
         "excerpt": "logistic regression only accuracy",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/ML/ml_app/LogisticRegression.html",
+        "url": "http://localhost:4000/pyspark/ML/ml_app/LogisticRegression.html",
         "teaser":null},{
         "title": "Infant Survival Application",
         
         "excerpt": "model object method parameter our dataset parameters only column features logistic columns output encoder calling not pipeline fit training best grid values change creating estimate models list specify also featurescreator pyspark split under passed regression evaluation tuning select want load data following transformers before need numeric encode birthplace getoutputcol value name learning into testing input created stage finally estimates final prediction estimators probability test well area defined later hyper example maximum search through grow optimize paramgridbuilder validation subsets predicte infant survival help code transformations since statistical operate variable onehotencoder however cannot accept stringtype deal types cast integertype combined together form",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/ML/ml_app/Predicting_the_chances_of_infant_survival_with_ML.html",
+        "url": "http://localhost:4000/pyspark/ML/ml_app/Predicting_the_chances_of_infant_survival_with_ML.html",
         "teaser":null},{
         "title": "Clustering",
         
         "excerpt": "clustering silhouette value pipeline kmeans please change k different high well matched clusters configuration too org normalized apache gaussianmixture ranges where indicates object its own cluster poorly neighboring objects appropriate points low negative few en wikipedia wiki here only classes dont forget exercise let data engineering lets create new movement patterns dataset setting good idea experiment values sweet spot closer gets better extend work features need tell feature column order contain normalizer stage sparkml used try algorithms parametrizations using same code below following link reference spark docs latest ml html gaussian mixture model gmm",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/ML/ml_app/clustering.html",
+        "url": "http://localhost:4000/pyspark/ML/ml_app/clustering.html",
         "teaser":null},{
         "title": "Linear Regression",
         
         "excerpt": "energy linear regression appliation try predicte sum xx yy zz not actual miss mass feature create temporary query view order sql statements generating label column get rmse",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/ML/ml_app/linear_regression.html",
+        "url": "http://localhost:4000/pyspark/ML/ml_app/linear_regression.html",
         "teaser":null},{
         "title": "Pipeline Applications",
         
         "excerpt": "pipeline model evaluate cross validation hyper parameter values flights application predicte duration plane take ml combine steps into regression analysis calculate root mean square error using regressionevaluator here python code evaluating sms spam resampling procedure used machine learning models limited data sample alt text scikit learn org stable images gridsearchcrossvalidation png whats average rmse across folds fit best gridsearch grid search process performing tuning order determine optimal given significant performance entire based specified",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/ML/pipeline/pipeline_applications.html",
+        "url": "http://localhost:4000/pyspark/ML/pipeline/pipeline_applications.html",
         "teaser":null},{
         "title": "Feature Engineering Pipeline",
         
         "excerpt": "data pipeline transformations learning feature com public dataset accelerometer human motion primitives ml allows us maintain flow relevant required reach end result machine project typically involves steps preprocessing extraction model fitting evaluating results need perform lot sequence imagine keeping track potentially become tedious task alt text oreilly library view spark definitive assets spdg png raw detection link github wchill hmpdataset hmp collection labelled recordings used creation validation acceleration models convert string column index integer exercise add minmax scaler transform features scaling given range",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/ML/pipeline/pipeline_feature_eng.html",
+        "url": "http://localhost:4000/pyspark/ML/pipeline/pipeline_feature_eng.html",
         "teaser":null},{
         "title": "Different Data Types",
         
         "excerpt": "data human generated types big structured different processed solutions machine although ultimately responsibility machines generate analytic results result interaction systems such online services digital devices learning oreilly com library view fundamentals graphics fig jpg primary unstructured semi",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/data/intro.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/data/intro.html",
         "teaser":null},{
         "title": "Semi-structured Data",
         
         "excerpt": "data semi structured defined level structure consistency not relational nature instead hierarchical graph based kind commonly stored files contain text learning oreilly com library view big fundamentals graphics fig jpg",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/data/semi.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/data/semi.html",
         "teaser":null},{
         "title": "Structured Data",
         
         "excerpt": "data structured often stored conforms model schema tabular form used capture relationships between different entities therefore relational database examples type include banking transactions invoices customer records tables learning oreilly com library view big fundamentals graphics fig jpg",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/data/struct.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/data/struct.html",
         "teaser":null},{
         "title": "Un-structured Data",
         
         "excerpt": "data unstructured does not conform model schema known estimated makes within any given enterprise faster growth rate structured form either textual binary often conveyed via files self contained non relational unstruct learning oreilly com library view big fundamentals graphics fig jpg",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/data/unstruct.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/data/unstruct.html",
         "teaser":null},{
         "title": "Introduction to Data Science",
         
         "excerpt": "data science python images scientist ability big multi disciplinary field uses scientific methods processes algorithms systems extract knowledge insights structured unstructured dscience click classifieds bcdeebedqthbfvi png main things set apart statistician work experience machine learning computing algorithm building tools tend differ too job descriptions frequently mentioning hadoop pig spark r java among others book though well focus great language because libraries available its widely supported specialized software used almost everywhere both commercial noncommercial settings",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/data_science/intro.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/data_science/intro.html",
         "teaser":null},{
         "title": "Data Science Process",
         
         "excerpt": "data science process typically consists six steps mind map figure below learning oreilly com library view introducing fig jpg",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/data_science/process.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/data_science/process.html",
         "teaser":null},{
         "title": "The Four V's of Big Data",
         
         "excerpt": "vs big data four www ibmbigdatahub com sites default files infographicfile jpg",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/four_v.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/four_v.html",
         "teaser":null},{
         "title": "Data Governance",
         
         "excerpt": "data governance management activities should collected policies procedures around related better dg overall availability usability integrity security used enterprise businesses benefit because ensures consistent trustworthy its very important sure only quality preserved maintained collection process also goes through evolution new types required excel managing consider following qualities good processes accountability formal decision structures enforcement rules why lower costs associated areas accurate regulation compliance greater transparency within any help instituting training educational practices assets increase value organizations ability provide standardized systems standards resolution past current issues improved monitoring tracking mechanisms qualityand",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/key/governance.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/key/governance.html",
         "teaser":null},{
         "title": "Data Security",
         
         "excerpt": "data security protect protecting encryption information technology critical refers process unauthorized access corruption throughout its lifecycle includes tokenization key management practices across applications platforms organizations around globe investing heavily cyber defense capabilities assets whether enterprise needs brand intellectual capital customer provide controls infrastructure means incident detection response organizational interests three common elements processes different technologies rdbms bi physical",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/key/security.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/key/security.html",
         "teaser":null},{
         "title": "Variety",
         
         "excerpt": "data variety big form structured used database such sql server mysql warehouses company oracle ibm store refers multiple formats types need supported solutions brings challenges enterprises terms integration transformation processing storage figure below provides visual representation includes financial transactions semi emails unstructured images learning oreilly com library view fundamentals graphics fig jpg",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/variety.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/variety.html",
         "teaser":null},{
         "title": "Velocity",
         
         "excerpt": "data velocity every minute translates into amount takes processed once enters enterprises perimeter coping fast inflow requires enterprise design highly elastic available processing solutions corresponding storage capabilities here few examples quickly increasing new york stock exchange captures tb during trading session hours videos being uploaded youtube generated modern cars almost sensors monitor item fuel tire pressure surrounding obstacles million emails sent learning oreilly com library view big fundamentals graphics fig jpg",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/velocity.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/velocity.html",
         "teaser":null},{
         "title": "Veracity",
         
         "excerpt": "data veracity noise quality lead information value refers fidelity enters big environments needs assessed processing activities resolve invalid remove relation part signal dataset cannot converted into thus whereas signals meaningful fava nkums ac ir getfile aspx fn uploaded users bigdata jpg",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/veracity.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/veracity.html",
         "teaser":null},{
         "title": "Volume",
         
         "excerpt": "data such volume big gigabytes terabytes large sensors price storing dropped incredibly last years cost hundred thousand dollars its merely per gb attribute projects tend imply petabytes information however smaller industries organizations likely deal mere typical sources responsible generating high volumes include online transactions point sale banking scientific research experiments hadron collider atacama millimeter submillimeter array telescope gps rfids smart meters telematics social media facebook twitter learning oreilly com library view fundamentals graphics fig jpg",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/1/volume.html",
+        "url": "http://localhost:4000/pyspark/big_data/1/volume.html",
         "teaser":null},{
         "title": "Introduction to Big Data",
         
         "excerpt": "data big high x refers being information innovative enhanced process introduction www analyticsinsight net wp content uploads bigdata jpg basic idea behind phrase everything increasingly leaving digital trace others analyse therefore collected our ability bernard marr volume velocity variety assets demand cost effective forms processing enable insight decision making automation gartner dynamic large disparate volumes created tools machines requires new scalable technology collect host analytically vast amount gathered order derive real business insights relate consumers risk profit performance productivity management shareholder value ey",
         "categories": [],
         "tags": [],
-        "url": "http://127.0.0.1:4000//pyspark/big_data/Intro_to_bigdata.html",
+        "url": "http://localhost:4000/pyspark/big_data/Intro_to_bigdata.html",
         "teaser":null},]
 </script>
             </div>
