@@ -1,0 +1,1280 @@
+---
+interact_link: content/pyspark/03/6/conditions.ipynb
+kernel_name: python3
+kernel_path: content/pyspark/03/6
+has_widgets: false
+title: |-
+  Conditions
+pagenum: 22
+prev_page:
+  url: /pyspark/03/5/function.html
+next_page:
+  url: /pyspark/03/7/list.html
+suffix: .ipynb
+search: python b boolean not code operators rainlevel true function conditional values false expressions value try equal example n expression precedence above preparedforweather haveumbrella havehood isworkday statements elif else line except yes comparison using parentheses im its turns things into hours booleans bool our get operations result program operation description less greater comparisons clever too combined weve seen corresponding just order evaluated right only following lines structure often depending condition blocks indented section pay rate enter type take rather putting directly usually answer questions well through below ask question produce control flow evaluate little bit arithmetic already express virtually limitless range
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Conditions</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Booleans">Booleans<a class="anchor-link" href="#Booleans"> </a></h1><p>Python has a type <code>bool</code> which can take on one of two values: <code>True</code> and <code>False</code>.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>True
+&lt;class &#39;bool&#39;&gt;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Rather than putting <code>True</code> or <code>False</code> directly in our code, we usually get boolean values from <strong>boolean operators</strong>. These are operators that answer yes/no questions. We'll go through some of these operators below.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Comparison-Operations">Comparison Operations<a class="anchor-link" href="#Comparison-Operations"> </a></h2><p><strong>Boolean expressions</strong> ask a question and produce a Yes or No result which we use to control program flow.</p>
+<p><strong>Boolean expressions</strong> using comparison operators evaluate to - True / False - Yes / No</p>
+<table>
+<thead><tr>
+<th>Operation</th>
+<th>Description</th>
+<th></th>
+<th>Operation</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>a == b</code></td>
+<td><code>a</code> equal to <code>b</code></td>
+<td></td>
+<td><code>a != b</code></td>
+<td><code>a</code> not equal to <code>b</code></td>
+</tr>
+<tr>
+<td><code>a &lt; b</code></td>
+<td><code>a</code> less than <code>b</code></td>
+<td></td>
+<td><code>a &gt; b</code></td>
+<td><code>a</code> greater than <code>b</code></td>
+</tr>
+<tr>
+<td><code>a &lt;= b</code></td>
+<td><code>a</code> less than or equal to <code>b</code></td>
+<td></td>
+<td><code>a &gt;= b</code></td>
+<td><code>a</code> greater than or equal to <code>b</code></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="mf">3.0</span> <span class="o">==</span> <span class="mi">3</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Comparisons are a little bit clever...</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>But not too clever...</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="s1">&#39;3&#39;</span> <span class="o">==</span> <span class="mi">3</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>False</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span> 
+<span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+  <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Smaller&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">25</span><span class="p">:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Bigger&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finish&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Smaller
+Finish
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">can_run_for_president</span><span class="p">(</span><span class="n">age</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Can someone of the given age run for president in the US?&quot;&quot;&quot;</span>
+    <span class="c1"># The US Constitution says you must &quot;have attained to the Age of thirty-five Years&quot;</span>
+    <span class="k">return</span> <span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">35</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Can a 19-year-old run for president?&quot;</span><span class="p">,</span> <span class="n">can_run_for_president</span><span class="p">(</span><span class="mi">19</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Can a 45-year-old run for president?&quot;</span><span class="p">,</span> <span class="n">can_run_for_president</span><span class="p">(</span><span class="mi">45</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Can a 19-year-old run for president? False
+Can a 45-year-old run for president? True
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Comparison operators can be combined with the arithmetic operators we've already seen to express a virtually limitless range of mathematical tests. For example, we can check if a number is odd by checking that the modulus with 2 returns 1:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">is_odd</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Is 100 odd?&quot;</span><span class="p">,</span> <span class="n">is_odd</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Is -1 odd?&quot;</span><span class="p">,</span> <span class="n">is_odd</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Is 100 odd? False
+Is -1 odd? True
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Remember to use <code>==</code> instead of <code>=</code> when making comparisons. If you write <code>n == 2</code> you are asking about the value of n. When you write <code>n = 2</code> you are changing the value of n.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Combining-Boolean-Values">Combining Boolean Values<a class="anchor-link" href="#Combining-Boolean-Values"> </a></h2><p>Python provides operators to combine boolean values using the standard concepts of "and", "or", and "not". And in fact, the corresponding Python operators use just those words: <code>and</code>, <code>or</code>, and <code>not</code>.</p>
+<p>With these, we can make our <code>can_run_for_president</code> function more accurate.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kc">True</span> <span class="ow">and</span> <span class="p">(</span><span class="mi">5</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="mi">8</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">can_run_for_president</span><span class="p">(</span><span class="n">age</span><span class="p">,</span> <span class="n">is_natural_born_citizen</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Can someone of the given age and citizenship status run for president in the US?&quot;&quot;&quot;</span>
+    <span class="c1"># The US Constitution says you must be a natural born citizen *and* at least 35 years old</span>
+    <span class="k">return</span> <span class="n">is_natural_born_citizen</span> <span class="ow">and</span> <span class="p">(</span><span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">35</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">can_run_for_president</span><span class="p">(</span><span class="mi">19</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">can_run_for_president</span><span class="p">(</span><span class="mi">55</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">can_run_for_president</span><span class="p">(</span><span class="mi">55</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>False
+False
+True
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Quick, can you guess the value of this expression?</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kc">True</span> <span class="ow">or</span> <span class="kc">True</span> <span class="ow">and</span> <span class="kc">False</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Python has precedence rules that determine the order in which operations get evaluated in expressions like above. For example, <code>and</code> has a higher precedence than <code>or</code>, which is why the first expression above is <code>True</code>. If we had evaluated it from left to right, we would have calculated <code>True or True</code> first (which is <code>True</code>), and then taken the <code>and</code> of that result with <code>False</code>, giving a final value of <code>False</code>.</p>
+<p>You could try to <a href="https://docs.python.org/3/reference/expressions.html#operator-precedence">memorize the order of precedence</a>, but a safer bet is to just use liberal parentheses. Not only does this help prevent bugs, it makes your intentions clearer to anyone who reads your code.</p>
+<p>For example, consider the following expression:</p>
+<div class="highlight"><pre><span></span><span class="n">prepared_for_weather</span> <span class="o">=</span> <span class="n">have_umbrella</span> <span class="ow">or</span> <span class="n">rain_level</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="ow">and</span> <span class="n">have_hood</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">rain_level</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">is_workday</span>
+</pre></div>
+<p>I'm trying to say that I'm safe from today's weather....</p>
+<ul>
+<li>if I have an umbrella...</li>
+<li>or if the rain isn't too heavy and I have a hood...</li>
+<li>otherwise, I'm still fine unless it's raining <em>and</em> it's a workday</li>
+</ul>
+<p>But not only is my Python code hard to read, it has a bug. We can address both problems by adding some parentheses:</p>
+<div class="highlight"><pre><span></span><span class="n">prepared_for_weather</span> <span class="o">=</span> <span class="n">have_umbrella</span> <span class="ow">or</span> <span class="p">(</span><span class="n">rain_level</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="ow">and</span> <span class="n">have_hood</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span><span class="n">rain_level</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">is_workday</span><span class="p">)</span>
+</pre></div>
+<p>You can add even more parentheses if you think it helps readability:</p>
+<div class="highlight"><pre><span></span><span class="n">prepared_for_weather</span> <span class="o">=</span> <span class="n">have_umbrella</span> <span class="ow">or</span> <span class="p">((</span><span class="n">rain_level</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">)</span> <span class="ow">and</span> <span class="n">have_hood</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">rain_level</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">is_workday</span><span class="p">))</span>
+</pre></div>
+<p>We can also split it over multiple lines to emphasize the 3-part structure described above:</p>
+<div class="highlight"><pre><span></span><span class="n">prepared_for_weather</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">have_umbrella</span> 
+    <span class="ow">or</span> <span class="p">((</span><span class="n">rain_level</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">)</span> <span class="ow">and</span> <span class="n">have_hood</span><span class="p">)</span> 
+    <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">rain_level</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">is_workday</span><span class="p">))</span>
+<span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Conditionals">Conditionals<a class="anchor-link" href="#Conditionals"> </a></h1><p>While useful enough in their own right, booleans really start to shine when combined with <em>conditional statements</em>, using the keywords <code>if</code>, <code>elif</code>, and <code>else</code>.</p>
+<p>Conditional statements, often referred to as <em>if-then</em> statements, allow the programmer to execute certain pieces of code depending on some Boolean condition.
+A basic example of a Python conditional statement is this:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">inspect</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;is zero&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;is positive&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;is negative&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;is unlike anything I&#39;ve ever seen...&quot;</span><span class="p">)</span>
+
+<span class="n">inspect</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">inspect</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0 is zero
+-15 is negative
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Python adopts the <code>if</code> and <code>else</code> often used in other languages; its more unique keyword is <code>elif</code>, a contraction of "else if".
+In these conditional clauses, <code>elif</code> and <code>else</code> blocks are optional; additionally, you can include as many <code>elif</code> statements as you would like.</p>
+<p>Note especially the use of colons (<code>:</code>) and whitespace to denote separate blocks of code. This is similar to what happens when we define a function - the function header ends with <code>:</code>, and the following line is indented with 4 spaces. All subsequent indented lines belong to the body of the function, until we encounter an unindented line, ending the function definition.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Only printed when x is positive; x =&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Also only printed when x is positive; x =&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Always printed, regardless of x&#39;s value; x =&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+<span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Only printed when x is positive; x = 1
+Also only printed when x is positive; x = 1
+Always printed, regardless of x&#39;s value; x = 1
+Always printed, regardless of x&#39;s value; x = 0
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Boolean-conversion">Boolean conversion<a class="anchor-link" href="#Boolean-conversion"> </a></h2><p>We've seen <code>int()</code>, which turns things into ints, and <code>float()</code>, which turns things into floats, so you might not be surprised to hear that Python has a <code>bool()</code> function which turns things into bools.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">bool</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">bool</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>False</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="c1"># all numbers are treated as true, except 0</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="s2">&quot;asf&quot;</span><span class="p">))</span> <span class="c1"># all strings are treated as true, except the empty string &quot;&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+<span class="c1"># Generally empty sequences (strings, lists, and other types we&#39;ve yet to see like lists and tuples)</span>
+<span class="c1"># are &quot;falsey&quot; and the rest are &quot;truthy&quot;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>True
+False
+True
+False
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can use non-boolean objects in <code>if</code> conditions and other places where a boolean would be expected. Python will implicitly treat them as their corresponding boolean value:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">elif</span> <span class="s2">&quot;spam&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;spam&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>spam
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conditional-expressions-(aka-'ternary')">Conditional expressions (aka 'ternary')<a class="anchor-link" href="#Conditional-expressions-(aka-'ternary')"> </a></h2><p>Setting a variable to either of two values depending on some condition is a pretty common pattern.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">quiz_message</span><span class="p">(</span><span class="n">grade</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">grade</span> <span class="o">&lt;</span> <span class="mi">50</span><span class="p">:</span>
+        <span class="n">outcome</span> <span class="o">=</span> <span class="s1">&#39;failed&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">outcome</span> <span class="o">=</span> <span class="s1">&#39;passed&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;You&#39;</span><span class="p">,</span> <span class="n">outcome</span><span class="p">,</span> <span class="s1">&#39;the quiz with a grade of&#39;</span><span class="p">,</span> <span class="n">grade</span><span class="p">)</span>
+    
+<span class="n">quiz_message</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>You passed the quiz with a grade of 80
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Python has a handy single-line 'conditional expression' syntax to simplify these cases:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">quiz_message</span><span class="p">(</span><span class="n">grade</span><span class="p">):</span>
+    <span class="n">outcome</span> <span class="o">=</span> <span class="s1">&#39;failed&#39;</span> <span class="k">if</span> <span class="n">grade</span> <span class="o">&lt;</span> <span class="mi">50</span> <span class="k">else</span> <span class="s1">&#39;passed&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;You&#39;</span><span class="p">,</span> <span class="n">outcome</span><span class="p">,</span> <span class="s1">&#39;the quiz with a grade of&#39;</span><span class="p">,</span> <span class="n">grade</span><span class="p">)</span>
+    
+<span class="n">quiz_message</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>You failed the quiz with a grade of 45
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="try/except-structure">try/except structure<a class="anchor-link" href="#try/except-structure"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>You surround a dangerous section of code with <strong>try</strong> and <strong>except</strong>. </li>
+<li>If the code in the <strong>try</strong> works - the <strong>except</strong> is skipped </li>
+<li>If the code in the <strong>try</strong> fails - it jumps to the <strong>except</strong> section</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stringVar</span> <span class="o">=</span> <span class="s1">&#39;Hello Tom&#39;</span>
+<span class="n">intString</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stringVar</span><span class="p">)</span>
+<span class="n">stringIntVar</span> <span class="o">=</span> <span class="s1">&#39;25&#39;</span>
+<span class="n">intstringVar</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stringIntVar</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ValueError</span>                                Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-18-bacc4d6efab6&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> stringVar <span class="ansi-blue-fg">=</span> <span class="ansi-blue-fg">&#39;Hello Tom&#39;</span>
+<span class="ansi-green-fg">----&gt; 2</span><span class="ansi-red-fg"> </span>intString <span class="ansi-blue-fg">=</span> int<span class="ansi-blue-fg">(</span>stringVar<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      3</span> stringIntVar <span class="ansi-blue-fg">=</span> <span class="ansi-blue-fg">&#39;25&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> intstringVar <span class="ansi-blue-fg">=</span> int<span class="ansi-blue-fg">(</span>stringIntVar<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-red-fg">ValueError</span>: invalid literal for int() with base 10: &#39;Hello Tom&#39;</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The program stopped in the second line.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stringVar</span> <span class="o">=</span> <span class="s1">&#39;Hello Tom&#39;</span>
+<span class="n">stringIntVar</span> <span class="o">=</span> <span class="s1">&#39;25&#39;</span>
+<span class="k">try</span><span class="p">:</span>
+  <span class="n">intString</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stringVar</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+  <span class="n">intString</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="k">try</span><span class="p">:</span>
+  <span class="n">intstringVar</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stringIntVar</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+  <span class="n">intstringVar</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">intstringVar</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>25
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">number</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter any number: &quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Enter any number: 5
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">number</span> <span class="o">+</span> <span class="mi">3</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-22-3415abcb9534&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>number <span class="ansi-blue-fg">+</span> <span class="ansi-cyan-fg">3</span>
+
+<span class="ansi-red-fg">TypeError</span>: must be str, not int</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>str</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We need to convert strting to number</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter any number: &quot;</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Enter any number: h
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ValueError</span>                                Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-24-1040d0f8c3bc&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>number <span class="ansi-blue-fg">=</span> int<span class="ansi-blue-fg">(</span>input<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#34;Enter any number: &#34;</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
+
+<span class="ansi-red-fg">ValueError</span>: invalid literal for int() with base 10: &#39;h&#39;</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">number</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Enter any number: &#39;</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+  <span class="n">number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Please insert a numeric value&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Enter any number: h
+Please insert a numeric value
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Exercise">Exercise<a class="anchor-link" href="#Exercise"> </a></h2><p>Rewrite your pay computation to give the employee 1.5 times the hourly rate for hours worked above 40 hours.</p>
+<ul>
+<li>Enter Hours: 45 </li>
+<li>Enter Rate: 10 </li>
+<li>Pay: 475.0</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

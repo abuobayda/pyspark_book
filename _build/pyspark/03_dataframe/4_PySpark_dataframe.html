@@ -1,0 +1,2074 @@
+---
+redirect_from:
+  - "/pyspark/03-dataframe/4-pyspark-dataframe"
+interact_link: content/pyspark/03_dataframe/4_PySpark_dataframe.ipynb
+kernel_name: python3
+kernel_path: content/pyspark/03_dataframe
+has_widgets: false
+title: |-
+  PySpark Dataframe
+pagenum: 31
+prev_page:
+  url: /pyspark/03_dataframe/3_functional_programming.html
+next_page:
+  url: /pyspark/ML/1_Intro_Machine_Learning.html
+suffix: .ipynb
+search: dataframe pyspark dataframes data rows columns create sql select using queries peopledf rdd spark table transformations filter operations count sex column both provides sparksession actions show operation where into visualization distributed library structured json dataframeapi methods entry point creating schema turn groupby orderby dropduplicates withcolumnrenamed printschema describe prints print names query plotting relational database also nature after action information e g available python api rdds interact used sparksessions method csv txt read name etc samplelist confirm output variable interacting transformation based duplicate observations peopledfsub female peopledffemale male peopledfmale easier construct done temporary peopledfnames graphs charts pandas apache collection under named
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">PySpark Dataframe</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="PySpark-Dataframe">PySpark Dataframe<a class="anchor-link" href="#PySpark-Dataframe"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="k">import</span> <span class="n">SparkSession</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="n">udf</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="k">import</span> <span class="n">StringType</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="k">import</span> <span class="n">IntegerType</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="n">desc</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="n">asc</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="nb">sum</span> <span class="k">as</span> <span class="n">Fsum</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyspark</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">pyspark</span><span class="o">.</span><span class="n">SparkContext</span><span class="p">(</span><span class="n">appName</span><span class="o">=</span><span class="s2">&quot;PySpark_dataframe&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span> \
+    <span class="o">.</span><span class="n">builder</span> \
+    <span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">&quot;dataframe&quot;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="What-are-PySpark-DataFrames?">What are PySpark DataFrames?<a class="anchor-link" href="#What-are-PySpark-DataFrames?"> </a></h2><p>In Apache Spark, a DataFrame is a distributed collection of rows under named columns. In simple terms, it is same as a table in relational database or an Excel sheet with Column headers. It also shares some common characteristics with RDD:</p>
+<ul>
+<li>Immutable in nature : We can create DataFrame / RDD once but can’t change it. And we can transform a DataFrame / RDD  after applying transformations.</li>
+<li>Lazy Evaluations: Which means that a task is not executed until an action is performed.</li>
+<li>Distributed: RDD and DataFrame both are distributed in nature.</li>
+</ul>
+<p><strong>PySpark SQL</strong> is a Spark library for structured data. It provides more information about the structure of data and computation</p>
+<p>Designed for processing both structured (e.g relational database) and semi-structured data (e.g
+JSON)</p>
+<ul>
+<li>DataframeAPI is available in Python, R, Scala, and Java</li>
+<li>DataFrames in PySpark support both SQL queries ( SELECT * from table ) or expression methods
+( df.select() )</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="SparkSession---Entry-point-for-DataFrame-API">SparkSession - Entry point for DataFrame API<a class="anchor-link" href="#SparkSession---Entry-point-for-DataFrame-API"> </a></h3><ul>
+<li>SparkContext is the main entry point for creating RDDs</li>
+<li>SparkSession provides a single point of entry to interact with Spark DataFrames</li>
+<li>SparkSession is used to create DataFrame, register DataFrames, execute SQL queries</li>
+<li>SparkSession is available in PySpark shell as spark</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Creating-DataFrames-in-PySpark">Creating DataFrames in PySpark<a class="anchor-link" href="#Creating-DataFrames-in-PySpark"> </a></h3><ul>
+<li>Two different methods of creating DataFrames in PySpark<ul>
+<li>From existing RDDs using SparkSession's createDataFrame() method</li>
+<li>From various data sources (CSV, JSON, TXT) using SparkSession's read method</li>
+</ul>
+</li>
+<li>Schema controls the data and helps DataFrames to optimize queries</li>
+<li>Schema provides information about column name,type of data in the column, empty values etc.,</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="https://www.analyticsvidhya.com/wp-content/uploads/2016/10/DataFrame-in-Spark.png" alt="alt text"></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Create-a-DataFrame-from-RDD">Create a DataFrame from RDD<a class="anchor-link" href="#Create-a-DataFrame-from-RDD"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">iphones_RDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span>
+                              <span class="p">(</span><span class="s2">&quot;XS&quot;</span><span class="p">,</span> <span class="mi">2018</span><span class="p">,</span> <span class="mf">5.65</span><span class="p">,</span> <span class="mf">2.79</span><span class="p">,</span> <span class="mf">6.24</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s2">&quot;XR&quot;</span><span class="p">,</span> <span class="mi">2018</span><span class="p">,</span> <span class="mf">5.94</span><span class="p">,</span> <span class="mf">2.98</span><span class="p">,</span> <span class="mf">6.84</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s2">&quot;X10&quot;</span><span class="p">,</span> <span class="mi">2017</span><span class="p">,</span> <span class="mf">5.65</span><span class="p">,</span> <span class="mf">2.79</span><span class="p">,</span> <span class="mf">6.13</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s2">&quot;8Plus&quot;</span><span class="p">,</span> <span class="mi">2017</span><span class="p">,</span> <span class="mf">6.23</span><span class="p">,</span> <span class="mf">3.07</span><span class="p">,</span> <span class="mf">7.12</span><span class="p">)</span>
+                              <span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">,</span> <span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;Height&#39;</span><span class="p">,</span> <span class="s1">&#39;Width&#39;</span><span class="p">,</span> <span class="s1">&#39;Weight&#39;</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">iphone_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">iphones_RDD</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">iphone_df</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>pyspark.sql.dataframe.DataFrame</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Create-a-DataFrame-from-reading-a-CSV/JSON/TXT">Create a DataFrame from reading a CSV/JSON/TXT<a class="anchor-link" href="#Create-a-DataFrame-from-reading-a-CSV/JSON/TXT"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_csv</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;people.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_txt</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;5000_points.txt&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>spark.read.format(path, optional parameter)</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Your-Turn:">Your Turn:<a class="anchor-link" href="#Your-Turn:"> </a></h3><ul>
+<li>Create a sample_list from tuples - ('Mona',20), ('Jennifer',34), ('John',20), ('Jim',26).</li>
+<li>Create an RDD from the sample_list.</li>
+<li>Create a PySpark DataFrame using the above RDD and schema.</li>
+<li>Confirm the output as PySpark DataFrame.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a list of tuples</span>
+<span class="n">sample_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">____</span><span class="p">,</span> <span class="n">____</span><span class="p">,</span> <span class="n">____</span><span class="p">,</span> <span class="n">____</span><span class="p">]</span>
+
+<span class="c1"># Create a RDD from the list</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="n">sample_list</span><span class="p">)</span>
+
+<span class="c1"># Create a PySpark DataFrame</span>
+<span class="n">names_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">____</span><span class="p">,</span> <span class="n">____</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Age&#39;</span><span class="p">])</span>
+
+<span class="c1"># Check the type of names_df</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The type of names_df is&quot;</span><span class="p">,</span> <span class="n">____</span><span class="p">(</span><span class="n">names_df</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a list of tuples</span>
+<span class="n">sample_list</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;Mona&#39;</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Jennifer&#39;</span><span class="p">,</span><span class="mi">34</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Jim&#39;</span><span class="p">,</span><span class="mi">26</span><span class="p">)]</span>
+
+<span class="c1"># Create a RDD from the list</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="n">sample_list</span><span class="p">)</span>
+
+<span class="c1"># Create a PySpark DataFrame</span>
+<span class="n">names_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">rdd</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Age&#39;</span><span class="p">])</span>
+
+<span class="c1"># Check the type of names_df</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The type of names_df is&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">names_df</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The type of names_df is &lt;class &#39;pyspark.sql.dataframe.DataFrame&#39;&gt;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Create a DataFrame from file_path variable.</li>
+<li>Confirm the output as PySpark DataFrame.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create an DataFrame from file_path</span>
+<span class="n">people_df</span> <span class="o">=</span> <span class="n">____</span><span class="p">(</span><span class="s2">&quot;people.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Check the type of people_df</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The type of people_df is&quot;</span><span class="p">,</span> <span class="n">____</span><span class="p">(</span><span class="n">people_df</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create an DataFrame from file_path</span>
+<span class="n">people_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;people.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Check the type of people_df</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The type of people_df is&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">people_df</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The type of people_df is &lt;class &#39;pyspark.sql.dataframe.DataFrame&#39;&gt;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Interacting-with-PySpark-DataFrames">Interacting with PySpark DataFrames<a class="anchor-link" href="#Interacting-with-PySpark-DataFrames"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="DataFrame-operators-in-PySpark">DataFrame operators in PySpark<a class="anchor-link" href="#DataFrame-operators-in-PySpark"> </a></h3><ul>
+<li>DataFrame operations: Transformations and Actions</li>
+<li>DataFrame Transformations:<ul>
+<li>select(), lter(), groupby(), orderby(), dropDuplicates() and withColumnRenamed()</li>
+</ul>
+</li>
+<li>DataFrameActions :<ul>
+<li>printSchema(), head(), show(), count(), columns() and describe()</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="printSchema()">printSchema()<a class="anchor-link" href="#printSchema()"> </a></h4><ul>
+<li>printSchema() operation prints the types of columns in the DataFrame</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">players</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s1">&#39;Fifa2018_dataset.csv&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">players</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>root
+ |-- _c0: string (nullable = true)
+ |-- Name: string (nullable = true)
+ |-- Age: string (nullable = true)
+ |-- Photo: string (nullable = true)
+ |-- Nationality: string (nullable = true)
+ |-- Flag: string (nullable = true)
+ |-- Overall: string (nullable = true)
+ |-- Potential: string (nullable = true)
+ |-- Club: string (nullable = true)
+ |-- Club Logo: string (nullable = true)
+ |-- Value: string (nullable = true)
+ |-- Wage: string (nullable = true)
+ |-- Special: string (nullable = true)
+ |-- Acceleration: string (nullable = true)
+ |-- Aggression: string (nullable = true)
+ |-- Agility: string (nullable = true)
+ |-- Balance: string (nullable = true)
+ |-- Ball control: string (nullable = true)
+ |-- Composure: string (nullable = true)
+ |-- Crossing: string (nullable = true)
+ |-- Curve: string (nullable = true)
+ |-- Dribbling: string (nullable = true)
+ |-- Finishing: string (nullable = true)
+ |-- Free kick accuracy: string (nullable = true)
+ |-- GK diving: string (nullable = true)
+ |-- GK handling: string (nullable = true)
+ |-- GK kicking: string (nullable = true)
+ |-- GK positioning: string (nullable = true)
+ |-- GK reflexes: string (nullable = true)
+ |-- Heading accuracy: string (nullable = true)
+ |-- Interceptions: string (nullable = true)
+ |-- Jumping: string (nullable = true)
+ |-- Long passing: string (nullable = true)
+ |-- Long shots: string (nullable = true)
+ |-- Marking: string (nullable = true)
+ |-- Penalties: string (nullable = true)
+ |-- Positioning: string (nullable = true)
+ |-- Reactions: string (nullable = true)
+ |-- Short passing: string (nullable = true)
+ |-- Shot power: string (nullable = true)
+ |-- Sliding tackle: string (nullable = true)
+ |-- Sprint speed: string (nullable = true)
+ |-- Stamina: string (nullable = true)
+ |-- Standing tackle: string (nullable = true)
+ |-- Strength: string (nullable = true)
+ |-- Vision: string (nullable = true)
+ |-- Volleys: string (nullable = true)
+ |-- CAM: string (nullable = true)
+ |-- CB: string (nullable = true)
+ |-- CDM: string (nullable = true)
+ |-- CF: string (nullable = true)
+ |-- CM: string (nullable = true)
+ |-- ID: string (nullable = true)
+ |-- LAM: string (nullable = true)
+ |-- LB: string (nullable = true)
+ |-- LCB: string (nullable = true)
+ |-- LCM: string (nullable = true)
+ |-- LDM: string (nullable = true)
+ |-- LF: string (nullable = true)
+ |-- LM: string (nullable = true)
+ |-- LS: string (nullable = true)
+ |-- LW: string (nullable = true)
+ |-- LWB: string (nullable = true)
+ |-- Preferred Positions: string (nullable = true)
+ |-- RAM: string (nullable = true)
+ |-- RB: string (nullable = true)
+ |-- RCB: string (nullable = true)
+ |-- RCM: string (nullable = true)
+ |-- RDM: string (nullable = true)
+ |-- RF: string (nullable = true)
+ |-- RM: string (nullable = true)
+ |-- RS: string (nullable = true)
+ |-- RW: string (nullable = true)
+ |-- RWB: string (nullable = true)
+ |-- ST: string (nullable = true)
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="columns()-actions">columns() actions<a class="anchor-link" href="#columns()-actions"> </a></h4><ul>
+<li>columns() operator prints the columns of a DataFrame</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">players</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39;_c0&#39;,
+ &#39;Name&#39;,
+ &#39;Age&#39;,
+ &#39;Photo&#39;,
+ &#39;Nationality&#39;,
+ &#39;Flag&#39;,
+ &#39;Overall&#39;,
+ &#39;Potential&#39;,
+ &#39;Club&#39;,
+ &#39;Club Logo&#39;,
+ &#39;Value&#39;,
+ &#39;Wage&#39;,
+ &#39;Special&#39;,
+ &#39;Acceleration&#39;,
+ &#39;Aggression&#39;,
+ &#39;Agility&#39;,
+ &#39;Balance&#39;,
+ &#39;Ball control&#39;,
+ &#39;Composure&#39;,
+ &#39;Crossing&#39;,
+ &#39;Curve&#39;,
+ &#39;Dribbling&#39;,
+ &#39;Finishing&#39;,
+ &#39;Free kick accuracy&#39;,
+ &#39;GK diving&#39;,
+ &#39;GK handling&#39;,
+ &#39;GK kicking&#39;,
+ &#39;GK positioning&#39;,
+ &#39;GK reflexes&#39;,
+ &#39;Heading accuracy&#39;,
+ &#39;Interceptions&#39;,
+ &#39;Jumping&#39;,
+ &#39;Long passing&#39;,
+ &#39;Long shots&#39;,
+ &#39;Marking&#39;,
+ &#39;Penalties&#39;,
+ &#39;Positioning&#39;,
+ &#39;Reactions&#39;,
+ &#39;Short passing&#39;,
+ &#39;Shot power&#39;,
+ &#39;Sliding tackle&#39;,
+ &#39;Sprint speed&#39;,
+ &#39;Stamina&#39;,
+ &#39;Standing tackle&#39;,
+ &#39;Strength&#39;,
+ &#39;Vision&#39;,
+ &#39;Volleys&#39;,
+ &#39;CAM&#39;,
+ &#39;CB&#39;,
+ &#39;CDM&#39;,
+ &#39;CF&#39;,
+ &#39;CM&#39;,
+ &#39;ID&#39;,
+ &#39;LAM&#39;,
+ &#39;LB&#39;,
+ &#39;LCB&#39;,
+ &#39;LCM&#39;,
+ &#39;LDM&#39;,
+ &#39;LF&#39;,
+ &#39;LM&#39;,
+ &#39;LS&#39;,
+ &#39;LW&#39;,
+ &#39;LWB&#39;,
+ &#39;Preferred Positions&#39;,
+ &#39;RAM&#39;,
+ &#39;RB&#39;,
+ &#39;RCB&#39;,
+ &#39;RCM&#39;,
+ &#39;RDM&#39;,
+ &#39;RF&#39;,
+ &#39;RM&#39;,
+ &#39;RS&#39;,
+ &#39;RW&#39;,
+ &#39;RWB&#39;,
+ &#39;ST&#39;]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="describe()-actions">describe() actions<a class="anchor-link" href="#describe()-actions"> </a></h4><ul>
+<li>describe() operation compute summary statistics of numerical columns in the DataFrame</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">players</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-------+-----------------+-------------+------------------+--------------------+-----------+--------------------+------------------+-----------------+--------------------+--------------------+-----+-----+------------------+------------------+-----------------+------------------+-----------------+------------------+------------------+------------------+------------------+------------------+-----------------+------------------+-----------------+------------------+------------------+------------------+------------------+-----------------+-----------------+------------------+------------------+------------------+------------------+-----------------+------------------+-----------------+------------------+------------------+------------------+------------------+------------------+------------------+-----------------+------------------+------------------+------------------+------------------+-----------------+-----------------+------------------+------------------+------------------+------------------+------------------+------------------+-----------------+-----------------+------------------+-----------------+------------------+-----------------+-------------------+------------------+------------------+------------------+------------------+-----------------+-----------------+------------------+-----------------+------------------+-----------------+-----------------+
+|summary|              _c0|         Name|               Age|               Photo|Nationality|                Flag|           Overall|        Potential|                Club|           Club Logo|Value| Wage|           Special|      Acceleration|       Aggression|           Agility|          Balance|      Ball control|         Composure|          Crossing|             Curve|         Dribbling|        Finishing|Free kick accuracy|        GK diving|       GK handling|        GK kicking|    GK positioning|       GK reflexes| Heading accuracy|    Interceptions|           Jumping|      Long passing|        Long shots|           Marking|        Penalties|       Positioning|        Reactions|     Short passing|        Shot power|    Sliding tackle|      Sprint speed|           Stamina|   Standing tackle|         Strength|            Vision|           Volleys|               CAM|                CB|              CDM|               CF|                CM|                ID|               LAM|                LB|               LCB|               LCM|              LDM|               LF|                LM|               LS|                LW|              LWB|Preferred Positions|               RAM|                RB|               RCB|               RCM|              RDM|               RF|                RM|               RS|                RW|              RWB|               ST|
++-------+-----------------+-------------+------------------+--------------------+-----------+--------------------+------------------+-----------------+--------------------+--------------------+-----+-----+------------------+------------------+-----------------+------------------+-----------------+------------------+------------------+------------------+------------------+------------------+-----------------+------------------+-----------------+------------------+------------------+------------------+------------------+-----------------+-----------------+------------------+------------------+------------------+------------------+-----------------+------------------+-----------------+------------------+------------------+------------------+------------------+------------------+------------------+-----------------+------------------+------------------+------------------+------------------+-----------------+-----------------+------------------+------------------+------------------+------------------+------------------+------------------+-----------------+-----------------+------------------+-----------------+------------------+-----------------+-------------------+------------------+------------------+------------------+------------------+-----------------+-----------------+------------------+-----------------+------------------+-----------------+-----------------+
+|  count|            14648|        14648|             14648|               14648|      14648|               14648|             14648|            14648|               14430|               14648|14648|14648|             14648|             14648|            14648|             14648|            14648|             14648|             14648|             14648|             14648|             14648|            14648|             14648|            14648|             14648|             14648|             14648|             14648|            14648|            14648|             14648|             14648|             14648|             14648|            14648|             14648|            14648|             14648|             14648|             14648|             14648|             14648|             14648|            14648|             14648|             14648|             13194|             13194|            13194|            13194|             13194|             14648|             13194|             13194|             13194|             13194|            13194|            13194|             13194|            13194|             13194|            13194|              14648|             13194|             13194|             13194|             13194|            13194|            13194|             13194|            13194|             13194|            13194|            13194|
+|   mean|           7323.5|         null|26.034202621518297|                null|       null|                null| 68.57181867831785|72.30065537957401|                null|                null| null| null|1652.3669442927362| 65.81252572369324|58.43761140819964| 64.86985737794843|64.30678627679244| 60.80904522613066| 60.59133658268689| 52.35196374622357|49.839733918529696|57.377355894896134|47.35068059947752|45.501951921101295|16.32278351220179|16.140679472281086| 16.01687965557302| 16.18121539408025| 16.46441512271826|54.51628385327391| 49.0443650848156| 66.09891013777504| 54.98177817506704|49.942908117752005|46.177493641300615|50.67061076533753|51.975013728720484|64.42313243076077| 60.86131386861314|58.221810699588474|47.311822051352465| 66.09299608220496| 65.52527819755461|49.454983148772264|67.08955428885379| 55.22015258780672|45.398056258982955|61.234652114597544| 57.41405184174625|58.93891162649689|60.96816734879491|60.649916628770654|202745.64766521027|61.234652114597544|58.802637562528425| 57.41405184174625|60.649916628770654|58.93891162649689|60.96816734879491|61.976277095649536|60.09860542670911|61.240867060785206|59.59307260876156|               null|61.234652114597544|58.802637562528425| 57.41405184174625|60.649916628770654|58.93891162649689|60.96816734879491|61.976277095649536|60.09860542670911|61.240867060785206|59.59307260876156|60.09860542670911|
+| stddev|4228.657706648766|         null| 4.326977305977739|                null|       null|                null|5.3462129285793365|5.689131080121517|                null|                null| null| null|248.52881366358713|14.454392161365226|16.99929161520208|14.421955453471732| 14.0016963318677|15.927950064074578|11.990940750277469|18.178945699167716|18.443020756360507|18.514751569957085|19.33819468528398|17.726082080250304|17.66015781933869|16.911612302912864|16.427988789233343|17.175067696183643|17.979872796951845| 17.1392772897159|20.55785747911336|11.824667001791703|14.822333348465321|19.004063775712584| 21.82866061555514|15.66034328078675| 19.24523676446252|7.754727074606576|13.993049437310432|16.959809466163726| 21.73139035494182|14.155644244416525|15.252526624437023|21.945130500423605|12.06627537629348|14.112708290067426|17.801246802802222| 9.160558272687005|11.859504466472988|9.566043667463049|9.296772167506132| 7.797530569125701|32683.839829231107| 9.160558272687005| 9.236494062876343|11.859504466472988| 7.797530569125701|9.566043667463049|9.296772167506132| 8.650588539732542|8.494649955711592|  9.41646371329798| 8.42767530949638|               null| 9.160558272687005| 9.236494062876343|11.859504466472988| 7.797530569125701|9.566043667463049|9.296772167506132| 8.650588539732542|8.494649955711592|  9.41646371329798| 8.42767530949638|8.494649955711592|
+|    min|                0|     A. Abbas|                16|https://cdn.sofif...|    Albania|https://cdn.sofif...|                60|               60| SSV Jahn Regensburg|https://cdn.sofif...|   €0|   €0|              1000|                12|               11|                14|               16|                10|                11|                10|                10|                10|               10|                10|                1|                 1|                 1|                 1|                 1|               10|               10|                25|                10|                10|                10|               10|                10|               32|                11|                10|                10|                12|                13|                10|               21|                10|                10|              28.0|              27.0|             33.0|             28.0|              35.0|            101317|              28.0|              34.0|              27.0|              35.0|             33.0|             28.0|              30.0|             32.0|              28.0|             36.0|               CAM |              28.0|              34.0|              27.0|              35.0|             33.0|             28.0|              30.0|             32.0|              28.0|             36.0|             32.0|
+|    max|             9999|Óscar Whalley|                44|https://cdn.sofif...|   Zimbabwe|https://cdn.sofif...|                94|               94|       Śląsk Wrocław|https://cdn.sofif...|  €9M|  €9K|               999|                96|               96|                96|               96|                95|                96|                91|                92|                97|               95|                93|               91|                91|                95|                91|                90|               94|               92|                95|                93|                92|                92|               92|                95|               96|                92|                94|                91|                96|                95|                92|               98|                94|                91|              92.0|              87.0|             85.0|             92.0|              87.0|              9833|              92.0|              84.0|              87.0|              87.0|             85.0|             92.0|              90.0|             92.0|              91.0|             84.0|          ST RW RM |              92.0|              84.0|              87.0|              87.0|             85.0|             92.0|              90.0|             92.0|              91.0|             84.0|             92.0|
++-------+-----------------+-------------+------------------+--------------------+-----------+--------------------+------------------+-----------------+--------------------+--------------------+-----+-----+------------------+------------------+-----------------+------------------+-----------------+------------------+------------------+------------------+------------------+------------------+-----------------+------------------+-----------------+------------------+------------------+------------------+------------------+-----------------+-----------------+------------------+------------------+------------------+------------------+-----------------+------------------+-----------------+------------------+------------------+------------------+------------------+------------------+------------------+-----------------+------------------+------------------+------------------+------------------+-----------------+-----------------+------------------+------------------+------------------+------------------+------------------+------------------+-----------------+-----------------+------------------+-----------------+------------------+-----------------+-------------------+------------------+------------------+------------------+------------------+-----------------+-----------------+------------------+-----------------+------------------+-----------------+-----------------+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="select()-and-show()-operations">select() and show() operations<a class="anchor-link" href="#select()-and-show()-operations"> </a></h4><ul>
+<li>select() transformation subsets the columns in the DataFrame</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_id_age</span> <span class="o">=</span> <span class="n">players</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;Age&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>show() action prints first rows in the DataFrame</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_id_age</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+
+|Age|
++---+
+| 32|
+| 30|
+| 25|
++---+
+only showing top 3 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="filter()-and-show()-operations">filter() and show() operations<a class="anchor-link" href="#filter()-and-show()-operations"> </a></h4><ul>
+<li>filter() transformation filters out the rows based on a condition</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">new_df_age21</span> <span class="o">=</span> <span class="n">players</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">players</span><span class="o">.</span><span class="n">Age</span> <span class="o">&gt;</span> <span class="mi">21</span><span class="p">)</span>
+<span class="n">new_df_age21</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+-----------------+---+--------------------+-----------+--------------------+-------+---------+-------------------+--------------------+------+-----+-------+------------+----------+-------+-------+------------+---------+--------+-----+---------+---------+------------------+---------+-----------+----------+--------------+-----------+----------------+-------------+-------+------------+----------+-------+---------+-----------+---------+-------------+----------+--------------+------------+-------+---------------+--------+------+-------+----+----+----+----+----+------+----+----+----+----+----+----+----+----+----+----+-------------------+----+----+----+----+----+----+----+----+----+----+----+
+|_c0|             Name|Age|               Photo|Nationality|                Flag|Overall|Potential|               Club|           Club Logo| Value| Wage|Special|Acceleration|Aggression|Agility|Balance|Ball control|Composure|Crossing|Curve|Dribbling|Finishing|Free kick accuracy|GK diving|GK handling|GK kicking|GK positioning|GK reflexes|Heading accuracy|Interceptions|Jumping|Long passing|Long shots|Marking|Penalties|Positioning|Reactions|Short passing|Shot power|Sliding tackle|Sprint speed|Stamina|Standing tackle|Strength|Vision|Volleys| CAM|  CB| CDM|  CF|  CM|    ID| LAM|  LB| LCB| LCM| LDM|  LF|  LM|  LS|  LW| LWB|Preferred Positions| RAM|  RB| RCB| RCM| RDM|  RF|  RM|  RS|  RW| RWB|  ST|
++---+-----------------+---+--------------------+-----------+--------------------+-------+---------+-------------------+--------------------+------+-----+-------+------------+----------+-------+-------+------------+---------+--------+-----+---------+---------+------------------+---------+-----------+----------+--------------+-----------+----------------+-------------+-------+------------+----------+-------+---------+-----------+---------+-------------+----------+--------------+------------+-------+---------------+--------+------+-------+----+----+----+----+----+------+----+----+----+----+----+----+----+----+----+----+-------------------+----+----+----+----+----+----+----+----+----+----+----+
+|  0|Cristiano Ronaldo| 32|https://cdn.sofif...|   Portugal|https://cdn.sofif...|     94|       94|     Real Madrid CF|https://cdn.sofif...|€95.5M|€565K|   2228|          89|        63|     89|     63|          93|       95|      85|   81|       91|       94|                76|        7|         11|        15|            14|         11|              88|           29|     95|          77|        92|     22|       85|         95|       96|           83|        94|            23|          91|     92|             31|      80|    85|     88|89.0|53.0|62.0|91.0|82.0| 20801|89.0|61.0|53.0|82.0|62.0|91.0|89.0|92.0|91.0|66.0|             ST LW |89.0|61.0|53.0|82.0|62.0|91.0|89.0|92.0|91.0|66.0|92.0|
+|  1|         L. Messi| 30|https://cdn.sofif...|  Argentina|https://cdn.sofif...|     93|       93|       FC Barcelona|https://cdn.sofif...| €105M|€565K|   2154|          92|        48|     90|     95|          95|       96|      77|   89|       97|       95|                90|        6|         11|        15|            14|          8|              71|           22|     68|          87|        88|     13|       74|         93|       95|           88|        85|            26|          87|     73|             28|      59|    90|     85|92.0|45.0|59.0|92.0|84.0|158023|92.0|57.0|45.0|84.0|59.0|92.0|90.0|88.0|91.0|62.0|                RW |92.0|57.0|45.0|84.0|59.0|92.0|90.0|88.0|91.0|62.0|88.0|
+|  2|           Neymar| 25|https://cdn.sofif...|     Brazil|https://cdn.sofif...|     92|       94|Paris Saint-Germain|https://cdn.sofif...| €123M|€280K|   2100|          94|        56|     96|     82|          95|       92|      75|   81|       96|       89|                84|        9|          9|        15|            15|         11|              62|           36|     61|          75|        77|     21|       81|         90|       88|           81|        80|            33|          90|     78|             24|      53|    80|     83|88.0|46.0|59.0|88.0|79.0|190871|88.0|59.0|46.0|79.0|59.0|88.0|87.0|84.0|89.0|64.0|                LW |88.0|59.0|46.0|79.0|59.0|88.0|87.0|84.0|89.0|64.0|84.0|
++---+-----------------+---+--------------------+-----------+--------------------+-------+---------+-------------------+--------------------+------+-----+-------+------------+----------+-------+-------+------------+---------+--------+-----+---------+---------+------------------+---------+-----------+----------+--------------+-----------+----------------+-------------+-------+------------+----------+-------+---------+-----------+---------+-------------+----------+--------------+------------+-------+---------------+--------+------+-------+----+----+----+----+----+------+----+----+----+----+----+----+----+----+----+----+-------------------+----+----+----+----+----+----+----+----+----+----+----+
+only showing top 3 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="groupby()-and-count()-operations">groupby() and count() operations<a class="anchor-link" href="#groupby()-and-count()-operations"> </a></h4><ul>
+<li>groupby() operation can be used to group a variable</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_df_age_group</span> <span class="o">=</span> <span class="n">players</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Age&#39;</span><span class="p">)</span>
+<span class="n">test_df_age_group</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-1-dbff4099365c&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>test_df_age_group <span class="ansi-blue-fg">=</span> players<span class="ansi-blue-fg">.</span>groupby<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#39;Age&#39;</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> test_df_age_group<span class="ansi-blue-fg">.</span>count<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">.</span>show<span class="ansi-blue-fg">(</span><span class="ansi-cyan-fg">3</span><span class="ansi-blue-fg">)</span>
+
+<span class="ansi-red-fg">NameError</span>: name &#39;players&#39; is not defined</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="orderby()-Transformations">orderby() Transformations<a class="anchor-link" href="#orderby()-Transformations"> </a></h4><ul>
+<li>orderby() operation sorts the DataFrame based one or more columns</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_df_age_group</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;Age&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+-----+
+|Age|count|
++---+-----+
+| 16|    3|
+| 17|   63|
+| 18|  195|
++---+-----+
+only showing top 3 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="dropDuplicates()">dropDuplicates()<a class="anchor-link" href="#dropDuplicates()"> </a></h4><ul>
+<li>dropDuplicates() removes the duplicate rows of a DataFrame</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_df_no_dup</span> <span class="o">=</span> <span class="n">players</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span><span class="s1">&#39;Nationality&#39;</span><span class="p">,</span><span class="s1">&#39;Age&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dropDuplicates</span><span class="p">()</span>
+<span class="n">test_df_no_dup</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>14570</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="withColumnRenamed-Transformations">withColumnRenamed Transformations<a class="anchor-link" href="#withColumnRenamed-Transformations"> </a></h4><ul>
+<li>withColumnRenamed() renames a column in the DataFrame</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_df_name</span> <span class="o">=</span> <span class="n">test_df_no_dup</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Full Name&#39;</span><span class="p">)</span>
+<span class="n">test_df_name</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----------+-----------+---+
+|  Full Name|Nationality|Age|
++-----------+-----------+---+
+|W. Sneijder|Netherlands| 33|
+|  A. Correa|  Argentina| 22|
+|    Mariano|     Brazil| 31|
++-----------+-----------+---+
+only showing top 3 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Your-Turn:">Your Turn:<a class="anchor-link" href="#Your-Turn:"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">people_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s1">&#39;people.csv&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">people_df</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39;_c0&#39;, &#39;person_id&#39;, &#39;name&#39;, &#39;sex&#39;, &#39;date of birth&#39;]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Print the first 10 observations in the people_df DataFrame.</li>
+<li>Count the number of rows in the people_df DataFrame.</li>
+<li>How many columns does people_df DataFrame have and what are their names?</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the first 10 observations </span>
+<span class="n">people_df</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Count the number of rows </span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">{}</span><span class="s2"> rows in the people_df DataFrame.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">people_df</span><span class="o">.</span><span class="n">____</span><span class="p">()))</span>
+
+<span class="c1"># Count the number of columns and their names</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">{}</span><span class="s2"> columns in the people_df DataFrame and their names are </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">people_df</span><span class="o">.</span><span class="n">____</span><span class="p">),</span> <span class="n">people_df</span><span class="o">.</span><span class="n">____</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the first 10 observations </span>
+<span class="n">people_df</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Count the number of rows </span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">{}</span><span class="s2"> rows in the people_df DataFrame.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">people_df</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
+
+<span class="c1"># Count the number of columns and their names</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">{}</span><span class="s2"> columns in the people_df DataFrame and their names are </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">people_df</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">people_df</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---------+----------------+------+-------------+
+|_c0|person_id|            name|   sex|date of birth|
++---+---------+----------------+------+-------------+
+|  0|      100|  Penelope Lewis|female|   1990-08-31|
+|  1|      101|   David Anthony|  male|   1971-10-14|
+|  2|      102|       Ida Shipp|female|   1962-05-24|
+|  3|      103|    Joanna Moore|female|   2017-03-10|
+|  4|      104|  Lisandra Ortiz|female|   2020-08-05|
+|  5|      105|   David Simmons|  male|   1999-12-30|
+|  6|      106|   Edward Hudson|  male|   1983-05-09|
+|  7|      107|    Albert Jones|  male|   1990-09-13|
+|  8|      108|Leonard Cavender|  male|   1958-08-08|
+|  9|      109|  Everett Vadala|  male|   2005-05-24|
++---+---------+----------------+------+-------------+
+only showing top 10 rows
+
+There are 100000 rows in the people_df DataFrame.
+There are 5 columns in the people_df DataFrame and their names are [&#39;_c0&#39;, &#39;person_id&#39;, &#39;name&#39;, &#39;sex&#39;, &#39;date of birth&#39;]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Select 'name', 'sex' and 'date of birth' columns from people_df and create people_df_sub DataFrame.</li>
+<li>Print the first 10 observations in the people_df DataFrame.</li>
+<li>Remove duplicate entries from people_df_sub DataFrame and create people_df_sub_nodup DataFrame.</li>
+<li>How many rows are there before and after duplicates are removed?</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Select name, sex and date of birth columns</span>
+<span class="n">people_df_sub</span> <span class="o">=</span> <span class="n">people_df</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">____</span><span class="p">,</span> <span class="n">____</span><span class="p">)</span>
+
+<span class="c1"># Print the first 10 observations from people_df_sub</span>
+<span class="n">people_df_sub</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="n">____</span><span class="p">)</span>
+
+<span class="c1"># Remove duplicate entries from people_df_sub</span>
+<span class="n">people_df_sub_nodup</span> <span class="o">=</span> <span class="n">people_df_sub</span><span class="o">.</span><span class="n">____</span><span class="p">()</span>
+
+<span class="c1"># Count the number of rows</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There were </span><span class="si">{}</span><span class="s2"> rows before removing duplicates, and </span><span class="si">{}</span><span class="s2"> rows after removing duplicates&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">people_df_sub</span><span class="o">.</span><span class="n">____</span><span class="p">(),</span> <span class="n">people_df_sub_nodup</span><span class="o">.</span><span class="n">____</span><span class="p">()))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Select name, sex and date of birth columns</span>
+<span class="n">people_df_sub</span> <span class="o">=</span> <span class="n">people_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;date of birth&#39;</span><span class="p">)</span>
+
+<span class="c1"># Print the first 10 observations from people_df_sub</span>
+<span class="n">people_df_sub</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Remove duplicate entries from people_df_sub</span>
+<span class="n">people_df_sub_nodup</span> <span class="o">=</span> <span class="n">people_df_sub</span><span class="o">.</span><span class="n">dropDuplicates</span><span class="p">()</span>
+
+<span class="c1"># Count the number of rows</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There were </span><span class="si">{}</span><span class="s2"> rows before removing duplicates, and </span><span class="si">{}</span><span class="s2"> rows after removing duplicates&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">people_df_sub</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="n">people_df_sub_nodup</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+----------------+------+-------------+
+|            name|   sex|date of birth|
++----------------+------+-------------+
+|  Penelope Lewis|female|   1990-08-31|
+|   David Anthony|  male|   1971-10-14|
+|       Ida Shipp|female|   1962-05-24|
+|    Joanna Moore|female|   2017-03-10|
+|  Lisandra Ortiz|female|   2020-08-05|
+|   David Simmons|  male|   1999-12-30|
+|   Edward Hudson|  male|   1983-05-09|
+|    Albert Jones|  male|   1990-09-13|
+|Leonard Cavender|  male|   1958-08-08|
+|  Everett Vadala|  male|   2005-05-24|
++----------------+------+-------------+
+only showing top 10 rows
+
+There were 100000 rows before removing duplicates, and 99998 rows after removing duplicates
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Filter the people_df DataFrame to select all rows where sex is female into people_df_female DataFrame.</li>
+<li>Filter the people_df DataFrame to select all rows where sex is male into people_df_male DataFrame.</li>
+<li>Count the number of rows in people_df_female and people_df_male DataFrames.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Filter people_df to select females </span>
+<span class="n">people_df_female</span> <span class="o">=</span> <span class="n">people_df</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="n">people_df</span><span class="o">.</span><span class="n">____</span> <span class="o">==</span> <span class="s2">&quot;female&quot;</span><span class="p">)</span>
+
+<span class="c1"># Filter people_df to select males</span>
+<span class="n">people_df_male</span> <span class="o">=</span> <span class="n">people_df</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="n">____</span> <span class="o">==</span> <span class="s2">&quot;____&quot;</span><span class="p">)</span>
+
+<span class="c1"># Count the number of rows </span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">{}</span><span class="s2"> rows in the people_df_female DataFrame and </span><span class="si">{}</span><span class="s2"> rows in the people_df_male DataFrame&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">people_df_female</span><span class="o">.</span><span class="n">____</span><span class="p">(),</span> <span class="n">people_df_male</span><span class="o">.</span><span class="n">____</span><span class="p">()))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Filter people_df to select females </span>
+<span class="n">people_df_female</span> <span class="o">=</span> <span class="n">people_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">people_df</span><span class="o">.</span><span class="n">sex</span> <span class="o">==</span> <span class="s2">&quot;female&quot;</span><span class="p">)</span>
+
+<span class="c1"># Filter people_df to select males</span>
+<span class="n">people_df_male</span> <span class="o">=</span> <span class="n">people_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">people_df</span><span class="o">.</span><span class="n">sex</span> <span class="o">==</span> <span class="s2">&quot;male&quot;</span><span class="p">)</span>
+
+<span class="c1"># Count the number of rows </span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">{}</span><span class="s2"> rows in the people_df_female DataFrame and </span><span class="si">{}</span><span class="s2"> rows in the people_df_male DataFrame&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">people_df_female</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="n">people_df_male</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>There are 49014 rows in the people_df_female DataFrame and 49066 rows in the people_df_male DataFrame
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Interacting-with-DataFrames-using-pyspark-SQL">Interacting with DataFrames using pyspark SQL<a class="anchor-link" href="#Interacting-with-DataFrames-using-pyspark-SQL"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="DataFrame-API-vs-SQL-queries">DataFrame API vs SQL queries<a class="anchor-link" href="#DataFrame-API-vs-SQL-queries"> </a></h3><ul>
+<li>In PySpark You can interact with SparkSQL through DataFrameAPI and SQL queries</li>
+<li>The DataFrameAPI provides a programmatic domain-specic language (DSL) for data</li>
+<li>DataFrame transformations and actions are easier to construct programmatically</li>
+<li>SQL queries can be concise and easier to understand and portable</li>
+<li>The operations on DataFrames can also be done using SQL queries</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="SQL-query-to-extract-data">SQL query to extract data<a class="anchor-link" href="#SQL-query-to-extract-data"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">people_df</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s2">&quot;people_table&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39; SELECT name FROM people_table&#39;&#39;&#39;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">people_name_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="n">people_name_df</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+--------------+
+|          name|
++--------------+
+|Penelope Lewis|
+| David Anthony|
+|     Ida Shipp|
++--------------+
+only showing top 3 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Summarizing-and-grouping-data-using-SQL-queries">Summarizing and grouping data using SQL queries<a class="anchor-link" href="#Summarizing-and-grouping-data-using-SQL-queries"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">players</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s1">&#39;players_table&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39; SELECT Age, count(Age) FROM players_table GROUP BY Age &#39;&#39;&#39;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+----------+
+|Age|count(Age)|
++---+----------+
+| 29|      1092|
+| 30|       775|
+| 34|       256|
++---+----------+
+only showing top 3 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Filtering-columns-using-SQL-queries">Filtering columns using SQL queries<a class="anchor-link" href="#Filtering-columns-using-SQL-queries"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">players</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s1">&#39;players_table&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39; SELECT Name, Age FROM players_table WHERE Age &gt; 21 &#39;&#39;&#39;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----------------+---+
+|             Name|Age|
++-----------------+---+
+|Cristiano Ronaldo| 32|
+|         L. Messi| 30|
+|           Neymar| 25|
+|        L. Suárez| 30|
++-----------------+---+
+only showing top 4 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Your-Turn:">Your Turn:<a class="anchor-link" href="#Your-Turn:"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Create a temporary table people that's a pointer to the people_df DataFrame.</li>
+<li>Construct a query to select the names of the people from the temporary table people.</li>
+<li>Assign the result of Spark's query to a new DataFrame - people_df_names.</li>
+<li>Print the top 10 names of the people from people_df_names DataFrame.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a temporary table &quot;people&quot;</span>
+<span class="n">people_df</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="s2">&quot;people&quot;</span><span class="p">)</span>
+
+<span class="c1"># Construct a query to select the names of the people from the temporary table &quot;people&quot;</span>
+<span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;SELECT name FROM ____&#39;&#39;&#39;</span>
+
+<span class="c1"># Assign the result of Spark&#39;s query to people_df_names</span>
+<span class="n">people_df_names</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">____</span><span class="p">)</span>
+
+<span class="c1"># Print the top 10 names of the people</span>
+<span class="n">people_df_names</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="n">____</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a temporary table &quot;people&quot;</span>
+<span class="n">people_df</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s2">&quot;people&quot;</span><span class="p">)</span>
+
+<span class="c1"># Construct a query to select the names of the people from the temporary table &quot;people&quot;</span>
+<span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;SELECT name FROM people&#39;&#39;&#39;</span>
+
+<span class="c1"># Assign the result of Spark&#39;s query to people_df_names</span>
+<span class="n">people_df_names</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+<span class="c1"># Print the top 10 names of the people</span>
+<span class="n">people_df_names</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+----------------+
+|            name|
++----------------+
+|  Penelope Lewis|
+|   David Anthony|
+|       Ida Shipp|
+|    Joanna Moore|
+|  Lisandra Ortiz|
+|   David Simmons|
+|   Edward Hudson|
+|    Albert Jones|
+|Leonard Cavender|
+|  Everett Vadala|
++----------------+
+only showing top 10 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Filter the people table to select all rows where sex is female into people_female_df DataFrame.</li>
+<li>Filter the people table to select all rows where sex is male into people_male_df DataFrame.</li>
+<li>Count the number of rows in both people_female and people_male DataFrames.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Filter the people table to select female sex </span>
+<span class="n">people_female_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM ____ WHERE sex==&quot;____&quot;&#39;</span><span class="p">)</span>
+
+<span class="c1"># Filter the people table DataFrame to select male sex</span>
+<span class="n">people_male_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="s1">&#39;SELECT * ____ people ____ ____==&quot;____&quot;&#39;</span><span class="p">)</span>
+
+<span class="c1"># Count the number of rows in both DataFrames</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">{}</span><span class="s2"> rows in the people_female_df and </span><span class="si">{}</span><span class="s2"> rows in the people_male_df DataFrames&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">people_female_df</span><span class="o">.</span><span class="n">____</span><span class="p">(),</span> <span class="n">people_male_df</span><span class="o">.</span><span class="n">____</span><span class="p">()))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Filter the people table to select female sex </span>
+<span class="n">people_female_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM people WHERE sex==&quot;female&quot;&#39;</span><span class="p">)</span>
+
+<span class="c1"># Filter the people table DataFrame to select male sex</span>
+<span class="n">people_male_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM people WHERE sex==&quot;male&quot;&#39;</span><span class="p">)</span>
+
+<span class="c1"># Count the number of rows in both DataFrames</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">{}</span><span class="s2"> rows in the people_female_df and </span><span class="si">{}</span><span class="s2"> rows in the people_male_df DataFrames&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">people_female_df</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="n">people_male_df</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>There are 49014 rows in the people_female_df and 49066 rows in the people_male_df DataFrames
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-Visualization-in-PySpark-using-DataFrames">Data Visualization in PySpark using DataFrames<a class="anchor-link" href="#Data-Visualization-in-PySpark-using-DataFrames"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="What-is-Data-visualization?">What is Data visualization?<a class="anchor-link" href="#What-is-Data-visualization?"> </a></h3><ul>
+<li>Data visualization is a way of representing your data in graphs or charts</li>
+<li>Open source plotting tools to aid visualization in Python:<ul>
+<li>Matplotlib, Seaborn, Bokeh etc.,</li>
+</ul>
+</li>
+<li>Plotting graphs using PySpark DataFrames is done using three methods<ul>
+<li>pyspark_dist_explore library</li>
+<li>toPandas()</li>
+<li>HandySpark library</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-Pandas-for-plotting-DataFrames">Using Pandas for plotting DataFrames<a class="anchor-link" href="#Using-Pandas-for-plotting-DataFrames"> </a></h4><ul>
+<li>It's easy to create charts from pandas DataFrames</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;Fifa2018_dataset.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_df_pandas</span> <span class="o">=</span> <span class="n">test_df</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_df_pandas</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="s1">&#39;Age&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[&lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f2b5fc8fc88&gt;]],
+      dtype=object)</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../images/pyspark/03_dataframe/4_PySpark_dataframe_82_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

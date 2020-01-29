@@ -1,0 +1,1866 @@
+---
+interact_link: content/pyspark/03/5/function.ipynb
+kernel_name: python3
+kernel_path: content/pyspark/03/5
+has_widgets: false
+title: |-
+  Introduction to Functions
+pagenum: 21
+prev_page:
+  url: /pyspark/03/4/Introduction_to_Tables.html
+next_page:
+  url: /pyspark/03/6/conditions.html
+suffix: .ipynb
+search: function python functions arguments help value example code return print docstring does abs x default input type define keyword calling argument called numpy takes result using expression optional its different examples useful computation returns def invoke name parenthesis our parameters not times pass after used key header us isnt output description even something object objects above another leastdifference dont effects lesson well kinds built float languages must defined always take having particular definition create body into put allows values often important remember just single slash youre read com english small turns simple very run statement immediately nice docstrings string lines
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Introduction to Functions</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Functions-and-Getting-Help">Functions and Getting Help<a class="anchor-link" href="#Functions-and-Getting-Help"> </a></h1><p>In this lesson, we'll be talking about functions. 
+There are two kinds of functions in Python</p>
+<ul>
+<li><p>Built-in functions that are provided as part of Python (input, print, type, float, int, ...)</p>
+</li>
+<li><p>Function that we define ourselves and then use.</p>
+</li>
+</ul>
+<p>In some languages, functions must be defined to always take a specific number of arguments, each having a particular type. Python functions are allowed much more flexibility. The <code>print</code> function is a good example of this:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The print function takes an input and prints it to the screen.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Each call to print starts on a new line.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;You&#39;ll often call print with strings, but you can pass any kind of value. For example, a number:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;If print is called with multiple arguments...&quot;</span><span class="p">,</span> <span class="s2">&quot;it joins them&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;(with spaces in between)&quot;</span><span class="p">,</span> <span class="s2">&quot;before printing.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;But&#39;</span><span class="p">,</span> <span class="s1">&#39;this&#39;</span><span class="p">,</span> <span class="s1">&#39;is&#39;</span><span class="p">,</span> <span class="s1">&#39;configurable&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;***&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;^^^ print can also be called with no arguments to print a blank line.&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The print function takes an input and prints it to the screen.
+Each call to print starts on a new line.
+You&#39;ll often call print with strings, but you can pass any kind of value. For example, a number:
+4
+If print is called with multiple arguments... it joins them (with spaces in between) before printing.
+But***this***is***configurable
+
+^^^ print can also be called with no arguments to print a blank line.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Function-Definition">Function Definition<a class="anchor-link" href="#Function-Definition"> </a></h3><ul>
+<li>In Python a <strong>function</strong> is some reusable code that takes <strong><em>arguments(s)</em></strong> as input does some computation and then returns a result or results.</li>
+<li>We define a <strong>function</strong> using the <strong><em>def</em></strong> reserved word</li>
+<li>We call/invoke the <strong>function</strong> by using the function name, parenthesis and <strong><em>arguments</em></strong> in an expression.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">big</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="s1">&#39;Hello world&#39;</span><span class="p">)</span>
+<span class="c1"># big --&gt; variable name</span>
+<span class="c1"># max --&gt; function name</span>
+<span class="c1"># &#39;Hello World&#39; --&gt; argument</span>
+<span class="c1"># max(&#39;Hello World&#39;) --&gt; &#39;w&#39;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">big</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;w&#39;</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tiny</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="s1">&#39;Hello world&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tiny</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> 
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Build-our-own-function">Build our own function<a class="anchor-link" href="#Build-our-own-function"> </a></h2><ul>
+<li>We create a new <strong>function</strong> using the <strong><em>def</em></strong> keyword followed by optional parameters in parenthesis. </li>
+<li>We indent the body of the function (4 spaces)</li>
+<li>This <em>defines</em> the function but <strong><em>does not</em></strong> execute the body of the function</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_remove_output">
+
+<div class="cell border-box-sizing code_cell rendered tag_remove_output">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># function syntax </span>
+<span class="k">def</span> <span class="nf">function_name</span> <span class="p">(</span><span class="n">argument</span><span class="p">(</span><span class="n">S</span><span class="p">)):</span>
+  <span class="c1">#function body</span>
+  <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Once we have defined a function, we can call (or invoke) it as many times as we like.</li>
+<li>This is the store and reuse pattern</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">print_messages</span><span class="p">():</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hi&quot;</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Hello
+Hi
+7
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Calling-the-Function">Calling the Function<a class="anchor-link" href="#Calling-the-Function"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">print_messages</span><span class="p">():</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hi&quot;</span><span class="p">)</span>
+<span class="c1"># calling the function</span>
+<span class="n">print_messages</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Hello
+Hi
+Hello World
+7
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Arguments">Arguments<a class="anchor-link" href="#Arguments"> </a></h3><ul>
+<li>An <strong>argument</strong> is a value we pass into the <strong>function</strong> as its <strong>input</strong> when we call the function </li>
+<li>We use <strong>arguments</strong> so we can direct the <strong>function</strong> to do different kinds of work when we call it at <strong>different</strong> times</li>
+<li>We put the <strong>arguments</strong> in parenthesis after the <strong><em>name</em></strong> of the function</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Parameters">Parameters<a class="anchor-link" href="#Parameters"> </a></h3><ul>
+<li>A <strong>parameter</strong> is a variable which we use <em>in</em> the function <strong>definition</strong> that is a “handle” that allows the code in the <strong>function</strong> to access the <strong>arguments</strong> for a particular <strong>function</strong> invocation.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># name is parameter</span>
+<span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Marhaba&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+<span class="c1"># &#39;Tom&#39; is the argument</span>
+<span class="n">greet</span><span class="p">(</span><span class="s1">&#39;Tom&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Marhaba Tom
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Return-Values">Return Values<a class="anchor-link" href="#Return-Values"> </a></h3><p>Often a function will take its arguments, do some computation and <strong>return</strong> a value to be used as the value of the function call in the <strong>calling expression</strong>. The <strong><em>return</em></strong> keyword is used for this.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+  <span class="k">return</span> <span class="s1">&#39;Marhaba &#39;</span> <span class="o">+</span> <span class="n">name</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">greet</span><span class="p">(</span><span class="s2">&quot;Smanga&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Marhaba Smanga
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">addtwonumbers</span><span class="p">(</span><span class="n">number1</span><span class="p">,</span> <span class="n">number2</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">number1</span><span class="o">+</span><span class="n">number2</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">addtwonumbers</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>15
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Asking-python-for-help?">Asking python for help?<a class="anchor-link" href="#Asking-python-for-help?"> </a></h2><p>I showed the <code>abs</code> function in the previous lesson, but what if you've forgotten what it does?</p>
+<p>The <code>help()</code> function is possibly the most important Python function you can learn. If you can remember how to use <code>help()</code>, you hold the key to understanding just about any other function in Python.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="nb">abs</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on built-in function abs in module builtins:
+
+abs(x, /)
+    Return the absolute value of the argument.
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When applied to a function, <code>help()</code> displays...</p>
+<ul>
+<li>the header of that function <code>abs(x, /)</code>. In this case, this tells us that <code>abs()</code> takes a single argument <code>x</code>. (The forward slash isn't important, but if you're curious, you can read about it <a href="https://stackoverflow.com/questions/24735311/python-what-does-the-slash-mean-in-the-output-of-helprange">here</a>)</li>
+<li>A brief English description of what the function does.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Common pitfall:</strong> when you're looking up a function, remember to pass in the name of the function itself, and not the result of calling that function.</p>
+<p>What happens if we invoke help on a <em>call</em> to the function <code>abs()</code>? Unhide the output of the cell below to see.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on int object:
+
+class int(object)
+ |  int([x]) -&gt; integer
+ |  int(x, base=10) -&gt; integer
+ |  
+ |  Convert a number or string to an integer, or return 0 if no arguments
+ |  are given.  If x is a number, return x.__int__().  For floating point
+ |  numbers, this truncates towards zero.
+ |  
+ |  If x is not a number or if base is given, then x must be a string,
+ |  bytes, or bytearray instance representing an integer literal in the
+ |  given base.  The literal can be preceded by &#39;+&#39; or &#39;-&#39; and be surrounded
+ |  by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.
+ |  Base 0 means to interpret the base from the string as an integer literal.
+ |  &gt;&gt;&gt; int(&#39;0b100&#39;, base=0)
+ |  4
+ |  
+ |  Methods defined here:
+ |  
+ |  __abs__(self, /)
+ |      abs(self)
+ |  
+ |  __add__(self, value, /)
+ |      Return self+value.
+ |  
+ |  __and__(self, value, /)
+ |      Return self&amp;value.
+ |  
+ |  __bool__(self, /)
+ |      self != 0
+ |  
+ |  __ceil__(...)
+ |      Ceiling of an Integral returns itself.
+ |  
+ |  __divmod__(self, value, /)
+ |      Return divmod(self, value).
+ |  
+ |  __eq__(self, value, /)
+ |      Return self==value.
+ |  
+ |  __float__(self, /)
+ |      float(self)
+ |  
+ |  __floor__(...)
+ |      Flooring an Integral returns itself.
+ |  
+ |  __floordiv__(self, value, /)
+ |      Return self//value.
+ |  
+ |  __format__(self, format_spec, /)
+ |      Default object formatter.
+ |  
+ |  __ge__(self, value, /)
+ |      Return self&gt;=value.
+ |  
+ |  __getattribute__(self, name, /)
+ |      Return getattr(self, name).
+ |  
+ |  __getnewargs__(self, /)
+ |  
+ |  __gt__(self, value, /)
+ |      Return self&gt;value.
+ |  
+ |  __hash__(self, /)
+ |      Return hash(self).
+ |  
+ |  __index__(self, /)
+ |      Return self converted to an integer, if self is suitable for use as an index into a list.
+ |  
+ |  __int__(self, /)
+ |      int(self)
+ |  
+ |  __invert__(self, /)
+ |      ~self
+ |  
+ |  __le__(self, value, /)
+ |      Return self&lt;=value.
+ |  
+ |  __lshift__(self, value, /)
+ |      Return self&lt;&lt;value.
+ |  
+ |  __lt__(self, value, /)
+ |      Return self&lt;value.
+ |  
+ |  __mod__(self, value, /)
+ |      Return self%value.
+ |  
+ |  __mul__(self, value, /)
+ |      Return self*value.
+ |  
+ |  __ne__(self, value, /)
+ |      Return self!=value.
+ |  
+ |  __neg__(self, /)
+ |      -self
+ |  
+ |  __or__(self, value, /)
+ |      Return self|value.
+ |  
+ |  __pos__(self, /)
+ |      +self
+ |  
+ |  __pow__(self, value, mod=None, /)
+ |      Return pow(self, value, mod).
+ |  
+ |  __radd__(self, value, /)
+ |      Return value+self.
+ |  
+ |  __rand__(self, value, /)
+ |      Return value&amp;self.
+ |  
+ |  __rdivmod__(self, value, /)
+ |      Return divmod(value, self).
+ |  
+ |  __repr__(self, /)
+ |      Return repr(self).
+ |  
+ |  __rfloordiv__(self, value, /)
+ |      Return value//self.
+ |  
+ |  __rlshift__(self, value, /)
+ |      Return value&lt;&lt;self.
+ |  
+ |  __rmod__(self, value, /)
+ |      Return value%self.
+ |  
+ |  __rmul__(self, value, /)
+ |      Return value*self.
+ |  
+ |  __ror__(self, value, /)
+ |      Return value|self.
+ |  
+ |  __round__(...)
+ |      Rounding an Integral returns itself.
+ |      Rounding with an ndigits argument also returns an integer.
+ |  
+ |  __rpow__(self, value, mod=None, /)
+ |      Return pow(value, self, mod).
+ |  
+ |  __rrshift__(self, value, /)
+ |      Return value&gt;&gt;self.
+ |  
+ |  __rshift__(self, value, /)
+ |      Return self&gt;&gt;value.
+ |  
+ |  __rsub__(self, value, /)
+ |      Return value-self.
+ |  
+ |  __rtruediv__(self, value, /)
+ |      Return value/self.
+ |  
+ |  __rxor__(self, value, /)
+ |      Return value^self.
+ |  
+ |  __sizeof__(self, /)
+ |      Returns size in memory, in bytes.
+ |  
+ |  __str__(self, /)
+ |      Return str(self).
+ |  
+ |  __sub__(self, value, /)
+ |      Return self-value.
+ |  
+ |  __truediv__(self, value, /)
+ |      Return self/value.
+ |  
+ |  __trunc__(...)
+ |      Truncating an Integral returns itself.
+ |  
+ |  __xor__(self, value, /)
+ |      Return self^value.
+ |  
+ |  bit_length(self, /)
+ |      Number of bits necessary to represent self in binary.
+ |      
+ |      &gt;&gt;&gt; bin(37)
+ |      &#39;0b100101&#39;
+ |      &gt;&gt;&gt; (37).bit_length()
+ |      6
+ |  
+ |  conjugate(...)
+ |      Returns self, the complex conjugate of any int.
+ |  
+ |  to_bytes(self, /, length, byteorder, *, signed=False)
+ |      Return an array of bytes representing an integer.
+ |      
+ |      length
+ |        Length of bytes object to use.  An OverflowError is raised if the
+ |        integer is not representable with the given number of bytes.
+ |      byteorder
+ |        The byte order used to represent the integer.  If byteorder is &#39;big&#39;,
+ |        the most significant byte is at the beginning of the byte array.  If
+ |        byteorder is &#39;little&#39;, the most significant byte is at the end of the
+ |        byte array.  To request the native byte order of the host system, use
+ |        `sys.byteorder&#39; as the byte order value.
+ |      signed
+ |        Determines whether two&#39;s complement is used to represent the integer.
+ |        If signed is False and a negative integer is given, an OverflowError
+ |        is raised.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Class methods defined here:
+ |  
+ |  from_bytes(bytes, byteorder, *, signed=False) from builtins.type
+ |      Return the integer represented by the given array of bytes.
+ |      
+ |      bytes
+ |        Holds the array of bytes to convert.  The argument must either
+ |        support the buffer protocol or be an iterable object producing bytes.
+ |        Bytes and bytearray are examples of built-in objects that support the
+ |        buffer protocol.
+ |      byteorder
+ |        The byte order used to represent the integer.  If byteorder is &#39;big&#39;,
+ |        the most significant byte is at the beginning of the byte array.  If
+ |        byteorder is &#39;little&#39;, the most significant byte is at the end of the
+ |        byte array.  To request the native byte order of the host system, use
+ |        `sys.byteorder&#39; as the byte order value.
+ |      signed
+ |        Indicates whether two&#39;s complement is used to represent the integer.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Static methods defined here:
+ |  
+ |  __new__(*args, **kwargs) from builtins.type
+ |      Create and return a new object.  See help(type) for accurate signature.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |  
+ |  denominator
+ |      the denominator of a rational number in lowest terms
+ |  
+ |  imag
+ |      the imaginary part of a complex number
+ |  
+ |  numerator
+ |      the numerator of a rational number in lowest terms
+ |  
+ |  real
+ |      the real part of a complex number
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Python evaluates an expression like this from the inside out. First it calculates the value of <code>abs(-2)</code>, then it provides help on whatever the value of that expression is.</p>
+<p><small>(And it turns out to have a lot to say about integers! In Python, even something as simple-seeming as an integer is actually an object with a fair amount of internal complexity. After we talk later about objects, methods, and attributes in Python, the voluminous help output above will make more sense.)</small></p>
+<p><code>abs</code> is a very simple function with a short docstring. <code>help</code> shines even more when dealing with more complex, configurable functions like <code>print</code>:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on built-in function print in module builtins:
+
+print(...)
+    print(value, ..., sep=&#39; &#39;, end=&#39;\n&#39;, file=sys.stdout, flush=False)
+    
+    Prints the values to a stream, or to sys.stdout by default.
+    Optional keyword arguments:
+    file:  a file-like object (stream); defaults to the current sys.stdout.
+    sep:   string inserted between values, default a space.
+    end:   string appended after the last value, default a newline.
+    flush: whether to forcibly flush the stream.
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;World&quot;</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Hello World </pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;World&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Hello
+World
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Another-example">Another example<a class="anchor-link" href="#Another-example"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">least_difference</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="n">diff1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">diff2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+    <span class="n">diff3</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">diff1</span><span class="p">,</span> <span class="n">diff2</span><span class="p">,</span> <span class="n">diff3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This creates a function called <code>least_difference</code>, which takes three arguments, <code>a</code>, <code>b</code>, and <code>c</code>.</p>
+<p>Functions start with a header introduced by the <code>def</code> keyword. The indented block of code following the <code>:</code> is run when the function is called.</p>
+<p><code>return</code> is another keyword uniquely associated with functions. When Python encounters a <code>return</code> statement, it exits the function immediately, and passes the value on the right hand side to the calling context.</p>
+<p>Is it clear what <code>least_difference()</code> does from the source code? If we're not sure, we can always try it out on a few examples:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span>
+    <span class="n">least_difference</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+    <span class="n">least_difference</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="n">least_difference</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="c1"># Python allows trailing commas in argument lists. How nice is that?</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>9 0 1
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Or maybe the <code>help()</code> function can tell us something about it.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">least_difference</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on function least_difference in module __main__:
+
+least_difference(a, b, c)
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Unsurprisingly, Python isn't smart enough to read my code and turn it into a nice English description. However, when I write a function, I can provide a description in what's called the <strong>docstring</strong>.</p>
+<h3 id="Docstrings">Docstrings<a class="anchor-link" href="#Docstrings"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The docstring is a triple-quoted string (which may span multiple lines) that comes immediately after the header of a function. When we call <code>help()</code> on a function, it shows the docstring.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">least_difference</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the smallest difference between any two numbers</span>
+<span class="sd">    among a, b and c.</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; least_difference(1, 5, -5)</span>
+<span class="sd">    4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diff1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">diff2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+    <span class="n">diff3</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">diff1</span><span class="p">,</span> <span class="n">diff2</span><span class="p">,</span> <span class="n">diff3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">least_difference</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on function least_difference in module __main__:
+
+least_difference(a, b, c)
+    Return the smallest difference between any two numbers
+    among a, b and c.
+    
+    &gt;&gt;&gt; least_difference(1, 5, -5)
+    4
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<blockquote><p><strong>Aside: example calls</strong>
+The last two lines of the docstring are an example function call and result. (The <code>&gt;&gt;&gt;</code> is a reference to the command prompt used in Python interactive shells.) Python doesn't run the example call - it's just there for the benefit of the reader. The convention of including 1 or more example calls in a function's docstring is far from universally observed, but it can be very effective at helping someone understand your function. For a real-world example of, see <a href="https://github.com/numpy/numpy/blob/v1.14.2/numpy/lib/twodim_base.py#L140-L194">this docstring for the numpy function <code>np.eye</code></a>.</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Docstrings are a nice way to document your code for others - or even for yourself. (How many times have you come back to some code you were working on a day ago and wondered "what was I thinking?")</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Functions-that-don't-return">Functions that don't return<a class="anchor-link" href="#Functions-that-don't-return"> </a></h2><p>What would happen if we didn't include the <code>return</code> keyword in our function?</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">least_difference</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the smallest difference between any two numbers</span>
+<span class="sd">    among a, b and c.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diff1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">diff2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+    <span class="n">diff3</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+    <span class="nb">min</span><span class="p">(</span><span class="n">diff1</span><span class="p">,</span> <span class="n">diff2</span><span class="p">,</span> <span class="n">diff3</span><span class="p">)</span>
+    
+<span class="nb">print</span><span class="p">(</span>
+    <span class="n">least_difference</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+    <span class="n">least_difference</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="n">least_difference</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>None None None
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Python allows us to define such functions. The result of calling them is the special value <code>None</code>. (This is similar to the concept of "null" in other languages.)</p>
+<p>Without a <code>return</code> statement, <code>least_difference</code> is completely pointless, but a function with side effects may do something useful without returning anything. We've already seen two examples of this: <code>print()</code> and <code>help()</code> don't return anything. We only call them for their side effects (putting some text on the screen). Other examples of useful side effects include writing to a file, or modifying an input.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mystery</span> <span class="o">=</span> <span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mystery</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+None
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Default-arguments">Default arguments<a class="anchor-link" href="#Default-arguments"> </a></h2><p>When we called <code>help(print)</code>, we saw that the <code>print</code> function has several optional arguments. For example, we can specify a value for <code>sep</code> to put some special string in between our printed arguments:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">displayProduct</span><span class="p">(</span><span class="n">RamSize</span><span class="p">,</span> <span class="n">HdSize</span><span class="p">,</span> <span class="n">company</span><span class="o">=</span><span class="s1">&#39;Hp&#39;</span><span class="p">):</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The company name = &quot;</span><span class="o">+</span><span class="n">company</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ram Size = &quot;</span><span class="o">+</span> <span class="n">RamSize</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">displayProduct</span><span class="p">(</span><span class="s2">&quot;3Gb&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The company name = Hp
+Ram Size = 3Gb
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">displayProduct</span><span class="p">(</span><span class="s2">&quot;6GB&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">company</span><span class="o">=</span><span class="s1">&#39;Toshiba&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The company name = Toshiba
+Ram Size = 6GB
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39; &lt; &#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1 &lt; 2 &lt; 3
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>But if we don't specify a value, <code>sep</code> is treated as having a default value of <code>' '</code> (a single space).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1 2 3
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Adding optional arguments with default values to the functions we define turns out to be pretty easy:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">who</span><span class="o">=</span><span class="s2">&quot;Colin&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello,&quot;</span><span class="p">,</span> <span class="n">who</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hi&quot;</span><span class="p">)</span>
+    
+<span class="n">greet</span><span class="p">()</span>
+<span class="n">greet</span><span class="p">(</span><span class="n">who</span><span class="o">=</span><span class="s2">&quot;Kaggle&quot;</span><span class="p">)</span>
+<span class="c1"># (In this case, we don&#39;t need to specify the name of the argument, because it&#39;s unambiguous.)</span>
+<span class="n">greet</span><span class="p">(</span><span class="s2">&quot;world&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Hello, Colin
+Hi
+Hello, Kaggle
+Hi
+Hello, world
+Hi
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<!-- Mention that non-default args must come before default? -->
+
+<h2 id="Functions-are-objects-too">Functions are objects too<a class="anchor-link" href="#Functions-are-objects-too"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The syntax for creating them may be different, but <code>f</code> and <code>x</code> in the code above aren't so fundamentally different. They're each variables that refer to objects. <code>x</code> refers to an object of type <code>float</code>, and <code>f</code> refers to an object of type... well, let's ask Python:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">2</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="mf">12.5</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>...though what it shows isn't super useful.</p>
+<p>Notice that the code cells above have examples of functions (<code>type</code>, and <code>print</code>) taking <em>another function</em> as input. This opens up some interesting possibilities - we can <em>call</em> the function we receive as an argument.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Call fn on arg&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">squared_call</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Call fn on the result of calling fn on arg&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="n">fn</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="n">call</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">squared_call</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> 
+    <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="c1"># &#39;\n&#39; is the newline character - it starts a new line</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>2
+4
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You probably won't often define <a href="https://en.wikipedia.org/wiki/Higher-order_function">higher order functions</a> like this yourself, but there are some existing ones (built in to Python and in libraries like pandas or numpy) that you might find useful to call. For example, <code>max</code>.</p>
+<p>By default, <code>max</code> returns the largest of its arguments. But if we pass in a function using the optional <code>key</code> argument, it returns the argument <code>x</code> that maximizes <code>key(x)</code> (aka the 'argmax').</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">mod_5</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the remainder of x after dividing by 5&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">5</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s1">&#39;Which number is biggest?&#39;</span><span class="p">,</span>
+    <span class="nb">max</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+    <span class="s1">&#39;Which number is the biggest modulo 5?&#39;</span><span class="p">,</span>
+    <span class="nb">max</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">mod_5</span><span class="p">),</span>
+    <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Which number is biggest?
+100
+Which number is the biggest modulo 5?
+14
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="mi">100</span><span class="o">%</span><span class="k">5</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="mi">51</span><span class="o">%</span><span class="k">5</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="mi">14</span><span class="o">%</span><span class="k">5</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>4</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Exercise:">Exercise:<a class="anchor-link" href="#Exercise:"> </a></h2><p>Rewrite your pay computation and create a function called <strong>computepay</strong> which takes two parameters ( hours and rate).</p>
+<ul>
+<li>Enter Hours: 35</li>
+<li>Enter Rate: 2.75 </li>
+<li>Pay: 96.25</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">computepay</span><span class="p">(</span><span class="n">hours</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">hours</span> <span class="o">*</span> <span class="n">rate</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

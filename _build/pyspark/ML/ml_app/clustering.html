@@ -1,0 +1,986 @@
+---
+redirect_from:
+  - "/pyspark/ml/ml-app/clustering"
+interact_link: content/pyspark/ML/ml_app/clustering.ipynb
+kernel_name: python3
+kernel_path: content/pyspark/ML/ml_app
+has_widgets: false
+title: |-
+  Clustering
+pagenum: 36
+prev_page:
+  url: /pyspark/ML/pipeline/pipeline_applications.html
+next_page:
+  url: /pyspark/ML/ml_app/linear_regression.html
+suffix: .ipynb
+search: clustering silhouette value pipeline kmeans please change k different high well matched clusters configuration too org normalized apache gaussianmixture ranges where indicates object its own cluster poorly neighboring objects appropriate points low negative few en wikipedia wiki here only classes dont forget exercise let data engineering lets create new movement patterns dataset setting good idea experiment values sweet spot closer gets better extend work features need tell feature column order contain normalizer stage sparkml used try algorithms parametrizations using same code below following link reference spark docs latest ml html gaussian mixture model gmm
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Clustering</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Clustering">Clustering<a class="anchor-link" href="#Clustering"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="k">import</span> <span class="n">SparkSession</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="s1">&#39;local[2]&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s1">&#39;clustering_app&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># delete files from previous runs</span>
+<span class="o">!</span>rm -f hmp.parquet*
+
+<span class="c1"># download the file containing the data in PARQUET format</span>
+<span class="o">!</span>wget https://github.com/IBM/coursera/raw/master/hmp.parquet
+    
+<span class="c1"># create a dataframe out of it</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="s1">&#39;hmp.parquet&#39;</span><span class="p">)</span>
+
+<span class="c1"># register a corresponding query table</span>
+<span class="n">df</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s1">&#39;df&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>--2020-01-08 08:58:34--  https://github.com/IBM/coursera/raw/master/hmp.parquet
+Resolving github.com (github.com)... 140.82.113.4
+Connecting to github.com (github.com)|140.82.113.4|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://raw.githubusercontent.com/IBM/coursera/master/hmp.parquet [following]
+--2020-01-08 08:58:34--  https://raw.githubusercontent.com/IBM/coursera/master/hmp.parquet
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 151.101.0.133, 151.101.64.133, 151.101.128.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|151.101.0.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 932997 (911K) [application/octet-stream]
+Saving to: ‘hmp.parquet’
+
+hmp.parquet         100%[===================&gt;] 911.13K  --.-KB/s    in 0.07s   
+
+2020-01-08 08:58:34 (12.1 MB/s) - ‘hmp.parquet’ saved [932997/932997]
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+--------------------+-----------+
+|  x|  y|  z|              source|      class|
++---+---+---+--------------------+-----------+
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|
+| 21| 52| 34|Accelerometer-201...|Brush_teeth|
+| 22| 51| 34|Accelerometer-201...|Brush_teeth|
+| 20| 50| 35|Accelerometer-201...|Brush_teeth|
+| 22| 52| 34|Accelerometer-201...|Brush_teeth|
+| 22| 50| 34|Accelerometer-201...|Brush_teeth|
+| 22| 51| 35|Accelerometer-201...|Brush_teeth|
+| 21| 51| 33|Accelerometer-201...|Brush_teeth|
+| 20| 50| 34|Accelerometer-201...|Brush_teeth|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|
+| 20| 51| 35|Accelerometer-201...|Brush_teeth|
+| 18| 49| 34|Accelerometer-201...|Brush_teeth|
+| 19| 48| 34|Accelerometer-201...|Brush_teeth|
+| 16| 53| 34|Accelerometer-201...|Brush_teeth|
+| 18| 52| 35|Accelerometer-201...|Brush_teeth|
+| 18| 51| 32|Accelerometer-201...|Brush_teeth|
++---+---+---+--------------------+-----------+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.linalg</span> <span class="k">import</span> <span class="n">Vectors</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+
+<span class="n">vectorAssembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">],</span>
+                                  <span class="n">outputCol</span> <span class="o">=</span> <span class="s1">&#39;features&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.clustering</span> <span class="k">import</span> <span class="n">KMeans</span>
+<span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">()</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">vectorAssembler</span><span class="p">,</span> <span class="n">kmeans</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">ClusteringEvaluator</span>
+
+<span class="c1"># Make predictions</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1"># Evaluate clustering by computing Silhouette score</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">ClusteringEvaluator</span><span class="p">()</span>
+
+<span class="n">silhouette</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Silhouette with squared euclidean distance = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">silhouette</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Silhouette with squared euclidean distance = 0.4153293521373778
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The silhouette ranges from −1 to +1, where a high value indicates that the object is well matched to its own cluster and poorly matched to neighboring clusters. If most objects have a high value, then the clustering configuration is appropriate. If many points have a low or negative value, then the clustering configuration may have too many or too few clusters.<a href="https://en.wikipedia.org/wiki/Silhouette">Silhouette</a></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we use only two classes</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s1">&#39;df_table&#39;</span><span class="p">)</span>
+<span class="n">df2</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;select * from df where class in (&#39;Climb_stairs&#39;, &#39;Brush_teeth&#39;)&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Don't forget to change the K value</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.clustering</span> <span class="k">import</span> <span class="n">KMeans</span>
+<span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">()</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">vectorAssembler</span><span class="p">,</span> <span class="n">kmeans</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model2</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">ClusteringEvaluator</span>
+
+<span class="c1"># Make predictions</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model2</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df2</span><span class="p">)</span>
+
+<span class="c1"># Evaluate clustering by computing Silhouette score</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">ClusteringEvaluator</span><span class="p">()</span>
+
+<span class="n">silhouette</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Silhouette with squared euclidean distance = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">silhouette</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Silhouette with squared euclidean distance = 0.6233363868811865
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Exercise">Exercise<a class="anchor-link" href="#Exercise"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Let-do-the-Data-Engineering">Let do the Data Engineering<a class="anchor-link" href="#Let-do-the-Data-Engineering"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">OneHotEncoder</span><span class="p">,</span> <span class="n">StringIndexer</span><span class="p">,</span> <span class="n">VectorAssembler</span><span class="p">,</span> <span class="n">Normalizer</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.linalg</span> <span class="k">import</span> <span class="n">Vectors</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
+
+<span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;classIndex&quot;</span><span class="p">)</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;classIndex&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;categoryVec&quot;</span><span class="p">)</span>
+<span class="n">vectorAssembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="s2">&quot;z&quot;</span><span class="p">],</span>
+                                  <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<span class="n">normalizer</span> <span class="o">=</span> <span class="n">Normalizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features_norm&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">indexer</span><span class="p">,</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">vectorAssembler</span><span class="p">,</span> <span class="n">normalizer</span><span class="p">])</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">prediction</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+--------------------+-----------+----------+--------------+----------------+--------------------+
+|  x|  y|  z|              source|      class|classIndex|   categoryVec|        features|       features_norm|
++---+---+---+--------------------+-----------+----------+--------------+----------------+--------------------+
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,49.0,35.0]|[0.20754716981132...|
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,49.0,35.0]|[0.20754716981132...|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,52.0,35.0]|[0.20183486238532...|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,52.0,35.0]|[0.20183486238532...|
+| 21| 52| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[21.0,52.0,34.0]|[0.19626168224299...|
+| 22| 51| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,51.0,34.0]|[0.20560747663551...|
+| 20| 50| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[20.0,50.0,35.0]|[0.19047619047619...|
+| 22| 52| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,52.0,34.0]|[0.20370370370370...|
+| 22| 50| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,50.0,34.0]|[0.20754716981132...|
+| 22| 51| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,51.0,35.0]|[0.20370370370370...|
+| 21| 51| 33|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[21.0,51.0,33.0]|[0.2,0.4857142857...|
+| 20| 50| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[20.0,50.0,34.0]|[0.19230769230769...|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[21.0,49.0,33.0]|[0.20388349514563...|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[21.0,49.0,33.0]|[0.20388349514563...|
+| 20| 51| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[20.0,51.0,35.0]|[0.18867924528301...|
+| 18| 49| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[18.0,49.0,34.0]|[0.17821782178217...|
+| 19| 48| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[19.0,48.0,34.0]|[0.18811881188118...|
+| 16| 53| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[16.0,53.0,34.0]|[0.15533980582524...|
+| 18| 52| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[18.0,52.0,35.0]|[0.17142857142857...|
+| 18| 51| 32|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[18.0,51.0,32.0]|[0.17821782178217...|
++---+---+---+--------------------+-----------+----------+--------------+----------------+--------------------+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now let’s create a new pipeline for kmeans.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.clustering</span> <span class="k">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">ClusteringEvaluator</span>
+
+<span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">vectorAssembler</span><span class="p">,</span> <span class="n">kmeans</span><span class="p">])</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">ClusteringEvaluator</span><span class="p">()</span>
+
+<span class="n">silhouette</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Silhouette with squared euclidean distance = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">silhouette</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Silhouette with squared euclidean distance = 0.41244594513295846
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We have 14 different movement patterns in the dataset, so setting K of KMeans to 14 is a good idea. But please experiment with different values for K, do you find a sweet spot? The closer Silhouette gets to 1, the better.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># please change the pipeline the check performance for different K, feel free to use a loop</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">17</span><span class="p">):</span>
+  <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">vectorAssembler</span><span class="p">,</span> <span class="n">kmeans</span><span class="p">])</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+  <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+  <span class="n">evaluator</span> <span class="o">=</span> <span class="n">ClusteringEvaluator</span><span class="p">()</span>
+  <span class="n">silhouette</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The value of K is: &quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Silhouette with squared euclidean distance = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">silhouette</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The value of K is:  10
+Silhouette with squared euclidean distance = 0.47370428136987536
+The value of K is:  11
+Silhouette with squared euclidean distance = 0.4819049717562352
+The value of K is:  12
+Silhouette with squared euclidean distance = 0.40964155503229643
+The value of K is:  13
+Silhouette with squared euclidean distance = 0.4153293521373778
+The value of K is:  14
+Silhouette with squared euclidean distance = 0.41244594513295846
+The value of K is:  15
+Silhouette with squared euclidean distance = 0.41771495579360896
+The value of K is:  16
+Silhouette with squared euclidean distance = 0.39594610810727193
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now please extend the pipeline to work on the normalized features. You need to tell KMeans to use the normalized feature column and change the pipeline in order to contain the normalizer stage as well.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="err">$$</span><span class="p">)</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="err">$$</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">ClusteringEvaluator</span><span class="p">()</span>
+
+<span class="n">silhouette</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Silhouette with squared euclidean distance = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">silhouette</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">featuresCol</span><span class="o">=</span><span class="s1">&#39;features_norm&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">vectorAssembler</span><span class="p">,</span> <span class="n">normalizer</span><span class="p">,</span> <span class="n">kmeans</span><span class="p">])</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">ClusteringEvaluator</span><span class="p">()</span>
+
+<span class="n">silhouette</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Silhouette with squared euclidean distance = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">silhouette</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Silhouette with squared euclidean distance = 0.39594610810727193
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="n">col</span>
+<span class="n">df_denormalized</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">),(</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="p">)])</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s1">&#39;(x * 10)&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_denormalized</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+--------------------+-----------+---+
+|  y|  z|              source|      class|  x|
++---+---+--------------------+-----------+---+
+| 49| 35|Accelerometer-201...|Brush_teeth|220|
+| 49| 35|Accelerometer-201...|Brush_teeth|220|
+| 52| 35|Accelerometer-201...|Brush_teeth|220|
+| 52| 35|Accelerometer-201...|Brush_teeth|220|
+| 52| 34|Accelerometer-201...|Brush_teeth|210|
+| 51| 34|Accelerometer-201...|Brush_teeth|220|
+| 50| 35|Accelerometer-201...|Brush_teeth|200|
+| 52| 34|Accelerometer-201...|Brush_teeth|220|
+| 50| 34|Accelerometer-201...|Brush_teeth|220|
+| 51| 35|Accelerometer-201...|Brush_teeth|220|
+| 51| 33|Accelerometer-201...|Brush_teeth|210|
+| 50| 34|Accelerometer-201...|Brush_teeth|200|
+| 49| 33|Accelerometer-201...|Brush_teeth|210|
+| 49| 33|Accelerometer-201...|Brush_teeth|210|
+| 51| 35|Accelerometer-201...|Brush_teeth|200|
+| 49| 34|Accelerometer-201...|Brush_teeth|180|
+| 48| 34|Accelerometer-201...|Brush_teeth|190|
+| 53| 34|Accelerometer-201...|Brush_teeth|160|
+| 52| 35|Accelerometer-201...|Brush_teeth|180|
+| 51| 32|Accelerometer-201...|Brush_teeth|180|
++---+---+--------------------+-----------+---+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">vectorAssembler</span><span class="p">,</span> <span class="n">kmeans</span><span class="p">])</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_denormalized</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_denormalized</span><span class="p">)</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">ClusteringEvaluator</span><span class="p">()</span>
+
+<span class="n">silhouette</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Silhouette with squared euclidean distance = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">silhouette</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Silhouette with squared euclidean distance = 0.5709023393004293
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Apache SparkML can be used to try many different algorithms and parametrizations using the same pipeline. Please change the code below to use GaussianMixture over KMeans. Please use the following link for your reference.
+<a href="https://spark.apache.org/docs/latest/ml-clustering.html#gaussian-mixture-model-gmm">GaussianMixture</a></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.clustering</span> <span class="k">import</span> <span class="n">GaussianMixture</span>
+
+<span class="n">gmm</span> <span class="o">=</span> <span class="err">$$</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="err">$$</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">ClusteringEvaluator</span><span class="p">()</span>
+
+<span class="n">silhouette</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Silhouette with squared euclidean distance = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">silhouette</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.clustering</span> <span class="k">import</span> <span class="n">GaussianMixture</span>
+
+<span class="n">gmm</span> <span class="o">=</span> <span class="n">GaussianMixture</span><span class="p">(</span><span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">vectorAssembler</span><span class="p">,</span> <span class="n">gmm</span><span class="p">])</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">ClusteringEvaluator</span><span class="p">()</span>
+
+<span class="n">silhouette</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Silhouette with squared euclidean distance = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">silhouette</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Silhouette with squared euclidean distance = 0.15906267433367427
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.clustering</span> <span class="k">import</span> <span class="n">GaussianMixture</span>
+
+<span class="n">gmm</span> <span class="o">=</span> <span class="n">GaussianMixture</span><span class="p">(</span><span class="n">featuresCol</span><span class="o">=</span><span class="s1">&#39;features_norm&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">vectorAssembler</span><span class="p">,</span> <span class="n">normalizer</span><span class="p">,</span> <span class="n">gmm</span><span class="p">])</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">ClusteringEvaluator</span><span class="p">()</span>
+
+<span class="n">silhouette</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Silhouette with squared euclidean distance = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">silhouette</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Silhouette with squared euclidean distance = 0.15906267433367427
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

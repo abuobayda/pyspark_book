@@ -1,0 +1,4324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+
+  <title>Machine Learning with PySpark MLlib</title>
+  <meta name="description" content="        Machine Learning with PySpark MLlib    Machine Learning with PySpark     from pyspark.sql import SparkSessionfrom pyspark.sql.functions import *impor...">
+
+  <link rel="canonical" href="http://127.0.0.1:4000//pyspark/ML/ML_Spark/2_Machine_Learning_pyspark.html">
+  <link rel="alternate" type="application/rss+xml" title="" href="http://127.0.0.1:4000//feed.xml">
+
+  <meta property="og:url"         content="http://127.0.0.1:4000//pyspark/ML/ML_Spark/2_Machine_Learning_pyspark.html" />
+<meta property="og:type"        content="article" />
+<meta property="og:title"       content="Machine Learning with PySpark MLlib" />
+<meta property="og:description" content="        Machine Learning with PySpark MLlib    Machine Learning with PySpark     from pyspark.sql import SparkSessionfrom pyspark.sql.functions import *impor..." />
+<meta property="og:image"       content="http://127.0.0.1:4000//images/logo/logo.png" />
+
+<meta name="twitter:card" content="summary">
+
+
+  <script type="application/ld+json">
+  {
+  "@context": "http://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": "http://127.0.0.1:4000//pyspark/ML/ML_Spark/2_Machine_Learning_pyspark.html",
+  "headline": "Machine Learning with PySpark MLlib",
+  "datePublished": "2020-01-27T12:08:23+02:00",
+  "dateModified": "2020-01-27T12:08:23+02:00",
+  "description": "        Machine Learning with PySpark MLlib    Machine Learning with PySpark     from pyspark.sql import SparkSessionfrom pyspark.sql.functions import *impor...",
+  "author": {
+    "@type": "Person",
+    "name": "Dr. Abuobayda Shabat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Data 100 at UC Berkeley",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://127.0.0.1:4000/",
+      "width": 60,
+      "height": 60
+    }
+  },
+  "image": {
+    "@type": "ImageObject",
+    "url": "http://127.0.0.1:4000/",
+    "height": 60,
+    "width": 60
+  }
+}
+
+  </script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+
+  <!-- <link rel="manifest" href="/manifest.json"> -->
+  <!-- <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#efae0a"> -->
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+  <meta name="theme-color" content="#233947">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="/images/logo/favicon.ico">
+
+  <!-- MathJax Config -->
+  <!-- Allow inline math using $ and automatically break long math lines -->
+<!-- (mostly) copied from nbconvert configuration -->
+<!-- https://github.com/jupyter/nbconvert/blob/master/nbconvert/templates/html/mathjax.tpl -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true,
+        processEnvironments: true
+    },
+    // Center justify equations in code and markdown cells. Elsewhere
+    // we use CSS to left justify single line equations in code cells.
+    displayAlign: 'center',
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}},
+        linebreaks: { automatic: true },
+    },
+    
+});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML' async></script>
+
+
+  <!-- DOM updating function -->
+  <script src="/assets/js/page/dom-update.js"></script>
+
+  <!-- Selectors for elements on the page -->
+  <script src="/assets/js/page/documentSelectors.js"></script>
+
+  <!-- Define some javascript variables that will be useful in other javascript -->
+  <script>
+    const site_basename = '';
+  </script>
+
+  <!-- Add AnchorJS to let headers be linked -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.min.js" async></script>
+  <script src="/assets/js/page/anchors.js" async></script>
+
+  <!-- Include Turbolinks to make page loads fast -->
+  <!-- https://github.com/turbolinks/turbolinks -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js" async></script>
+  <meta name="turbolinks-cache-control" content="no-cache">
+
+  <!-- Load nbinteract for widgets -->
+  
+
+  <!-- Load Thebelab for interactive widgets -->
+  <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+<!-- Display Thebelab button in each code cell -->
+<script>
+/**
+ * Set up thebelab button for code blocks
+ */
+
+const thebelabCellButton = id =>
+  `<a id="thebelab-cell-button-${id}" class="btn thebebtn o-tooltip--left" data-tooltip="Interactive Mode">
+    <img src="/assets/images/edit-button.svg" alt="Start thebelab interactive mode">
+  </a>`
+
+
+const addThebelabButtonToCodeCells =  () => {
+
+  const codeCells = document.querySelectorAll('div.input_area > div.highlight:not(.output) pre')
+  codeCells.forEach((codeCell, index) => {
+    const id = codeCellId(index)
+    codeCell.setAttribute('id', id)
+    if (document.getElementById("thebelab-cell-button-" + id) == null) {
+      codeCell.insertAdjacentHTML('afterend', thebelabCellButton(id));
+    }
+  })
+}
+
+initFunction(addThebelabButtonToCodeCells);
+</script>
+
+
+<script src="https://unpkg.com/thebelab@latest/lib/index.js" async></script>
+<script>
+    /**
+     * Add attributes to Thebelab blocks
+     */
+
+    const initThebelab = () => {
+        const addThebelabToCodeCells = () => {
+            console.log("Adding thebelab to code cells...");
+            // If Thebelab hasn't loaded, wait a bit and try again. This
+            // happens because we load ClipboardJS asynchronously.
+            if (window.thebelab === undefined) {
+                setTimeout(addThebelabToCodeCells, 250)
+            return
+            }
+
+            // If we already detect a Thebelab cell, don't re-run
+            if (document.querySelectorAll('div.thebelab-cell').length > 0) {
+                return;
+            }
+
+            // Find all code cells, replace with Thebelab interactive code cells
+            const codeCells = document.querySelectorAll('.input_area pre')
+            codeCells.forEach((codeCell, index) => {
+                const id = codeCellId(index)
+
+                // Clean up the language to make it work w/ CodeMirror and add it to the cell
+                dataLanguage = ""
+                dataLanguage = detectLanguage(dataLanguage);
+                codeCell.setAttribute('data-language', dataLanguage)
+                codeCell.setAttribute('data-executable', 'true')
+
+                // If the code cell is hidden, show it
+                var inputCheckbox = document.querySelector(`input#hidebtn${codeCell.id}`);
+                if (inputCheckbox !== null) {
+                    setCodeCellVisibility(inputCheckbox, 'visible');
+                }
+            });
+
+            // Remove the event listener from the page so keyboard press doesn't
+            // Change page
+            document.removeEventListener('keydown', initPageNav)
+            keyboardListener = false;
+
+            // Init thebelab
+            thebelab.bootstrap();
+
+            // Remove copy buttons since they won't work anymore
+            const copyAndThebeButtons = document.querySelectorAll('.copybtn, .thebebtn')
+            copyAndThebeButtons.forEach((button, index) => {
+                button.remove();
+            });
+
+            // Remove outputs since they'll be stale
+            const outputs = document.querySelectorAll('.output *, .output')
+            outputs.forEach((output, index) => {
+                output.remove();
+            });
+
+            // Find any cells with an initialization tag and ask ThebeLab to run them when ready
+            var thebeInitCells = document.querySelectorAll('div.tag_thebelab-init');
+            thebeInitCells.forEach((cell) => {
+                console.log("Initializing ThebeLab with cell: " + cell.id);
+                cell.querySelector('.thebelab-run-button').click();
+            });
+        }
+
+        // Add event listener for the function to modify code cells
+        const thebelabButtons = document.querySelectorAll('[id^=thebelab], [id$=thebelab]')
+        thebelabButtons.forEach((thebelabButton,index) => {
+            if (thebelabButton === null) {
+                setTimeout(initThebelab, 250)
+                return
+            };
+            thebelabButton.addEventListener('click', addThebelabToCodeCells);
+        });
+    }
+
+    // Initialize Thebelab
+    initFunction(initThebelab);
+
+// Helper function to munge the language name
+var detectLanguage = (language) => {
+    if (language.indexOf('python') > -1) {
+        language = "python";
+    }
+    return language;
+}
+</script>
+
+
+
+  <!-- Load the auto-generating TOC (non-async otherwise the TOC won't load w/ turbolinks) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js" async></script>
+  <script src="/assets/js/page/tocbot.js"></script>
+
+  <!-- Google analytics -->
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-52617120-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-52617120-7');
+</script>
+
+
+
+  <!-- Clipboard copy button -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script>
+
+  <!-- Load custom website scripts -->
+  <script src="/assets/js/scripts.js" async></script>
+
+  <!-- Load custom user CSS and JS  -->
+  <script src="/assets/custom/custom.js" async></script>
+  <link rel="stylesheet" href="/assets/custom/custom.css">
+
+  <!-- Update interact links w/ REST param, is defined in includes so we can use templates -->
+  
+<script>
+/**
+  * To auto-embed hub URLs in interact links if given in a RESTful fashion
+ */
+
+function getJsonFromUrl(url) {
+  var query = url.split('?');
+  if (query.length < 2) {
+    // No queries so just return false
+    return false;
+  }
+  query = query[1];
+  // Collect REST params into a dictionary
+  var result = {};
+  query.split("&").forEach(function(part) {
+    var item = part.split("=");
+    result[item[0]] = decodeURIComponent(item[1]);
+  });
+  return result;
+}
+    
+function dict2param(dict) {
+    params = Object.keys(dict).map(function(k) {
+        return encodeURIComponent(k) + '=' + encodeURIComponent(dict[k])
+    });
+    return params.join('&')
+}
+
+// Parse a Binder URL, converting it to the string needed for JupyterHub
+function binder2Jupyterhub(url) {
+  newUrl = {};
+  parts = url.split('v2/gh/')[1];
+  // Grab the base repo information
+  repoinfo = parts.split('?')[0];
+  var [org, repo, ref] = repoinfo.split('/');
+  newUrl['repo'] = ['https://github.com', org, repo].join('/');
+  newUrl['branch'] = ref
+  // Grab extra parameters passed
+  params = getJsonFromUrl(url);
+  if (params['filepath'] !== undefined) {
+    newUrl['subPath'] = params['filepath']
+  }
+  return dict2param(newUrl);
+}
+
+// Filter out potentially unsafe characters to prevent xss
+function safeUrl(url)
+{
+   return String(encodeURIComponent(url))
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+}
+
+function addParamToInternalLinks(hub) {
+  var links = document.querySelectorAll("a").forEach(function(link) {
+    var href = link.href;
+    // If the link is an internal link...
+    if (href.search("http://127.0.0.1:4000/") !== -1 || href.startsWith('/') || href.search("127.0.0.1:") !== -1) {
+      // Assume we're an internal link, add the hub param to it
+      var params = getJsonFromUrl(href);
+      if (params !== false) {
+        // We have REST params, so append a new one
+        params['jupyterhub'] = hub;
+      } else {
+        // Create the REST params
+        params = {'jupyterhub': hub};
+      }
+      // Update the link
+      var newHref = href.split('?')[0] + '?' + dict2param(params);
+      link.setAttribute('href', decodeURIComponent(newHref));
+    }
+  });
+  return false;
+}
+
+
+// Update interact links
+function updateInteractLink() {
+    // hack to make this work since it expects a ? in the URL
+    rest = getJsonFromUrl("?" + location.search.substr(1));
+    jupyterHubUrl = rest['jupyterhub'];
+    var hubType = null;
+    var hubUrl = null;
+    if (jupyterHubUrl !== undefined) {
+      hubType = 'jupyterhub';
+      hubUrl = jupyterHubUrl;
+    }
+
+    if (hubType !== null) {
+      // Sanitize the hubUrl
+      hubUrl = safeUrl(hubUrl);
+
+      // Add HTTP text if omitted
+      if (hubUrl.indexOf('http') < 0) {hubUrl = 'http://' + hubUrl;}
+      var interactButtons = document.querySelectorAll("button.interact-button")
+      var lastButton = interactButtons[interactButtons.length-1];
+      var link = lastButton.parentElement;
+
+      // If we've already run this, skip the link updating
+      if (link.nextElementSibling !== null) {
+        return;
+      }
+
+      // Update the link and add context div
+      var href = link.getAttribute('href');
+      if (lastButton.id === 'interact-button-binder') {
+        // If binder links exist, we need to re-work them for jupyterhub
+        if (hubUrl.indexOf('http%3A%2F%2Flocalhost') > -1) {
+          // If localhost, assume we're working from a local Jupyter server and remove `/hub`
+          first = [hubUrl, 'git-sync'].join('/')
+        } else {
+          first = [hubUrl, 'hub', 'user-redirect', 'git-sync'].join('/')
+        }
+        href = first + '?' + binder2Jupyterhub(href);
+      } else {
+        // If interact button isn't binderhub, assume it's jupyterhub
+        // If JupyterHub links, we only need to replace the hub url
+        href = href.replace("", hubUrl);
+        if (hubUrl.indexOf('http%3A%2F%2Flocalhost') > -1) {
+          // Assume we're working from a local Jupyter server and remove `/hub`
+          href = href.replace("/hub/user-redirect", "");
+        }
+      }
+      link.setAttribute('href', decodeURIComponent(href));
+
+      // Add text after interact link saying where we're launching
+      hubUrlNoHttp = decodeURIComponent(hubUrl).replace('http://', '').replace('https://', '');
+      link.insertAdjacentHTML('afterend', '<div class="interact-context">on ' + hubUrlNoHttp + '</div>');
+
+      // Update internal links so we retain the hub url
+      addParamToInternalLinks(hubUrl);
+    }
+}
+
+runWhenDOMLoaded(updateInteractLink)
+document.addEventListener('turbolinks:load', updateInteractLink)
+</script>
+
+
+  <!-- Lunr search code - will only be executed on the /search page -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.6/lunr.min.js" async></script>
+  <script>var initQuery = function() {
+  // See if we have a search box
+  var searchInput = document.querySelector('input#lunr_search');
+  if (searchInput === null) {
+    return;
+  }
+
+  // Function to parse our lunr cache
+  var idx = lunr(function () {
+    this.field('title')
+    this.field('excerpt')
+    this.field('categories')
+    this.field('tags')
+    this.ref('id')
+
+    this.pipeline.remove(lunr.trimmer)
+
+    for (var item in store) {
+      this.add({
+        title: store[item].title,
+        excerpt: store[item].excerpt,
+        categories: store[item].categories,
+        tags: store[item].tags,
+        id: item
+      })
+    }
+  });
+
+  // Run search upon keyup
+  searchInput.addEventListener('keyup', function () {
+    var resultdiv = document.querySelector('#results');
+    var query = document.querySelector("input#lunr_search").value.toLowerCase();
+    var result =
+      idx.query(function (q) {
+        query.split(lunr.tokenizer.separator).forEach(function (term) {
+          q.term(term, { boost: 100 })
+          if(query.lastIndexOf(" ") != query.length-1){
+            q.term(term, {  usePipeline: false, wildcard: lunr.Query.wildcard.TRAILING, boost: 10 })
+          }
+          if (term != ""){
+            q.term(term, {  usePipeline: false, editDistance: 1, boost: 1 })
+          }
+        })
+      });
+
+      // Empty the results div
+      while (resultdiv.firstChild) {
+        resultdiv.removeChild(resultdiv.firstChild);
+      }
+
+    resultdiv.insertAdjacentHTML('afterbegin', '<p class="results__found">'+result.length+' Result(s) found</p>');
+    for (var item in result) {
+      var ref = result[item].ref;
+      if(store[ref].teaser){
+        var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<div class="archive__item-teaser">'+
+                '<img src="'+store[ref].teaser+'" alt="">'+
+              '</div>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      else{
+    	  var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      resultdiv.insertAdjacentHTML('beforeend', searchitem);
+    }
+  });
+};
+
+initFunction(initQuery);
+</script>
+
+  <!-- Load JS that depends on site variables -->
+  <script src="/assets/js/page/copy-button.js" async></script>
+
+  <!-- Hide cell code -->
+  <script src="/assets/js/page/hide-cell.js" async></script>
+
+  <!-- Printing the screen -->
+  <!-- Include nbinteract for interactive widgets -->
+<script src="https://printjs-4de6.kxcdn.com/print.min.js" async></script>
+<script>
+printContent = () => {
+    // MathJax displays a second version of any math for assistive devices etc.
+    // This prevents double-rendering in the PDF output.
+    var ignoreAssistList = [];
+    assistives = document.querySelectorAll('.MathJax_Display span.MJX_Assistive_MathML').forEach((element, index) => {
+        var thisId = 'MathJax-assistive-' + index.toString();
+        element.setAttribute('id', thisId);
+        ignoreAssistList.push(thisId)
+    });
+
+    // Print the actual content object
+    printJS({
+        printable: 'textbook_content',
+        type: 'html',
+        css: "/assets/css/styles.css",
+        style: "#textbook_content {padding-top: 40px};",
+        scanStyles: false,
+        targetStyles: ["*"],
+        ignoreElements: ignoreAssistList,
+        documentTitle: "Made with Jupyter Book"
+    })
+};
+
+initPrint = () => {
+    document.querySelector('#interact-button-print').addEventListener('click', printContent)
+}
+
+initFunction(initPrint)
+</script>
+
+</head>
+
+  <body>
+    <!-- Include the ThebeLab config so it gets reloaded on each page -->
+    <script type="text/x-thebe-config">{
+    requestKernel: true,
+    binderOptions: {
+    repo: "jupyter/jupyter-book",
+    ref: "gh-pages",
+    },
+    codeMirrorConfig: {
+    theme: "abcdef",
+    mode: "python"
+    },
+    kernelOptions: {
+    kernelName: "python3",
+    path: "content/pyspark/ML/ML_Spark"
+    }
+}
+</script>
+
+    <!-- .js-show-sidebar shows sidebar by default -->
+    <div id="js-textbook" class="c-textbook js-show-sidebar">
+      
+
+
+
+<nav id="js-sidebar" class="c-textbook__sidebar">
+  <a href="https://www.zyelabs.net/"><img src="/images/logo/logo.png" class="textbook_logo" id="sidebar-logo" alt="textbook logo" data-turbolinks-permanent/></a>
+  <h2 class="c-sidebar__title"></h2>
+  <ul class="c-sidebar__chapters">
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/intro">
+        <a class="c-sidebar__entry"
+          href="/intro.html"
+        >
+          
+          Introduction
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/pyspark/big_data/Intro_to_bigdata">
+        <a class="c-sidebar__entry"
+          href="/pyspark/big_data/Intro_to_bigdata.html"
+        >
+          
+            1.
+          
+          Introduction to Big Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+        
+
+        
+
+        <ul class="c-sidebar__sections u-hidden-visually">
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/four_v">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/four_v.html"
+              >
+                
+                  1.1
+                
+                The Four V's of Big Data
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/volume">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/volume.html"
+                  >
+                    
+                      1.1.1
+                      
+                    
+                    Volume
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/variety">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/variety.html"
+                  >
+                    
+                      1.1.2
+                      
+                    
+                    Variety
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/velocity">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/velocity.html"
+                  >
+                    
+                      1.1.3
+                      
+                    
+                    Velocity
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/veracity">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/veracity.html"
+                  >
+                    
+                      1.1.4
+                      
+                    
+                    Veracity
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/data/intro">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/data/intro.html"
+              >
+                
+                  1.2
+                
+                Different Data Types
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/data/struct">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/data/struct.html"
+                  >
+                    
+                      1.2.1
+                      
+                    
+                    Structured Data
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/data/unstruct">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/data/unstruct.html"
+                  >
+                    
+                      1.2.2
+                      
+                    
+                    Un-structured Data
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/data/semi">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/data/semi.html"
+                  >
+                    
+                      1.2.3
+                      
+                    
+                    Semi-structured Data
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/key/governance">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/key/governance.html"
+              >
+                
+                  1.3
+                
+                Data Governance
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/key/security">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/key/security.html"
+              >
+                
+                  1.4
+                
+                Data Security
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/big_data/1/data_science/intro">
+              <a class="c-sidebar__entry"
+                href="/pyspark/big_data/1/data_science/intro.html"
+              >
+                
+                  1.5
+                
+                Introduction to Data Science
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/big_data/1/data_science/process">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/big_data/1/data_science/process.html"
+                  >
+                    
+                      1.5.1
+                      
+                    
+                    Data Science Process
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+        </ul>
+      
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/pyspark/03/programming-in-python">
+        <a class="c-sidebar__entry"
+          href="/pyspark/03/programming-in-python.html"
+        >
+          
+            2.
+          
+          Programming in Python
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+        
+
+        
+
+        <ul class="c-sidebar__sections u-hidden-visually">
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/1/Expressions">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/1/Expressions.html"
+              >
+                
+                  2.1
+                
+                Expressions
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/2/Names">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/2/Names.html"
+              >
+                
+                  2.2
+                
+                Names
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/03/2/1/Growth">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/03/2/1/Growth.html"
+                  >
+                    
+                      2.2.1
+                      
+                    
+                    Example: Growth Rates
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/3/Calls">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/3/Calls.html"
+              >
+                
+                  2.3
+                
+                Call Expressions
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/4/Introduction_to_Tables">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/4/Introduction_to_Tables.html"
+              >
+                
+                  2.4
+                
+                Introduction to Tables
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/5/function">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/5/function.html"
+              >
+                
+                  2.5
+                
+                Introduction to Functions
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/6/conditions">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/6/conditions.html"
+              >
+                
+                  2.6
+                
+                Conditions
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/7/list">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/7/list.html"
+              >
+                
+                  2.7
+                
+                List
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/8/loop">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/8/loop.html"
+              >
+                
+                  2.8
+                
+                Loops
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/9/string_dictionary">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/9/string_dictionary.html"
+              >
+                
+                  2.9
+                
+                Introduction to Data Structure
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03/10/numpy">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03/10/numpy.html"
+              >
+                
+                  2.10
+                
+                Introduction to Numpy
+              </a>
+            </li>
+            
+            
+          
+        </ul>
+      
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/Intro_to_pyspark">
+        <a class="c-sidebar__entry"
+          href="/Intro_to_pyspark.html"
+        >
+          
+            3.
+          
+          Introduction to PySpark
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+        
+
+        
+
+        <ul class="c-sidebar__sections u-hidden-visually">
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/02_rdd/2_Pyspark_RDD">
+              <a class="c-sidebar__entry"
+                href="/pyspark/02_rdd/2_Pyspark_RDD.html"
+              >
+                
+                  3.1
+                
+                PySpark RDD
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/02_rdd/Simple_statistical_analysis">
+              <a class="c-sidebar__entry"
+                href="/pyspark/02_rdd/Simple_statistical_analysis.html"
+              >
+                
+                  3.2
+                
+                Simple Statistical Analysis
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03_dataframe/3_functional_programming">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03_dataframe/3_functional_programming.html"
+              >
+                
+                  3.3
+                
+                Functional Programming
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/03_dataframe/4_PySpark_dataframe">
+              <a class="c-sidebar__entry"
+                href="/pyspark/03_dataframe/4_PySpark_dataframe.html"
+              >
+                
+                  3.4
+                
+                PySpark Dataframe
+              </a>
+            </li>
+            
+            
+          
+        </ul>
+      
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/pyspark/ML/1_Intro_Machine_Learning">
+        <a class="c-sidebar__entry"
+          href="/pyspark/ML/1_Intro_Machine_Learning.html"
+        >
+          
+            4.
+          
+          Introduction to Machine Learning
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+        
+
+        
+
+        <ul class="c-sidebar__sections u-hidden-visually">
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ML_Spark/2_Machine_Learning_pyspark">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ML_Spark/2_Machine_Learning_pyspark.html"
+              >
+                
+                  4.1
+                
+                Machine Learning with PySpark MLlib
+              </a>
+            </li>
+            
+              
+              <ul class='c-sidebar__subsections u-hidden-visually'>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/ML/pipeline/pipeline_feature_eng">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/ML/pipeline/pipeline_feature_eng.html"
+                  >
+                    
+                      4.1.1
+                      
+                    
+                    Feature Engineering Pipeline
+                  </a>
+                </li>
+              
+                
+                
+                
+                
+                <li class="c-sidebar__subsection" data-url="/pyspark/ML/pipeline/pipeline_applications">
+                  <a class="c-sidebar__entry"
+                    href="/pyspark/ML/pipeline/pipeline_applications.html"
+                  >
+                    
+                      4.1.2
+                      
+                    
+                    Pipeline Applications
+                  </a>
+                </li>
+              
+              </ul>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ml_app/clustering">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ml_app/clustering.html"
+              >
+                
+                  4.2
+                
+                Clustering
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ml_app/linear_regression">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ml_app/linear_regression.html"
+              >
+                
+                  4.3
+                
+                Linear Regression
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ml_app/LogisticRegression">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ml_app/LogisticRegression.html"
+              >
+                
+                  4.4
+                
+                Logistic Regression
+              </a>
+            </li>
+            
+            
+          
+            
+            
+
+            
+            
+            
+            
+
+            <li class="c-sidebar__section" data-url="/pyspark/ML/ml_app/Predicting_the_chances_of_infant_survival_with_ML">
+              <a class="c-sidebar__entry"
+                href="/pyspark/ML/ml_app/Predicting_the_chances_of_infant_survival_with_ML.html"
+              >
+                
+                  4.5
+                
+                Infant Survival Application
+              </a>
+            </li>
+            
+            
+          
+        </ul>
+      
+
+      
+    
+  </ul>
+  <p class="sidebar_footer">Powered by <a href="https://jupyterbook.org">Jupyter Book</a></p>
+</nav>
+
+      
+      <div class="c-topbar" id="top-navbar">
+  <!-- We show the sidebar by default so we use .is-active -->
+  <div class="c-topbar__buttons">
+    <button
+      id="js-sidebar-toggle"
+      class="hamburger hamburger--arrowalt is-active"
+    >
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+    </button>
+    <div class="buttons">
+<div class="download-buttons-dropdown">
+    <button id="dropdown-button-trigger" class="interact-button"><img src="/assets/images/download-solid.svg" alt="Download" /></button>
+    <div class="download-buttons">
+        <a href="/content/pyspark/ML/ML_Spark/2_Machine_Learning_pyspark.ipynb" download>
+        <button id="interact-button-download" class="interact-button">.ipynb</button>
+        </a>
+        
+        <a id="interact-button-print"><button id="interact-button-download" class="interact-button">.pdf</button></a>
+    </div>
+</div>
+
+
+  <button id="interact-button-thebelab" class="interact-button">Thebelab</button>
+
+  
+  
+
+
+
+
+
+
+<a href="https://mybinder.org/v2/gh/jupyter/jupyter-book/gh-pages?urlpath=lab/tree/content%2Fpyspark%2FML%2FML_Spark%2F2_Machine_Learning_pyspark.ipynb"><button class="interact-button" id="interact-button-binder"><img class="interact-button-logo" src="/assets/images/logo_binder.svg" alt="Interact" />Interact</button></a>
+  
+
+
+</div>
+
+  </div>
+  <!-- Empty sidebar placeholder that we'll auto-fill with javascript -->
+  <aside class="sidebar__right">
+    <header><h4 class="nav__title"><img src="/assets/images/list-solid.svg" alt="Search" />   On this page</h4></header>
+    <nav class="onthispage">
+    </nav>
+  </aside>
+  <a href="/search.html" class="topbar-right-button" id="search-button">
+    <img src="/assets/images/search-solid.svg" alt="Search" />
+  </a>
+</div>
+
+      <main class="c-textbook__page" tabindex="-1">
+            <div class="c-textbook__content" id="textbook_content">
+                  <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Machine Learning with PySpark MLlib</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Machine-Learning-with-PySpark">Machine Learning with PySpark<a class="anchor-link" href="#Machine-Learning-with-PySpark"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="k">import</span> <span class="n">SparkSession</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="s1">&#39;local[2]&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s1">&#39;first_spark_ML_application&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="https://learning.oreilly.com/library/view/spark-the-definitive/9781491912201/assets/spdg_2402.png" alt="alt text"></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="What-is-PySpark-MLlib?">What is PySpark MLlib?<a class="anchor-link" href="#What-is-PySpark-MLlib?"> </a></h2><p>Spark MLlib is short for spark machine learning library. Machine learning in PySpark is easy to use and scalable. It works on distributed systems. We use in Spark machine learning for data analysis. We get the benefit of various machine learning algorithms such as Regression, classification etc, because of the PySpark MLlib.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data">Data<a class="anchor-link" href="#Data"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="flight-dataset">flight dataset<a class="anchor-link" href="#flight-dataset"> </a></h3><p>Some airline flight data stored in a csv file</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Data-dictionary">Data dictionary<a class="anchor-link" href="#Data-dictionary"> </a></h4><p>mon --&gt; month (integer between 1 and 12)</p>
+<p>dom --&gt; day of month (integer between 1 and 31)</p>
+<p>dow --&gt; day of week (integer; 1 = Monday and 7 = Sunday)</p>
+<p>org --&gt; origin airport (IATA code)</p>
+<p>mile --&gt; distance (miles)</p>
+<p>carrier --&gt; carrier (IATA code)</p>
+<p>depart --&gt; departure time (decimal hour)</p>
+<p>duration --&gt; expected duration (minutes)</p>
+<p>delay --&gt; delay (minutes)</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Loading-Data">Loading Data<a class="anchor-link" href="#Loading-Data"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Creating a SparkSession</strong></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Read data from CSV file</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s1">&#39;flights.csv&#39;</span><span class="p">,</span>
+                         <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span>
+                         <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">nullValue</span><span class="o">=</span><span class="s1">&#39;NA&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get number of records</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The data contain </span><span class="si">%d</span><span class="s2"> records.&quot;</span> <span class="o">%</span> <span class="n">flights</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+
+<span class="c1"># View the first five records</span>
+<span class="n">flights</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Check column data types</span>
+<span class="n">flights</span><span class="o">.</span><span class="n">dtypes</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The data contain 50000 records.
++---+---+---+-------+------+---+----+------+--------+-----+
+|mon|dom|dow|carrier|flight|org|mile|depart|duration|delay|
++---+---+---+-------+------+---+----+------+--------+-----+
+| 11| 20|  6|     US|    19|JFK|2153|  9.48|     351| null|
+|  0| 22|  2|     UA|  1107|ORD| 316| 16.33|      82|   30|
+|  2| 20|  4|     UA|   226|SFO| 337|  6.17|      82|   -8|
+|  9| 13|  1|     AA|   419|ORD|1236| 10.33|     195|   -5|
+|  4|  2|  5|     AA|   325|ORD| 258|  8.92|      65| null|
++---+---+---+-------+------+---+----+------+--------+-----+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&#39;mon&#39;, &#39;int&#39;),
+ (&#39;dom&#39;, &#39;int&#39;),
+ (&#39;dow&#39;, &#39;int&#39;),
+ (&#39;carrier&#39;, &#39;string&#39;),
+ (&#39;flight&#39;, &#39;int&#39;),
+ (&#39;org&#39;, &#39;string&#39;),
+ (&#39;mile&#39;, &#39;int&#39;),
+ (&#39;depart&#39;, &#39;double&#39;),
+ (&#39;duration&#39;, &#39;int&#39;),
+ (&#39;delay&#39;, &#39;int&#39;)]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Data-Preparation">Data Preparation<a class="anchor-link" href="#Data-Preparation"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">flights</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+-------+------+---+----+------+--------+-----+
+|mon|dom|dow|carrier|flight|org|mile|depart|duration|delay|
++---+---+---+-------+------+---+----+------+--------+-----+
+| 11| 20|  6|     US|    19|JFK|2153|  9.48|     351| null|
+|  0| 22|  2|     UA|  1107|ORD| 316| 16.33|      82|   30|
+|  2| 20|  4|     UA|   226|SFO| 337|  6.17|      82|   -8|
+|  9| 13|  1|     AA|   419|ORD|1236| 10.33|     195|   -5|
+|  4|  2|  5|     AA|   325|ORD| 258|  8.92|      65| null|
++---+---+---+-------+------+---+----+------+--------+-----+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Removing-columns-and-Rows">Removing columns and Rows<a class="anchor-link" href="#Removing-columns-and-Rows"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Do we needs all the columns?</p>
+<ul>
+<li>Removing an informative column</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In any machine learning project, we always have a few columns that are not required for solving the problem.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Remove the &#39;flight&#39; column</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;flight&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Filtering out missing data</p>
+<ul>
+<li>removing rows which do not have information about whether or not a flight was delayed.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is important to check the number of missing values present in all the columns. Knowing the count helps us treat the missing values before building any machine learning model using that data.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Number of records with missing &#39;delay&#39; values</span>
+<span class="n">flights</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;delay IS NULL&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>2978</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Remove records with missing &#39;delay&#39; values</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;delay IS NOT NULL&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Remove records with missing values in any column and get the number of remaining rows</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">flights</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>47022
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Column-manipulation">Column manipulation<a class="anchor-link" href="#Column-manipulation"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The Federal Aviation Administration (FAA) considers a flight to be "delayed" when it arrives <strong>15 minutes or more</strong> after its scheduled time.</p>
+<p>The next step of preparing the flight data has two parts:</p>
+<ol>
+<li>convert the units of distance, replacing the mile column with a kmcolumn; and</li>
+<li>create a Boolean column indicating whether or not a flight was delayed.</li>
+</ol>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Import the round function</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="nb">round</span>
+
+<span class="c1"># Convert &#39;mile&#39; to &#39;km&#39; and drop &#39;mile&#39; column</span>
+<span class="c1"># we use cast function to convert from boolean to integer (0 and 1)</span>
+<span class="n">flights_km</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;km&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">flights</span><span class="o">.</span><span class="n">mile</span> <span class="o">*</span> <span class="mf">1.60934</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> \
+                    <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;mile&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create &#39;label&#39; column indicating whether flight delayed (1) or not (0)</span>
+<span class="c1"># Cast convert boolean value to integer</span>
+<span class="n">flights_km</span> <span class="o">=</span> <span class="n">flights_km</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">flights_km</span><span class="o">.</span><span class="n">delay</span> <span class="o">&gt;=</span> <span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s1">&#39;integer&#39;</span><span class="p">))</span>
+
+<span class="c1"># Check first five records</span>
+<span class="n">flights_km</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+-------+---+------+--------+-----+------+-----+
+|mon|dom|dow|carrier|org|depart|duration|delay|    km|label|
++---+---+---+-------+---+------+--------+-----+------+-----+
+|  0| 22|  2|     UA|ORD| 16.33|      82|   30| 509.0|    1|
+|  2| 20|  4|     UA|SFO|  6.17|      82|   -8| 542.0|    0|
+|  9| 13|  1|     AA|ORD| 10.33|     195|   -5|1989.0|    0|
+|  5|  2|  1|     UA|SFO|  7.98|     102|    2| 885.0|    0|
+|  7|  2|  6|     AA|ORD| 10.83|     135|   54|1180.0|    1|
++---+---+---+-------+---+------+--------+-----+------+-----+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Categorical-columns">Categorical columns<a class="anchor-link" href="#Categorical-columns"> </a></h4><p>Categorical variables represent types of data which may be divided into groups. Examples of categorical variables are race, sex, age group, and educational level.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Most machine learning algorithms accept the data only in numerical form. So, it is essential to convert any categorical variables present in our dataset into numbers.</p>
+<p>Remember that we cannot simply drop them from our dataset as they might contain useful information. It would be a nightmare to lose that just because we don’t want to figure out how to use them!</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the flights data there are two columns, carrier and org, which hold categorical data. We need to transform these columns into indexed numerical values.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Import the appropriate class and create an indexer object to transform the carrier column from a string to an numeric index.</li>
+<li>Prepare the indexer object on the flight data.</li>
+<li>Use the prepared indexer to create the numeric index column.</li>
+<li>Repeat the process for the org column.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>StringIndexer</strong> assigns a unique integer value to each category. 0 is assigned to the most frequent category, 1 to the next most frequent value, and so on. We have to define the input column name that we want to index and the output column name in which we want the results</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span>
+
+<span class="c1"># Create an indexer</span>
+<span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">&#39;carrier&#39;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;carrier_idx&#39;</span><span class="p">)</span>
+
+<span class="c1"># Indexer identifies categories in the data</span>
+<span class="n">indexer_model</span> <span class="o">=</span> <span class="n">indexer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_km</span><span class="p">)</span>
+
+<span class="c1"># Indexer creates a new column with numeric index values</span>
+<span class="n">flights_indexed</span> <span class="o">=</span> <span class="n">indexer_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_km</span><span class="p">)</span>
+
+<span class="c1"># Repeat the process for the other categorical feature</span>
+<span class="n">flights_indexed</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">&#39;org&#39;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;org_idx&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_indexed</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_indexed</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><em>Transformers</em> are functions that convert raw data in some way. This might be to create a new interaction variable (from two other variables), normalize a column, or simply change an Integer into a Double type to be input into a model. An example of a transformer is one that converts string categorical variables into numerical values that can be used in MLlib. Transformers are primarily used in preprocessing and feature engineering. Transformers take a DataFrame as input and produce a new DataFrame as output, as illustrated below:
+<img src="https://learning.oreilly.com/library/view/spark-the-definitive/9781491912201/assets/spdg_2403.png" alt="alt text"></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">flights_indexed</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+-------+---+------+--------+-----+------+-----+-----------+-------+
+|mon|dom|dow|carrier|org|depart|duration|delay|    km|label|carrier_idx|org_idx|
++---+---+---+-------+---+------+--------+-----+------+-----+-----------+-------+
+|  0| 22|  2|     UA|ORD| 16.33|      82|   30| 509.0|    1|        0.0|    0.0|
+|  2| 20|  4|     UA|SFO|  6.17|      82|   -8| 542.0|    0|        0.0|    1.0|
+|  9| 13|  1|     AA|ORD| 10.33|     195|   -5|1989.0|    0|        1.0|    0.0|
+|  5|  2|  1|     UA|SFO|  7.98|     102|    2| 885.0|    0|        0.0|    1.0|
+|  7|  2|  6|     AA|ORD| 10.83|     135|   54|1180.0|    1|        1.0|    0.0|
++---+---+---+-------+---+------+--------+-----+------+-----+-----------+-------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">flights_indexed</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="s1">&#39;org_idx&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-------+------------------+
+|summary|           org_idx|
++-------+------------------+
+|  count|             47022|
+|   mean|1.6448896261324486|
+| stddev|1.8366570435032554|
+|    min|               0.0|
+|    max|               7.0|
++-------+------------------+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>0.0 --&gt; is the most frequent value</li>
+<li>7.0 --&gt; is the less frequent value</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Assembling-columns">Assembling columns<a class="anchor-link" href="#Assembling-columns"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The final stage of data preparation is to consolidate all of the predictor columns into a single column.</p>
+<p>At present our data has the following predictor columns:</p>
+<ul>
+<li>mon, dom and dow</li>
+<li>carrier_idx (derived from carrier)</li>
+<li>org_idx (derived from org)</li>
+<li>km</li>
+<li>depart</li>
+<li>duration</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>A vector assembler</strong> combines a given list of columns into a single vector column</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Import the VectorAssembler class</span>
+<span class="c1"># we use a vector assembler to transform the data.</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+
+<span class="c1"># Create an assembler object</span>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span> <span class="s1">&#39;dom&#39;</span><span class="p">,</span> <span class="s1">&#39;dow&#39;</span><span class="p">,</span> <span class="s1">&#39;carrier_idx&#39;</span><span class="p">,</span> 
+                                       <span class="s1">&#39;org_idx&#39;</span><span class="p">,</span> <span class="s1">&#39;km&#39;</span><span class="p">,</span> <span class="s1">&#39;depart&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">],</span> 
+                            <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;features&#39;</span><span class="p">)</span>
+
+<span class="c1"># Consolidate predictor columns</span>
+<span class="n">flights_assembled</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_indexed</span><span class="p">)</span>
+
+<span class="c1"># Check the resulting column</span>
+<span class="n">flights_assembled</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;features&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----------------------------------------+-----+
+|features                                 |label|
++-----------------------------------------+-----+
+|[0.0,22.0,2.0,0.0,0.0,509.0,16.33,82.0]  |1    |
+|[2.0,20.0,4.0,0.0,1.0,542.0,6.17,82.0]   |0    |
+|[9.0,13.0,1.0,1.0,0.0,1989.0,10.33,195.0]|0    |
+|[5.0,2.0,1.0,0.0,1.0,885.0,7.98,102.0]   |0    |
+|[7.0,2.0,6.0,1.0,0.0,1180.0,10.83,135.0] |1    |
++-----------------------------------------+-----+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Classification">Classification<a class="anchor-link" href="#Classification"> </a></h2><p>Predict whether or not a given flight will be delayed.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Decision-Tree">Decision Tree<a class="anchor-link" href="#Decision-Tree"> </a></h3><p>Decision tree is the most powerful and popular tool for classification and prediction. A Decision tree is a flowchart like tree structure, where each internal node denotes a test on an attribute, each branch represents an outcome of the test, and each leaf node (terminal node) holds a class label.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="&#39;DT.png&#39;" alt="alt text"></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Classifying-flights">Classifying flights<a class="anchor-link" href="#Classifying-flights"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">flights_assembled</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+-------+---+------+--------+-----+------+-----+-----------+-------+--------------------+
+|mon|dom|dow|carrier|org|depart|duration|delay|    km|label|carrier_idx|org_idx|            features|
++---+---+---+-------+---+------+--------+-----+------+-----+-----------+-------+--------------------+
+|  0| 22|  2|     UA|ORD| 16.33|      82|   30| 509.0|    1|        0.0|    0.0|[0.0,22.0,2.0,0.0...|
+|  2| 20|  4|     UA|SFO|  6.17|      82|   -8| 542.0|    0|        0.0|    1.0|[2.0,20.0,4.0,0.0...|
+|  9| 13|  1|     AA|ORD| 10.33|     195|   -5|1989.0|    0|        1.0|    0.0|[9.0,13.0,1.0,1.0...|
+|  5|  2|  1|     UA|SFO|  7.98|     102|    2| 885.0|    0|        0.0|    1.0|[5.0,2.0,1.0,0.0,...|
+|  7|  2|  6|     AA|ORD| 10.83|     135|   54|1180.0|    1|        1.0|    0.0|[7.0,2.0,6.0,1.0,...|
++---+---+---+-------+---+------+--------+-----+------+-----+-----------+-------+--------------------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Split-train/test">Split train/test<a class="anchor-link" href="#Split-train/test"> </a></h4><p>Split data into training and testing sets</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split into training and testing sets in a 80:20 ratio</span>
+<span class="n">flights_train</span><span class="p">,</span> <span class="n">flights_test</span> <span class="o">=</span> <span class="n">flights_assembled</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+<span class="n">flights_train</span> <span class="o">=</span> <span class="n">flights_train</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s1">&#39;features&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">])</span>
+<span class="n">flights_test</span> <span class="o">=</span> <span class="n">flights_test</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s1">&#39;features&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Check that training set has around 80% of records</span>
+<span class="n">training_ratio</span> <span class="o">=</span> <span class="n">flights_train</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">/</span> <span class="n">flights</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">training_ratio</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.7980732423121092
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Build-a-Decision-Tree-model">Build a Decision Tree model<a class="anchor-link" href="#Build-a-Decision-Tree-model"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">DecisionTreeClassifier</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Create a Decision Tree classier.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tree</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Learn from the training data</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tree</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_train</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Evaluating-the-DT-model">Evaluating the DT model<a class="anchor-link" href="#Evaluating-the-DT-model"> </a></h4><p>Make predictions on the testing data and aompare to known values.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prediction</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prediction</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">,</span> <span class="s1">&#39;probability&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----+----------+----------------------------------------+
+|label|prediction|probability                             |
++-----+----------+----------------------------------------+
+|1    |1.0       |[0.48838709677419356,0.5116129032258064]|
+|1    |1.0       |[0.3543011744450593,0.6456988255549406] |
+|1    |1.0       |[0.3543011744450593,0.6456988255549406] |
+|1    |1.0       |[0.3543011744450593,0.6456988255549406] |
+|1    |1.0       |[0.3543011744450593,0.6456988255549406] |
++-----+----------+----------------------------------------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Confusion-Matrix">Confusion Matrix<a class="anchor-link" href="#Confusion-Matrix"> </a></h5>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A confusion matrix gives a useful breakdown of predictions versus known values. It has four cells which represent the counts of:</p>
+<ul>
+<li>True Negatives (TN) — model predicts negative outcome &amp; known outcome is negative</li>
+<li>True Positives (TP) — model predicts positive outcome &amp; known outcome is positive</li>
+<li>False Negatives (FN) — model predicts negative outcome but known outcome is positive</li>
+<li>False Positives (FP) — model predicts positive outcome but known outcome is negative.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prediction</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;prediction&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----+----------+-----+
+|label|prediction|count|
++-----+----------+-----+
+|    1|       0.0| 1087|
+|    0|       0.0| 2286|
+|    1|       1.0| 3737|
+|    0|       1.0| 2385|
++-----+----------+-----+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate the elements of the confusion matrix</span>
+<span class="n">TN</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;prediction = 0 AND label = prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">TP</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;prediction = 1 AND label = prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">FN</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;prediction = 0 AND label = 1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">FP</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;prediction = 1 AND label = 0&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Accuracy">Accuracy<a class="anchor-link" href="#Accuracy"> </a></h5><p>Accuracy is one metric for evaluating classification models. Informally, accuracy is the fraction of predictions our model got right. Formally, accuracy has the following definition</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$Accuracy = \frac{(TN + TP)}{(TN + TP + FN + FP)}$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Accuracy measures the proportion of correct predictions</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="p">(</span><span class="n">TN</span> <span class="o">+</span> <span class="n">TP</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">TN</span><span class="o">+</span> <span class="n">TP</span><span class="o">+</span> <span class="n">FN</span> <span class="o">+</span> <span class="n">FP</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.634333859926277
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Logistic-Regression">Logistic Regression<a class="anchor-link" href="#Logistic-Regression"> </a></h3><p>In statistics, the logistic model (or logit model) is used to model the probability of a certain class or event existing such as pass/fail, win/lose, alive/dead or healthy/sick. This can be extended to model several classes of events such as determining whether an image contains a cat, dog, lion, etc. Each object being detected in the image would be assigned a probability between 0 and 1 and the sum adding to one.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Build-a-logistic-Regreesion-model">Build a logistic Regreesion model<a class="anchor-link" href="#Build-a-logistic-Regreesion-model"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Create a logistic Regression classifier</strong></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">logistic</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Learn from the training data</strong></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">logistic</span> <span class="o">=</span> <span class="n">logistic</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_train</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Predictions</strong></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prediction</span> <span class="o">=</span> <span class="n">logistic</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prediction</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">,</span> <span class="s1">&#39;probability&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----+----------+----------------------------------------+
+|label|prediction|probability                             |
++-----+----------+----------------------------------------+
+|1    |0.0       |[0.5033470048952998,0.49665299510470023]|
+|1    |1.0       |[0.35967532714510964,0.6403246728548905]|
+|1    |1.0       |[0.3071406970789145,0.6928593029210856] |
+|1    |1.0       |[0.2149373998372294,0.7850626001627706] |
+|1    |1.0       |[0.2742323639584431,0.7257676360415569] |
++-----+----------+----------------------------------------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># confusion matrix</span>
+<span class="n">prediction</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----+----------+-----+
+|label|prediction|count|
++-----+----------+-----+
+|    1|       0.0| 1652|
+|    0|       0.0| 2645|
+|    1|       1.0| 3172|
+|    0|       1.0| 2026|
++-----+----------+-----+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Evaluate-the-Logistic-Regression-model">Evaluate the Logistic Regression model<a class="anchor-link" href="#Evaluate-the-Logistic-Regression-model"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Confusion-matrix">Confusion matrix<a class="anchor-link" href="#Confusion-matrix"> </a></h5>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate the elements of the confusion matrix</span>
+<span class="n">TN</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;prediction = 0 AND label = prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">TP</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;prediction = 1 AND label = prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">FN</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;prediction = 0 AND label = 1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">FP</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;prediction = 1 AND label = 0&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Precision">Precision<a class="anchor-link" href="#Precision"> </a></h5>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Precision attempts to answer the following question:</p>
+<p><em>What proportion of positive identifications was actually correct?</em></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$Precision (positive) = \frac{TP}{(TP + FP)}$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Recall">Recall<a class="anchor-link" href="#Recall"> </a></h5><p>Recall attempts to answer the following question:</p>
+<p><em>What proportion of actual positives was identified correctly?</em></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$Recall (positive) = \frac{TP}{(TP + FN)}$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate precision and recall</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="n">TP</span> <span class="o">/</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FP</span><span class="p">)</span>
+<span class="n">recall</span> <span class="o">=</span> <span class="n">TP</span> <span class="o">/</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FN</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;precision = </span><span class="si">{:.2f}</span><span class="se">\n</span><span class="s1">recall    = </span><span class="si">{:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>precision = 0.61
+recall    = 0.66
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">,</span> <span class="n">BinaryClassificationEvaluator</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">()</span>
+<span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="p">{</span><span class="n">evaluator</span><span class="o">.</span><span class="n">metricName</span><span class="p">:</span><span class="s1">&#39;weightedPrecision&#39;</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.6128474273772628</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="SMS-dataset">SMS dataset<a class="anchor-link" href="#SMS-dataset"> </a></h3><p>The file sms.csv contains a selection of SMS messages which have been classified as either 'spam' or 'ham'. These data have been adapted from the <a href="https://archive.ics.uci.edu/ml/index.php">UCI Machine Learning Repository</a>. There are a total of 5574 SMS, of which 747 have been labelled as spam.</p>
+<p>Notes on CSV format:</p>
+<ul>
+<li>no header record and</li>
+<li>fields are separated by a semicolon (this is not the default separator).</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Loading-SMS-spam-data">Loading SMS spam data<a class="anchor-link" href="#Loading-SMS-spam-data"> </a></h4><p>In the SMS data the header is missing. So we need to create the data schema</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="k">import</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">,</span> <span class="n">StringType</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can define the custom schema for our dataframe in Spark. For this, we need to create an object of StructType which takes a list of StructField. And of course, we should define StructField with a column name, the data type of the column and whether null values are allowed for the particular column or not.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Specify column names and types</span>
+<span class="n">schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">([</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">()),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">StringType</span><span class="p">()),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">())</span>
+<span class="p">])</span>
+
+<span class="c1"># Load data from a delimited file</span>
+<span class="n">sms</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s1">&#39;sms.csv&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">)</span>
+
+<span class="c1"># Print schema of DataFrame</span>
+<span class="n">sms</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>root
+ |-- id: integer (nullable = true)
+ |-- text: string (nullable = true)
+ |-- label: integer (nullable = true)
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Turning-Text-into-Tables">Turning Text into Tables<a class="anchor-link" href="#Turning-Text-into-Tables"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Data-dictionary">Data dictionary<a class="anchor-link" href="#Data-dictionary"> </a></h5><p>id — record identifier</p>
+<p>text — content of SMS message</p>
+<p>label — spam or ham (integer; 0 = ham and 1 = spam)</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Import the necessary functions</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="n">regexp_replace</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">Tokenizer</span>
+
+<span class="c1"># Remove punctuation (REGEX provided) and numbers</span>
+<span class="n">wrangled</span> <span class="o">=</span> <span class="n">sms</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">regexp_replace</span><span class="p">(</span><span class="n">sms</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;[_():;,.!?</span><span class="se">\\</span><span class="s1">-]&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">))</span>
+<span class="n">wrangled</span> <span class="o">=</span> <span class="n">wrangled</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">regexp_replace</span><span class="p">(</span><span class="n">wrangled</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;\d&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">))</span>
+
+<span class="c1"># Merge multiple spaces</span>
+<span class="n">wrangled</span> <span class="o">=</span> <span class="n">wrangled</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">regexp_replace</span><span class="p">(</span><span class="n">wrangled</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39; +&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">))</span>
+
+<span class="c1"># Split the text into words</span>
+<span class="n">wrangled</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;words&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">wrangled</span><span class="p">)</span>
+
+<span class="n">wrangled</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+----------------------------------+-----+------------------------------------------+
+|id |text                              |label|words                                     |
++---+----------------------------------+-----+------------------------------------------+
+|1  |Sorry I&#39;ll call later in meeting  |0    |[sorry, i&#39;ll, call, later, in, meeting]   |
+|2  |Dont worry I guess he&#39;s busy      |0    |[dont, worry, i, guess, he&#39;s, busy]       |
+|3  |Call FREEPHONE now                |1    |[call, freephone, now]                    |
+|4  |Win a cash prize or a prize worth |1    |[win, a, cash, prize, or, a, prize, worth]|
++---+----------------------------------+-----+------------------------------------------+
+only showing top 4 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sms</span> <span class="o">=</span> <span class="n">wrangled</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;words&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sms</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+--------------------+-----+
+| id|               words|label|
++---+--------------------+-----+
+|  1|[sorry, i&#39;ll, cal...|    0|
+|  2|[dont, worry, i, ...|    0|
+|  3|[call, freephone,...|    1|
+|  4|[win, a, cash, pr...|    1|
+|  5|[go, until, juron...|    0|
++---+--------------------+-----+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Stop-Words">Stop Words<a class="anchor-link" href="#Stop-Words"> </a></h4><p>A stop word is a commonly used word (such as “the”, “a”, “an”, “in”) that a search engine has been programmed to ignore, both when indexing entries for searching and when retrieving them as the result of a search query.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StopWordsRemover</span><span class="p">,</span> <span class="n">HashingTF</span><span class="p">,</span> <span class="n">IDF</span>
+
+<span class="c1"># Remove stop words.</span>
+<span class="n">wrangled</span> <span class="o">=</span> <span class="n">StopWordsRemover</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">&#39;words&#39;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;terms&#39;</span><span class="p">)</span>\
+      <span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">sms</span><span class="p">)</span>
+<span class="n">wrangled</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+--------------------+-----+--------------------+
+| id|               words|label|               terms|
++---+--------------------+-----+--------------------+
+|  1|[sorry, i&#39;ll, cal...|    0|[sorry, call, lat...|
+|  2|[dont, worry, i, ...|    0|[dont, worry, gue...|
+|  3|[call, freephone,...|    1|   [call, freephone]|
+|  4|[win, a, cash, pr...|    1|[win, cash, prize...|
+|  5|[go, until, juron...|    0|[go, jurong, poin...|
++---+--------------------+-----+--------------------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Hashing-Trick">Hashing Trick<a class="anchor-link" href="#Hashing-Trick"> </a></h4><p>Hashing Trick is a fast and space-efficient way of vectorizing features, i.e. turning arbitrary features into indices in a vector or matrix.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Apply the hashing trick</span>
+<span class="n">wrangled</span> <span class="o">=</span> <span class="n">HashingTF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;terms&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;hash&quot;</span><span class="p">,</span> <span class="n">numFeatures</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>\
+      <span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">wrangled</span><span class="p">)</span>
+<span class="n">wrangled</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+--------------------+-----+--------------------+--------------------+
+| id|               words|label|               terms|                hash|
++---+--------------------+-----+--------------------+--------------------+
+|  1|[sorry, i&#39;ll, cal...|    0|[sorry, call, lat...|(1024,[138,344,37...|
+|  2|[dont, worry, i, ...|    0|[dont, worry, gue...|(1024,[53,233,329...|
+|  3|[call, freephone,...|    1|   [call, freephone]|(1024,[138,396],[...|
+|  4|[win, a, cash, pr...|    1|[win, cash, prize...|(1024,[31,69,387,...|
+|  5|[go, until, juron...|    0|[go, jurong, poin...|(1024,[116,262,33...|
++---+--------------------+-----+--------------------+--------------------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="TFIDF">TFIDF<a class="anchor-link" href="#TFIDF"> </a></h4><p>TF-IDF (term frequency-inverse document frequency) is a statistical measure that evaluates how relevant a word is to a document in a collection of documents. This is done by multiplying two metrics: how many times a word appears in a document, and the inverse document frequency of the word across a set of documents.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Convert hashed symbols to TF-IDF</span>
+<span class="n">tf_idf</span> <span class="o">=</span> <span class="n">IDF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">&#39;hash&#39;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;features&#39;</span><span class="p">)</span>\
+      <span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">wrangled</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">wrangled</span><span class="p">)</span>
+      
+<span class="n">tf_idf</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;terms&#39;</span><span class="p">,</span> <span class="s1">&#39;features&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+--------------------------------+----------------------------------------------------------------------------------------------------+
+|terms                           |features                                                                                            |
++--------------------------------+----------------------------------------------------------------------------------------------------+
+|[sorry, call, later, meeting]   |(1024,[138,344,378,1006],[2.2391682769656747,2.892706319430574,3.684405173719015,4.244020961654438])|
+|[dont, worry, guess, busy]      |(1024,[53,233,329,858],[4.618714411095849,3.557143394108088,4.618714411095849,4.937168142214383])   |
+|[call, freephone]               |(1024,[138,396],[2.2391682769656747,3.3843005812686773])                                            |
+|[win, cash, prize, prize, worth]|(1024,[31,69,387,428],[3.7897656893768414,7.284881949239966,4.4671645129686475,3.898659777615979])  |
++--------------------------------+----------------------------------------------------------------------------------------------------+
+only showing top 4 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sms</span> <span class="o">=</span> <span class="n">tf_idf</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Train-and-Test">Train and Test<a class="anchor-link" href="#Train-and-Test"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split the data into training and testing sets</span>
+<span class="n">sms_train</span><span class="p">,</span> <span class="n">sms_test</span> <span class="o">=</span> <span class="n">sms</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">13</span><span class="p">)</span>
+
+<span class="c1"># Fit a Logistic Regression model to the training data</span>
+<span class="n">logistic</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">regParam</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">sms_train</span><span class="p">)</span>
+
+<span class="c1"># Make predictions on the testing data</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">logistic</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">sms_test</span><span class="p">)</span>
+
+<span class="c1"># Create a confusion matrix, comparing predictions to known labels</span>
+<span class="n">prediction</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;prediction&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----+----------+-----+
+|label|prediction|count|
++-----+----------+-----+
+|    1|       0.0|   47|
+|    0|       0.0|  987|
+|    1|       1.0|  124|
+|    0|       1.0|    3|
++-----+----------+-----+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Regression">Regression<a class="anchor-link" href="#Regression"> </a></h3><p>We want to build a regression model to predict flight duration</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="One-Hot-Encoding">One-Hot Encoding<a class="anchor-link" href="#One-Hot-Encoding"> </a></h4><p>using indexing values to convert a category type is not going to work in a regression problem. as each numeric value has different weight.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Dummy-Varaibles:-sparse-representation">Dummy Varaibles: sparse representation<a class="anchor-link" href="#Dummy-Varaibles:-sparse-representation"> </a></h5>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Dummy Variable</strong></p>
+<p>Each categorical level becomes a column.</p>
+<p><img src="https://www.mathworks.com/help/stats/dummy1.png" alt="alt text"></p>
+<p><em>This approach can increase the size of our dataset.</em></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Dummy variable: sparse representation</strong></p>
+<p><img src ='/content/dumy_variable.png'/></p>
+<p><img src="&#39;/content/dumy_variable.png&#39;" alt="title"></p>
+<p>Sparse representation: store column index and value.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Applying-one_hot-encoding">Applying one_hot encoding<a class="anchor-link" href="#Applying-one_hot-encoding"> </a></h5>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Import the one hot encoder class</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">OneHotEncoderEstimator</span>
+<span class="c1"># Create an instance of the one hot encoder</span>
+<span class="n">onehot</span> <span class="o">=</span> <span class="n">OneHotEncoderEstimator</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;org_idx&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="n">outputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;org_dummy&#39;</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Apply the one hot encoder to the flights data</span>
+<span class="n">onehot</span> <span class="o">=</span> <span class="n">onehot</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_assembled</span><span class="p">)</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">onehot</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_assembled</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># check the number of categories</span>
+<span class="n">onehot</span><span class="o">.</span><span class="n">categorySizes</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[8]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">flights_assembled</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+-------+---+------+--------+-----+------+-----+-----------+-------+--------------------+
+|mon|dom|dow|carrier|org|depart|duration|delay|    km|label|carrier_idx|org_idx|            features|
++---+---+---+-------+---+------+--------+-----+------+-----+-----------+-------+--------------------+
+|  0| 22|  2|     UA|ORD| 16.33|      82|   30| 509.0|    1|        0.0|    0.0|[0.0,22.0,2.0,0.0...|
+|  2| 20|  4|     UA|SFO|  6.17|      82|   -8| 542.0|    0|        0.0|    1.0|[2.0,20.0,4.0,0.0...|
+|  9| 13|  1|     AA|ORD| 10.33|     195|   -5|1989.0|    0|        1.0|    0.0|[9.0,13.0,1.0,1.0...|
+|  5|  2|  1|     UA|SFO|  7.98|     102|    2| 885.0|    0|        0.0|    1.0|[5.0,2.0,1.0,0.0,...|
+|  7|  2|  6|     AA|ORD| 10.83|     135|   54|1180.0|    1|        1.0|    0.0|[7.0,2.0,6.0,1.0,...|
++---+---+---+-------+---+------+--------+-----+------+-----+-----------+-------+--------------------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Check the results</span>
+<span class="n">flights</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;org&#39;</span><span class="p">,</span> <span class="s1">&#39;org_idx&#39;</span><span class="p">,</span> <span class="s1">&#39;org_dummy&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;org_idx&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+-------+-------------+
+|org|org_idx|    org_dummy|
++---+-------+-------------+
+|ORD|    0.0|(7,[0],[1.0])|
+|SFO|    1.0|(7,[1],[1.0])|
+|JFK|    2.0|(7,[2],[1.0])|
+|LGA|    3.0|(7,[3],[1.0])|
+|SMF|    4.0|(7,[4],[1.0])|
+|SJC|    5.0|(7,[5],[1.0])|
+|TUS|    6.0|(7,[6],[1.0])|
+|OGG|    7.0|    (7,[],[])|
++---+-------+-------------+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Regression-Model">Regression Model<a class="anchor-link" href="#Regression-Model"> </a></h4><p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Linear_regression.svg/1920px-Linear_regression.svg.png" alt="alt text"></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Loss-Function">Loss Function<a class="anchor-link" href="#Loss-Function"> </a></h4><p>How well the model is?</p>
+$$MSE = \frac{1}{N}\sum_{i=1}^{N}(y_i - \hat{y_i})^2$$<p>MSE: "Mean Square Error"
+Where:</p>
+<p>$y_i$ -- observed values</p>
+<p>$\hat{y_i}$ -- model value</p>
+<p><strong>Don't wory</strong> the spark will do all the calculations for you</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Build-regression-model">Build regression model<a class="anchor-link" href="#Build-regression-model"> </a></h5>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">LinearRegression</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a regression object</span>
+<span class="n">regression</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s1">&#39;duration&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split into training and testing sets in a 80:20 ratio</span>
+<span class="n">flights_train</span><span class="p">,</span> <span class="n">flights_test</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Fit to flight_train</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># train the model</span>
+<span class="n">regression</span> <span class="o">=</span> <span class="n">regression</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_train</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create predictions for the testing data and take a look at the predictions</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">regression</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_test</span><span class="p">)</span>
+<span class="n">predictions</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+--------+------------------+
+|duration|prediction        |
++--------+------------------+
+|240     |240.00000000000017|
+|160     |160.00000000000003|
+|130     |129.99999999999997|
+|275     |275.00000000000006|
+|85      |84.99999999999994 |
++--------+------------------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">RegressionEvaluator</span>
+
+
+<span class="c1"># Calculate the RMSE</span>
+<span class="n">RegressionEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s1">&#39;duration&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>8.447208869735431e-14</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">flights_train</span><span class="p">,</span> <span class="n">flights_test</span> <span class="o">=</span> <span class="n">flights_km</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+<span class="n">flights_train</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+-------+---+------+--------+-----+------+-----+
+|mon|dom|dow|carrier|org|depart|duration|delay|    km|label|
++---+---+---+-------+---+------+--------+-----+------+-----+
+|  0|  1|  2|     AA|JFK|  6.58|     230|   50|2570.0|    1|
+|  0|  1|  2|     AA|JFK|   7.0|     385|  -16|4162.0|    0|
+|  0|  1|  2|     AA|JFK|  12.0|     370|   11|3983.0|    0|
+|  0|  1|  2|     AA|JFK|  17.0|     379|  -10|3983.0|    0|
+|  0|  1|  2|     AA|LGA|  8.25|     250|   27|2235.0|    1|
++---+---+---+-------+---+------+--------+-----+------+-----+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Convert categorical strings to index values</span>
+<span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">&#39;org&#39;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;org_idx&#39;</span><span class="p">)</span>
+
+<span class="c1"># One-hot encode index values</span>
+<span class="n">onehot</span> <span class="o">=</span> <span class="n">OneHotEncoderEstimator</span><span class="p">(</span>
+    <span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;org_idx&#39;</span><span class="p">,</span> <span class="s1">&#39;dow&#39;</span><span class="p">],</span>
+    <span class="n">outputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;org_dummy&#39;</span><span class="p">,</span><span class="s1">&#39;dow_dummy&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Assemble predictors into a single column</span>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;km&#39;</span><span class="p">,</span> <span class="s1">&#39;org_dummy&#39;</span><span class="p">,</span> <span class="s1">&#39;dow_dummy&#39;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;features&#39;</span><span class="p">)</span>
+
+<span class="c1"># A linear regression object</span>
+<span class="n">regression</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s1">&#39;duration&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Import class for creating a pipeline</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
+
+<span class="c1"># Construct a pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">indexer</span><span class="p">,</span> <span class="n">onehot</span><span class="p">,</span> <span class="n">assembler</span><span class="p">,</span> <span class="n">regression</span><span class="p">])</span>
+
+<span class="c1"># Train the pipeline on the training data</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_train</span><span class="p">)</span>
+
+<span class="c1"># Make predictions on the testing data</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">Tokenizer</span><span class="p">,</span> <span class="n">StopWordsRemover</span><span class="p">,</span> <span class="n">HashingTF</span><span class="p">,</span> <span class="n">IDF</span>
+
+<span class="c1"># Break text into tokens at non-word characters</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;words&#39;</span><span class="p">)</span>
+
+<span class="c1"># Remove stop words</span>
+<span class="n">remover</span> <span class="o">=</span> <span class="n">StopWordsRemover</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">getOutputCol</span><span class="p">(),</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;terms&#39;</span><span class="p">)</span>
+
+<span class="c1"># Apply the hashing trick and transform to TF-IDF</span>
+<span class="n">hasher</span> <span class="o">=</span> <span class="n">HashingTF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">remover</span><span class="o">.</span><span class="n">getOutputCol</span><span class="p">(),</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;hash&quot;</span><span class="p">)</span>
+<span class="n">idf</span> <span class="o">=</span> <span class="n">IDF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">hasher</span><span class="o">.</span><span class="n">getOutputCol</span><span class="p">(),</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create a logistic regression object and add everything to a pipeline</span>
+<span class="n">logistic</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">remover</span><span class="p">,</span> <span class="n">hasher</span><span class="p">,</span> <span class="n">idf</span><span class="p">,</span> <span class="n">logistic</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split the data into training and testing sets</span>
+<span class="n">sms_train</span><span class="p">,</span> <span class="n">sms_test</span> <span class="o">=</span> <span class="n">sms</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">13</span><span class="p">)</span>
+
+<span class="c1"># Fit a Logistic Regression model to the training data</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">sms_train</span><span class="p">)</span>
+
+<span class="c1"># Make predictions on the testing data</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">sms_test</span><span class="p">)</span>
+
+<span class="c1"># Create a confusion matrix, comparing predictions to known labels</span>
+<span class="n">prediction</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;prediction&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----+----------+-----+
+|label|prediction|count|
++-----+----------+-----+
+|    1|       0.0|   40|
+|    0|       0.0|  989|
+|    1|       1.0|  131|
+|    0|       1.0|    1|
++-----+----------+-----+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
+            </div>
+            <div class="c-textbook__footer" id="textbook_footer">
+              
+<nav class="c-page__nav">
+  
+    
+    
+
+    <a id="js-page__nav__prev" class="c-page__nav__prev" href="/pyspark/ML/1_Intro_Machine_Learning.html">
+      〈 <span class="u-margin-right-tiny"></span> Introduction to Machine Learning
+    </a>
+  
+
+  
+    
+
+    
+    <a id="js-page__nav__next" class="c-page__nav__next" href="/pyspark/ML/pipeline/pipeline_feature_eng.html">
+      Feature Engineering Pipeline <span class="u-margin-right-tiny"></span> 〉
+    </a>
+  
+</nav>
+
+              <footer>
+  <p class="footer">This page was created by <a href="https://www.zyelabs.net/">ZyeLabs</a></p>
+</footer>
+
+            </div>
+
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

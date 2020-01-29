@@ -1,0 +1,1317 @@
+---
+redirect_from:
+  - "/pyspark/02-rdd/simple-statistical-analysis"
+interact_link: content/pyspark/02_rdd/Simple_statistical_analysis.ipynb
+kernel_name: python3
+kernel_path: content/pyspark/02_rdd
+has_widgets: false
+title: |-
+  Simple Statistical Analysis
+pagenum: 29
+prev_page:
+  url: /pyspark/02_rdd/2_Pyspark_RDD.html
+next_page:
+  url: /pyspark/03_dataframe/3_functional_programming.html
+suffix: .ipynb
+search: mean data n x statistical frac outliers y moment value hat skew sum list standard spread around std xi indicates tail median middle add index deviation points high negative distributions kurtosis measure sigma simple analysis st average values dataset ai cdots sequance numbers sort pick need entry notice key lets gets pulled into direction whereas far resistant isnt amazing nd wide low close much wider sqrt where point devision ehich sense our range variance its power rd skewness asymmetric postitve undefined left positive right zero means both sides balanced th reports shape content within higher present longer tails distribution cov
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Simple Statistical Analysis</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Simple-Statistical-Analysis">Simple Statistical Analysis<a class="anchor-link" href="#Simple-Statistical-Analysis"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyspark</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">pyspark</span><span class="o">.</span><span class="n">SparkContext</span><span class="p">(</span><span class="n">appName</span><span class="o">=</span><span class="s2">&quot;rdd_statistical&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="1st-Statistical-Moment">1st Statistical Moment<a class="anchor-link" href="#1st-Statistical-Moment"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The mean is the average of all values in the dataset.
+$$Mean = \frac{1}{n}\sum_{i=1}^{n}a_i = \frac{1}{n}(a_1, a_2, \cdots, a_n)$$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">sum</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="n">n</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>49.5
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The median is the middle number in a sequance of numbers.</p>
+<ol>
+<li>Sort the list.</li>
+<li>Pick the middle number.</li>
+</ol>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">101</span><span class="p">]</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span><span class="o">+</span><span class="p">[</span><span class="mi">102</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span><span class="o">.</span><span class="n">sortBy</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We need to add the index to each entry.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span><span class="o">.</span><span class="n">sortBy</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">zipWithIndex</span><span class="p">()</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span><span class="o">.</span><span class="n">sortBy</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">zipWithIndex</span><span class="p">()</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice the key is the value and the value is the index.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sorted_list</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sortBy</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">zipWithIndex</span><span class="p">()</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">sorted_list</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">n</span><span class="o">%</span><span class="k">2</span>==1):
+  <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">sorted_list</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">index</span><span class="p">))</span> 
+<span class="k">else</span><span class="p">:</span>
+  <span class="n">index1</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+  <span class="n">index2</span> <span class="o">=</span> <span class="n">n</span><span class="o">/</span><span class="mi">2</span>
+  <span class="n">value1</span> <span class="o">=</span> <span class="n">sorted_list</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">index1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="n">value2</span> <span class="o">=</span> <span class="n">sorted_list</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">index2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="n">median</span> <span class="o">=</span> <span class="p">(</span><span class="n">value1</span> <span class="o">+</span> <span class="n">value2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">median</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>50.5
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Lets add some outliers</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">101</span><span class="p">]</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span><span class="o">+</span><span class="p">[</span><span class="mi">102</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">sum</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>155.31730769230768
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sorted_list</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sortBy</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">zipWithIndex</span><span class="p">()</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">sorted_list</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">n</span><span class="o">%</span><span class="k">2</span>==1):
+  <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">sorted_list</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">index</span><span class="p">))</span> 
+<span class="k">else</span><span class="p">:</span>
+  <span class="n">index1</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+  <span class="n">index2</span> <span class="o">=</span> <span class="n">n</span><span class="o">/</span><span class="mi">2</span>
+  <span class="n">value1</span> <span class="o">=</span> <span class="n">sorted_list</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">index1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="n">value2</span> <span class="o">=</span> <span class="n">sorted_list</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">index2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="n">median</span> <span class="o">=</span> <span class="p">(</span><span class="n">value1</span> <span class="o">+</span> <span class="n">value2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">median</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>51.5
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we can see, the mean gets pulled into the direction of the outliers, whereas the median is far more resistant to the outliers. Isn't that amazing?</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="2nd-Statistical-Moment:">2nd Statistical Moment:<a class="anchor-link" href="#2nd-Statistical-Moment:"> </a></h2><h3 id="Standard-Deviation">Standard Deviation<a class="anchor-link" href="#Standard-Deviation"> </a></h3><ul>
+<li>How wide the data is spread around the mean.</li>
+<li>If the $std$ is low most of the data points in the list are close to the mean.</li>
+<li>If the $std$ is high then the data points in the list are much wider spread around the mean.
+$$std = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(x_i - \hat{x})^2}$$
+where $\hat{x}$ is the mean and $x_i$ is the data point</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+<span class="c1">#calculate the mean</span>
+<span class="nb">sum</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="c1"># subtract the mean from each data point in the list</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>83325.0</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># divide it by the size of the list &quot;n&quot;</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>833.25</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">sqrt</span>
+<span class="c1"># squre root the result</span>
+<span class="n">std</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">std</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>28.86607004772212
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The value of the standard devision is high, ehich make sense as our data range from 0 to 100.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">49</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
+<span class="c1">#calculate the mean</span>
+<span class="nb">sum</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The mean is:&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>
+<span class="n">std</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The std is: &quot;</span><span class="p">,</span><span class="n">std</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The mean is: 49.0
+The std is:  0.0
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">49</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span><span class="o">+</span><span class="p">[</span><span class="mi">100</span><span class="p">])</span>
+<span class="c1">#calculate the mean</span>
+<span class="nb">sum</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The mean is:&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>
+<span class="n">std</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The std is: &quot;</span><span class="p">,</span><span class="n">std</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The mean is: 49.504950495049506
+The std is:  5.049504950495049
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">49</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span><span class="o">+</span><span class="p">[</span><span class="mi">1000</span><span class="p">])</span>
+<span class="c1">#calculate the mean</span>
+<span class="nb">sum</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The mean is:&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>
+<span class="n">std</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The std is: &quot;</span><span class="p">,</span><span class="n">std</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The mean is: 58.415841584158414
+The std is:  94.15841584158416
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="variance">variance<a class="anchor-link" href="#variance"> </a></h3><p>Its the standard deviation to the power of two</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="3rd-Statistical-Moment:-Skewness">3rd Statistical Moment: Skewness<a class="anchor-link" href="#3rd-Statistical-Moment:-Skewness"> </a></h2><ul>
+<li>How asymmetric data is spread around the mean.</li>
+<li>The skew value can be postitve, negative or undefined.</li>
+</ul>
+<p><strong>negative Skew</strong> indicates that the tail is on the left side of the distributions.</p>
+<p><strong>positive Skew</strong> indicates that the tail is on the right side of the distributions.</p>
+<p><strong>zero Skew</strong> means that the tail in both sides are balanced.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+<span class="c1">#calculate the mean</span>
+<span class="nb">sum</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">std</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">skew</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mean</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="nb">pow</span><span class="p">(</span><span class="n">std</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The mean is: &quot;</span><span class="p">,</span><span class="n">mean</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The std is: &quot;</span><span class="p">,</span><span class="n">std</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The skew is: &quot;</span><span class="p">,</span><span class="n">skew</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The mean is:  49.5
+The std is:  28.86607004772212
+The skew is:  0.0
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># add outliers (Negative Skew)</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span><span class="o">+</span><span class="p">[</span><span class="mi">1000</span><span class="p">]</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span>
+<span class="c1">#calculate the mean</span>
+<span class="nb">sum</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">std</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">skew</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mean</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="nb">pow</span><span class="p">(</span><span class="n">std</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The mean is: &quot;</span><span class="p">,</span><span class="n">mean</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The std is: &quot;</span><span class="p">,</span><span class="n">std</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The skew is: &quot;</span><span class="p">,</span><span class="n">skew</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The mean is:  913.5909090909091
+The std is:  273.38811224585896
+The skew is:  -2.8513343104247486
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># add outliers (positive skew)</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span><span class="o">+</span><span class="p">[</span><span class="o">-</span><span class="mi">1000</span><span class="p">]</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span>
+<span class="c1">#calculate the mean</span>
+<span class="nb">sum</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">std</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">skew</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mean</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="nb">pow</span><span class="p">(</span><span class="n">std</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The mean is: &quot;</span><span class="p">,</span><span class="n">mean</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The std is: &quot;</span><span class="p">,</span><span class="n">std</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The skew is: &quot;</span><span class="p">,</span><span class="n">skew</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The mean is:  -904.5909090909091
+The std is:  301.8355450920072
+The skew is:  2.850385714443368
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="4th-Statistical-Moment:-Kurtosis">4th Statistical Moment: Kurtosis<a class="anchor-link" href="#4th-Statistical-Moment:-Kurtosis"> </a></h2><ul>
+<li>Reports on the shape of the data.</li>
+<li>Indicates outliers content within the data.</li>
+<li>The higher the Kurtosis measure is the more outliers are present and the longer the tails of the distribution.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+<span class="c1">#calculate the mean</span>
+<span class="nb">sum</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">std</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">skew</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mean</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="nb">pow</span><span class="p">(</span><span class="n">std</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ku</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mean</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="nb">pow</span><span class="p">(</span><span class="n">std</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The mean is: &quot;</span><span class="p">,</span><span class="n">mean</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The std is: &quot;</span><span class="p">,</span><span class="n">std</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The skew is: &quot;</span><span class="p">,</span><span class="n">skew</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The kurtosis is: &quot;</span><span class="p">,</span><span class="n">ku</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The mean is:  49.5
+The std is:  28.86607004772212
+The skew is:  0.0
+The kurtosis is:  1.7997599759975997
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span><span class="o">+</span><span class="p">[</span><span class="mi">1000</span><span class="p">]</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span>
+<span class="c1">#calculate the mean</span>
+<span class="nb">sum</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">std</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">skew</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mean</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="nb">pow</span><span class="p">(</span><span class="n">std</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ku</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mean</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="nb">pow</span><span class="p">(</span><span class="n">std</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The mean is: &quot;</span><span class="p">,</span><span class="n">mean</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The std is: &quot;</span><span class="p">,</span><span class="n">std</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The skew is: &quot;</span><span class="p">,</span><span class="n">skew</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The kurtosis is: &quot;</span><span class="p">,</span><span class="n">ku</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The mean is:  913.5909090909091
+The std is:  273.38811224585896
+The skew is:  -2.8513343104247486
+The kurtosis is:  9.142332316054704
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span><span class="o">+</span><span class="p">[</span><span class="o">-</span><span class="mi">1000</span><span class="p">]</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span>
+<span class="c1">#calculate the mean</span>
+<span class="nb">sum</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">std</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">skew</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mean</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="nb">pow</span><span class="p">(</span><span class="n">std</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ku</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mean</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="nb">pow</span><span class="p">(</span><span class="n">std</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The mean is: &quot;</span><span class="p">,</span><span class="n">mean</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The std is: &quot;</span><span class="p">,</span><span class="n">std</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The skew is: &quot;</span><span class="p">,</span><span class="n">skew</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The kurtosis is: &quot;</span><span class="p">,</span><span class="n">ku</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The mean is:  -904.5909090909091
+The std is:  301.8355450920072
+The skew is:  2.850385714443368
+The kurtosis is:  9.134733566834258
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$cov(X,Y) = \frac{1}{n}\sum_{i=1}^n(x_i - \hat{x})(y_i - \hat{y})$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rddx</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+<span class="n">rddy</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+<span class="n">rddxy</span> <span class="o">=</span> <span class="n">rddx</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">rddy</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rddxy</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="c1"># Calculate the mean value</span>
+<span class="n">meanx</span> <span class="o">=</span> <span class="n">rddx</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">rddx</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">meany</span> <span class="o">=</span> <span class="n">rddy</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">rddy</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="c1"># Calculate the STD</span>
+<span class="n">stdx</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rddx</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">meanx</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">stdy</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rddy</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">meany</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The stdx is: &quot;</span><span class="p">,</span><span class="n">stdx</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The stdy is: &quot;</span><span class="p">,</span><span class="n">stdy</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The stdx is:  28.86607004772212
+The stdy is:  28.86607004772212
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rddxy</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(0, 0),
+ (1, 1),
+ (2, 2),
+ (3, 3),
+ (4, 4),
+ (5, 5),
+ (6, 6),
+ (7, 7),
+ (8, 8),
+ (9, 9)]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">conv</span> <span class="o">=</span> <span class="p">(</span><span class="n">rddxy</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">meanx</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">meany</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">/</span><span class="n">n</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Measure of dependencay</strong> Correlation</p>
+<ul>
+<li>1 totally correlated.</li>
+<li>0 No interaction </li>
+<li>-1 inverse dependence</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$corr(X,Y) = \frac{conv(X,Y)}{\sigma_{x}.\sigma_{y}}$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">corr</span> <span class="o">=</span> <span class="p">(</span><span class="n">conv</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">stdx</span><span class="o">*</span><span class="n">stdy</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">corr</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1.0</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rddx</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+<span class="c1"># reverse the second column</span>
+<span class="n">rddy</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))))</span>
+<span class="n">rddxy</span> <span class="o">=</span> <span class="n">rddx</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">rddy</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rddxy</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="c1"># Calculate the mean value</span>
+<span class="n">meanx</span> <span class="o">=</span> <span class="n">rddx</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">rddx</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">meany</span> <span class="o">=</span> <span class="n">rddy</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">rddy</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="c1"># Calculate the STD</span>
+<span class="n">stdx</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rddx</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">meanx</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">stdy</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rddy</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">meany</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The stdx is: &quot;</span><span class="p">,</span><span class="n">stdx</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The stdy is: &quot;</span><span class="p">,</span><span class="n">stdy</span><span class="p">)</span>
+<span class="n">conv</span> <span class="o">=</span> <span class="p">(</span><span class="n">rddxy</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">meanx</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">meany</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">/</span><span class="n">n</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The covariance is: &quot;</span><span class="p">,</span> <span class="n">conv</span><span class="p">)</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="p">(</span><span class="n">conv</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">stdx</span><span class="o">*</span><span class="n">stdy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The correlation value is: &quot;</span><span class="p">,</span> <span class="n">corr</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The stdx is:  28.86607004772212
+The stdy is:  28.86607004772212
+The covariance is:  -833.25
+The correlation value is:  -1.0
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Generate random samples</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="n">rddx</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">rddy</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">rddxy</span> <span class="o">=</span> <span class="n">rddx</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">rddy</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">rddxy</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="c1"># Calculate the mean value</span>
+<span class="n">meanx</span> <span class="o">=</span> <span class="n">rddx</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">rddx</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">meany</span> <span class="o">=</span> <span class="n">rddy</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">rddy</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="c1"># Calculate the STD</span>
+<span class="n">stdx</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rddx</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">meanx</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">stdy</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rddy</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">meany</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The stdx is: &quot;</span><span class="p">,</span><span class="n">stdx</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The stdy is: &quot;</span><span class="p">,</span><span class="n">stdy</span><span class="p">)</span>
+<span class="n">conv</span> <span class="o">=</span> <span class="p">(</span><span class="n">rddxy</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">meanx</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">meany</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">/</span><span class="n">n</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The covariance is: &quot;</span><span class="p">,</span> <span class="n">conv</span><span class="p">)</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="p">(</span><span class="n">conv</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">stdx</span><span class="o">*</span><span class="n">stdy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The correlation value is: &quot;</span><span class="p">,</span> <span class="n">corr</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The stdx is:  28.86607004772212
+The stdy is:  28.86607004772212
+The covariance is:  64.98
+The correlation value is:  0.07798379837983799
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.mllib.stat</span> <span class="k">import</span> <span class="n">Statistics</span>
+
+<span class="n">column1</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">column2</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">))</span>
+<span class="n">column3</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))))</span>
+<span class="n">column4</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">column1</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">column2</span><span class="p">)</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">column3</span><span class="p">)</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">column4</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">nested</span> <span class="p">:</span> <span class="p">(</span><span class="n">nested</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">nested</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">nested</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">nested</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Statistics</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[ 1.          1.         -1.         -0.12255626]
+ [ 1.          1.         -1.         -0.12255626]
+ [-1.         -1.          1.          0.12255626]
+ [-0.12255626 -0.12255626  0.12255626  1.        ]]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

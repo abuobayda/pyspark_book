@@ -1,0 +1,424 @@
+---
+redirect_from:
+  - "/intro-to-pyspark"
+interact_link: content/Intro_to_pyspark.ipynb
+kernel_name: python3
+kernel_path: content
+has_widgets: false
+title: |-
+  Introduction to PySpark
+pagenum: 27
+prev_page:
+  url: /pyspark/03/10/numpy.html
+next_page:
+  url: /pyspark/02_rdd/2_Pyspark_RDD.html
+suffix: .ipynb
+search: pyspark spark python sparkcontext none shell class version set master cluster environment object serializer gateway profiler local method apache programming language using because library data any run driver program worker nodes url appname sparkhome pyfiles batchsize batch size conf jvm jsc profilercls basicprofiler retrieve print list load overview written scala support community released tool work rdds also called pyj able achieve offers links api core initializes context majority scientists analytics experts today its rich integrating boon importing entry point functionality application starts main function gets initiated here runs operations inside executors details connects name job installation directory zip py files
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Introduction to PySpark</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="PySpark-overview">PySpark overview<a class="anchor-link" href="#PySpark-overview"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Apache Spark is written in Scala programming language. To support Python with Spark, Apache Spark Community released a tool, PySpark. Using PySpark, you can work with RDDs in Python programming language also. It is because of a library called Py4j that they are able to achieve this.</p>
+<p>PySpark offers PySpark Shell which links the Python API to the spark core and initializes the Spark context. Majority of data scientists and analytics experts today use Python because of its rich library set. Integrating Python with Spark is a boon to them</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Importing-PySpark">Importing PySpark<a class="anchor-link" href="#Importing-PySpark"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyspark</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">pyspark</span><span class="o">.</span><span class="n">SparkContext</span><span class="p">(</span><span class="n">appName</span><span class="o">=</span><span class="s2">&quot;Intro_to_pyspark&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SparkContext is the entry point to any spark functionality. When we run any Spark application, a driver program starts, which has the main function and your SparkContext gets initiated here. The driver program then runs the operations inside the executors on worker nodes.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>The details of a PySpark class</strong></p>
+
+<pre><code>class pyspark.SparkContext (
+   # master --&gt; It is the URL of the cluster it connects to
+   master = None,
+   # appName --&gt; Name of your job
+   appName = None,
+   # sparkHome --&gt; Spark installation directory
+   sparkHome = None,
+   # pyFiles --&gt; The .zip or .py files to send to the cluster and add to the PYTHONPATH
+   pyFiles = None,
+   # Environment --&gt; Worker nodes environment variables
+   environment = None,
+   # batchSize --&gt; The number of Python objects represented as a single Java object. Set 1 to disable batching, 
+   0 to automatically choose the batch size based on object sizes, or -1 to use an unlimited batch size.
+   batchSize = 0,
+   # Serializer --&gt; RDD serializer
+   serializer = PickleSerializer(),
+   # Conf --&gt; An object of L{SparkConf} to set all the Spark properties.
+   conf = None,
+   # Gateway --&gt; Use an existing gateway and JVM, otherwise initializing a new JVM.
+   gateway = None,
+   # JSC --&gt; The JavaSparkContext instance. 
+   jsc = None,
+   # profiler_cls --&gt; A class of custom Profiler used to do profiling (the default is pyspark.profiler.BasicProfiler).
+   profiler_cls = &lt;class 'pyspark.profiler.BasicProfiler'&gt;
+)</code></pre>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Retrieve SparkContext version</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">version</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;2.4.4&#39;</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Retrieve Python version of SparkContext</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pythonVer</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;3.6&#39;</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>URL of the cluster or "local" string to run in local mode of SparkContex</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">master</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;local[*]&#39;</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Loading-data-in-PySpark">Loading data in PySpark<a class="anchor-link" href="#Loading-data-in-PySpark"> </a></h1><p>SparkContext's <em>paralleliza()</em> method</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SparksContext's <em>textFile()</em> method</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rdd2</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;sample_data/test.txt&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Your Turn:</p>
+<ul>
+<li>Print the version of SparkContext in the PySpark shell.</li>
+<li>Print the Python version of SparkContext in the PySpark shell.</li>
+<li>What is the master of SparkContext in the PySpark shell?</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the version of SparkContext</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The version of Spark Context in the PySpark shell is&quot;</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">____</span><span class="p">)</span>
+
+<span class="c1"># Print the Python version of SparkContext</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The Python version of Spark Context in the PySpark shell is&quot;</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">____</span><span class="p">)</span>
+
+<span class="c1"># Print the master of SparkContext</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The master of Spark Context in the PySpark shell is&quot;</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">____</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Create a python list named numb containing the numbers 1 to 100.</li>
+<li>Load the list into Spark using Spark Context's parallelize method and assign it to a variable spark_data.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a python list of numbers from 1 to 100 </span>
+<span class="n">numb</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">____</span><span class="p">,</span> <span class="n">____</span><span class="p">)</span>
+
+<span class="c1"># Load the list into PySpark  </span>
+<span class="n">spark_data</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="n">numb</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Load a local text file sample_data/README.md in PySpark shell.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">file_path</span> <span class="o">=</span> <span class="s1">&#39;sample_data/README.md&#39;</span>
+<span class="c1"># Load a local file into PySpark shell</span>
+<span class="n">lines</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">____</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

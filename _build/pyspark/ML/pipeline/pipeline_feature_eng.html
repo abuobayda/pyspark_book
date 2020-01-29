@@ -1,0 +1,760 @@
+---
+redirect_from:
+  - "/pyspark/ml/pipeline/pipeline-feature-eng"
+interact_link: content/pyspark/ML/pipeline/pipeline_feature_eng.ipynb
+kernel_name: python3
+kernel_path: content/pyspark/ML/pipeline
+has_widgets: false
+title: |-
+  Feature Engineering Pipeline
+pagenum: 34
+prev_page:
+  url: /pyspark/ML/ML_Spark/2_Machine_Learning_pyspark.html
+next_page:
+  url: /pyspark/ML/pipeline/pipeline_applications.html
+suffix: .ipynb
+search: data pipeline transformations learning feature com public dataset accelerometer human motion primitives ml allows us maintain flow relevant required reach end result machine project typically involves steps preprocessing extraction model fitting evaluating results need perform lot sequence imagine keeping track potentially become tedious task alt text oreilly library view spark definitive assets spdg png raw detection link github wchill hmpdataset hmp collection labelled recordings used creation validation acceleration models convert string column index integer exercise add minmax scaler transform features scaling given range
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Feature Engineering Pipeline</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="ML-Pipeline">ML Pipeline<a class="anchor-link" href="#ML-Pipeline"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="k">import</span> <span class="n">SparkSession</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="s1">&#39;local[2]&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s1">&#39;stats_app&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><em>A pipeline allows us to maintain the data flow of all the relevant transformations that are required to reach the end result.</em></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A machine learning project typically involves steps like data preprocessing, feature extraction, model fitting and evaluating results. We need to perform a lot of transformations on the data in sequence. As you can imagine, keeping track of them can potentially become a tedious task.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="https://learning.oreilly.com/library/view/spark-the-definitive/9781491912201/assets/spdg_2404.png" alt="alt text"></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Raw data:</p>
+<p>Public Dataset of Accelerometer Data for Human Motion Primitives Detection.<a href="https://github.com/wchill/HMP_Dataset">link to dataset</a></p>
+<p>HMP is a public collection of labelled accelerometer data recordings to be used for the creation and validation of acceleration models of human motion primitives.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># delete files from previous runs</span>
+<span class="o">!</span>rm -f hmp.parquet*
+
+<span class="c1"># download the file containing the data in PARQUET format</span>
+<span class="o">!</span>wget https://github.com/IBM/coursera/raw/master/hmp.parquet
+    
+<span class="c1"># create a dataframe out of it</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="s1">&#39;hmp.parquet&#39;</span><span class="p">)</span>
+
+<span class="c1"># register a corresponding query table</span>
+<span class="n">df</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s1">&#39;df&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+--------------------+-----------+
+|  x|  y|  z|              source|      class|
++---+---+---+--------------------+-----------+
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|
+| 21| 52| 34|Accelerometer-201...|Brush_teeth|
+| 22| 51| 34|Accelerometer-201...|Brush_teeth|
+| 20| 50| 35|Accelerometer-201...|Brush_teeth|
+| 22| 52| 34|Accelerometer-201...|Brush_teeth|
+| 22| 50| 34|Accelerometer-201...|Brush_teeth|
+| 22| 51| 35|Accelerometer-201...|Brush_teeth|
+| 21| 51| 33|Accelerometer-201...|Brush_teeth|
+| 20| 50| 34|Accelerometer-201...|Brush_teeth|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|
+| 20| 51| 35|Accelerometer-201...|Brush_teeth|
+| 18| 49| 34|Accelerometer-201...|Brush_teeth|
+| 19| 48| 34|Accelerometer-201...|Brush_teeth|
+| 16| 53| 34|Accelerometer-201...|Brush_teeth|
+| 18| 52| 35|Accelerometer-201...|Brush_teeth|
+| 18| 51| 32|Accelerometer-201...|Brush_teeth|
++---+---+---+--------------------+-----------+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Convert the string column to index(integer)</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span>
+
+<span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;class_index&#39;</span><span class="p">)</span>
+<span class="n">indexed</span> <span class="o">=</span> <span class="n">indexer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">indexed</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+--------------------+-----------+-----------+
+|  x|  y|  z|              source|      class|class_index|
++---+---+---+--------------------+-----------+-----------+
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|        6.0|
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|        6.0|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|
+| 21| 52| 34|Accelerometer-201...|Brush_teeth|        6.0|
+| 22| 51| 34|Accelerometer-201...|Brush_teeth|        6.0|
+| 20| 50| 35|Accelerometer-201...|Brush_teeth|        6.0|
+| 22| 52| 34|Accelerometer-201...|Brush_teeth|        6.0|
+| 22| 50| 34|Accelerometer-201...|Brush_teeth|        6.0|
+| 22| 51| 35|Accelerometer-201...|Brush_teeth|        6.0|
+| 21| 51| 33|Accelerometer-201...|Brush_teeth|        6.0|
+| 20| 50| 34|Accelerometer-201...|Brush_teeth|        6.0|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|        6.0|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|        6.0|
+| 20| 51| 35|Accelerometer-201...|Brush_teeth|        6.0|
+| 18| 49| 34|Accelerometer-201...|Brush_teeth|        6.0|
+| 19| 48| 34|Accelerometer-201...|Brush_teeth|        6.0|
+| 16| 53| 34|Accelerometer-201...|Brush_teeth|        6.0|
+| 18| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|
+| 18| 51| 32|Accelerometer-201...|Brush_teeth|        6.0|
++---+---+---+--------------------+-----------+-----------+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">indexed</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;class_index&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----------+-----+
+|class_index|count|
++-----------+-----+
+|        8.0|25036|
+|        0.0|92254|
+|        7.0|25417|
+|        1.0|45801|
+|        4.0|40258|
+|       11.0|15225|
+|        3.0|41673|
+|        2.0|42792|
+|       10.0|15375|
+|       13.0| 6683|
+|        6.0|29829|
+|        5.0|31236|
+|        9.0|23504|
+|       12.0|11446|
++-----------+-----+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">OneHotEncoder</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">&#39;class_index&#39;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;categoryVec&#39;</span><span class="p">)</span>
+
+<span class="n">encoded</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">indexed</span><span class="p">)</span>
+
+<span class="n">encoded</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+--------------------+-----------+-----------+--------------+
+|  x|  y|  z|              source|      class|class_index|   categoryVec|
++---+---+---+--------------------+-----------+-----------+--------------+
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 21| 52| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 22| 51| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 20| 50| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 22| 52| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 22| 50| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 22| 51| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 21| 51| 33|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 20| 50| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 20| 51| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 18| 49| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 19| 48| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 16| 53| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 18| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
+| 18| 51| 32|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|
++---+---+---+--------------------+-----------+-----------+--------------+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.linalg</span> <span class="k">import</span> <span class="n">Vectors</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+
+<span class="n">vectorAssembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">],</span>
+                                  <span class="n">outputCol</span> <span class="o">=</span> <span class="s1">&#39;features&#39;</span><span class="p">)</span>
+
+<span class="n">features_vectorized</span> <span class="o">=</span> <span class="n">vectorAssembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+<span class="n">features_vectorized</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+--------------------+-----------+-----------+--------------+----------------+
+|  x|  y|  z|              source|      class|class_index|   categoryVec|        features|
++---+---+---+--------------------+-----------+-----------+--------------+----------------+
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,49.0,35.0]|
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,49.0,35.0]|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,52.0,35.0]|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,52.0,35.0]|
+| 21| 52| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[21.0,52.0,34.0]|
+| 22| 51| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,51.0,34.0]|
+| 20| 50| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[20.0,50.0,35.0]|
+| 22| 52| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,52.0,34.0]|
+| 22| 50| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,50.0,34.0]|
+| 22| 51| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,51.0,35.0]|
+| 21| 51| 33|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[21.0,51.0,33.0]|
+| 20| 50| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[20.0,50.0,34.0]|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[21.0,49.0,33.0]|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[21.0,49.0,33.0]|
+| 20| 51| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[20.0,51.0,35.0]|
+| 18| 49| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[18.0,49.0,34.0]|
+| 19| 48| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[19.0,48.0,34.0]|
+| 16| 53| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[16.0,53.0,34.0]|
+| 18| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[18.0,52.0,35.0]|
+| 18| 51| 32|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[18.0,51.0,32.0]|
++---+---+---+--------------------+-----------+-----------+--------------+----------------+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">Normalizer</span>
+<span class="n">normalizer</span> <span class="o">=</span> <span class="n">Normalizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">&#39;features&#39;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">&#39;features_norm&#39;</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">normalized_data</span> <span class="o">=</span> <span class="n">normalizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">features_vectorized</span><span class="p">)</span>
+<span class="n">normalized_data</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+--------------------+-----------+-----------+--------------+----------------+--------------------+
+|  x|  y|  z|              source|      class|class_index|   categoryVec|        features|       features_norm|
++---+---+---+--------------------+-----------+-----------+--------------+----------------+--------------------+
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,49.0,35.0]|[0.20754716981132...|
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,49.0,35.0]|[0.20754716981132...|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,52.0,35.0]|[0.20183486238532...|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,52.0,35.0]|[0.20183486238532...|
+| 21| 52| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[21.0,52.0,34.0]|[0.19626168224299...|
+| 22| 51| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,51.0,34.0]|[0.20560747663551...|
+| 20| 50| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[20.0,50.0,35.0]|[0.19047619047619...|
+| 22| 52| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,52.0,34.0]|[0.20370370370370...|
+| 22| 50| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,50.0,34.0]|[0.20754716981132...|
+| 22| 51| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,51.0,35.0]|[0.20370370370370...|
+| 21| 51| 33|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[21.0,51.0,33.0]|[0.2,0.4857142857...|
+| 20| 50| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[20.0,50.0,34.0]|[0.19230769230769...|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[21.0,49.0,33.0]|[0.20388349514563...|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[21.0,49.0,33.0]|[0.20388349514563...|
+| 20| 51| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[20.0,51.0,35.0]|[0.18867924528301...|
+| 18| 49| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[18.0,49.0,34.0]|[0.17821782178217...|
+| 19| 48| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[19.0,48.0,34.0]|[0.18811881188118...|
+| 16| 53| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[16.0,53.0,34.0]|[0.15533980582524...|
+| 18| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[18.0,52.0,35.0]|[0.17142857142857...|
+| 18| 51| 32|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[18.0,51.0,32.0]|[0.17821782178217...|
++---+---+---+--------------------+-----------+-----------+--------------+----------------+--------------------+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">indexer</span><span class="p">,</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">vectorAssembler</span><span class="p">,</span> <span class="n">normalizer</span><span class="p">])</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">prediction</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+--------------------+-----------+-----------+--------------+----------------+--------------------+
+|  x|  y|  z|              source|      class|class_index|   categoryVec|        features|       features_norm|
++---+---+---+--------------------+-----------+-----------+--------------+----------------+--------------------+
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,49.0,35.0]|[0.20754716981132...|
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,49.0,35.0]|[0.20754716981132...|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,52.0,35.0]|[0.20183486238532...|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,52.0,35.0]|[0.20183486238532...|
+| 21| 52| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[21.0,52.0,34.0]|[0.19626168224299...|
+| 22| 51| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,51.0,34.0]|[0.20560747663551...|
+| 20| 50| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[20.0,50.0,35.0]|[0.19047619047619...|
+| 22| 52| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,52.0,34.0]|[0.20370370370370...|
+| 22| 50| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,50.0,34.0]|[0.20754716981132...|
+| 22| 51| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[22.0,51.0,35.0]|[0.20370370370370...|
+| 21| 51| 33|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[21.0,51.0,33.0]|[0.2,0.4857142857...|
+| 20| 50| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[20.0,50.0,34.0]|[0.19230769230769...|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[21.0,49.0,33.0]|[0.20388349514563...|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[21.0,49.0,33.0]|[0.20388349514563...|
+| 20| 51| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[20.0,51.0,35.0]|[0.18867924528301...|
+| 18| 49| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[18.0,49.0,34.0]|[0.17821782178217...|
+| 19| 48| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[19.0,48.0,34.0]|[0.18811881188118...|
+| 16| 53| 34|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[16.0,53.0,34.0]|[0.15533980582524...|
+| 18| 52| 35|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[18.0,52.0,35.0]|[0.17142857142857...|
+| 18| 51| 32|Accelerometer-201...|Brush_teeth|        6.0|(13,[6],[1.0])|[18.0,51.0,32.0]|[0.17821782178217...|
++---+---+---+--------------------+-----------+-----------+--------------+----------------+--------------------+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_train</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s1">&#39;categoryVec&#39;</span><span class="p">,</span> <span class="s1">&#39;features_norm&#39;</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_train</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+--------------+--------------------+
+|   categoryVec|       features_norm|
++--------------+--------------------+
+|(13,[6],[1.0])|[0.20754716981132...|
+|(13,[6],[1.0])|[0.20754716981132...|
+|(13,[6],[1.0])|[0.20183486238532...|
+|(13,[6],[1.0])|[0.20183486238532...|
+|(13,[6],[1.0])|[0.19626168224299...|
+|(13,[6],[1.0])|[0.20560747663551...|
+|(13,[6],[1.0])|[0.19047619047619...|
+|(13,[6],[1.0])|[0.20370370370370...|
+|(13,[6],[1.0])|[0.20754716981132...|
+|(13,[6],[1.0])|[0.20370370370370...|
+|(13,[6],[1.0])|[0.2,0.4857142857...|
+|(13,[6],[1.0])|[0.19230769230769...|
+|(13,[6],[1.0])|[0.20388349514563...|
+|(13,[6],[1.0])|[0.20388349514563...|
+|(13,[6],[1.0])|[0.18867924528301...|
+|(13,[6],[1.0])|[0.17821782178217...|
+|(13,[6],[1.0])|[0.18811881188118...|
+|(13,[6],[1.0])|[0.15533980582524...|
+|(13,[6],[1.0])|[0.17142857142857...|
+|(13,[6],[1.0])|[0.17821782178217...|
++--------------+--------------------+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Exercise:">Exercise:<a class="anchor-link" href="#Exercise:"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Add the MinMax scaler</p>
+<p>Transform features by scaling each feature to a given range.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">MinMaxScaler</span>
+
+<span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;classIndex&quot;</span><span class="p">)</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;classIndex&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;categoryVec&quot;</span><span class="p">)</span>
+<span class="n">vectorAssembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="s2">&quot;z&quot;</span><span class="p">],</span>
+                                  <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<span class="n">normalizer</span> <span class="o">=</span> <span class="n">Normalizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features_norm&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="c1"># todo: add you code here</span>
+<span class="n">minmaxscalar</span> <span class="o">=</span> <span class="err">$$</span>
+<span class="c1">###########################</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">indexer</span><span class="p">,</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">vectorAssembler</span><span class="p">,</span> <span class="n">normalizer</span><span class="p">,</span><span class="n">minmaxscaler</span><span class="p">])</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">prediction</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Solution</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">MinMaxScaler</span>
+
+<span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;classIndex&quot;</span><span class="p">)</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;classIndex&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;categoryVec&quot;</span><span class="p">)</span>
+<span class="n">vectorAssembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="s2">&quot;z&quot;</span><span class="p">],</span>
+                                  <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<span class="n">normalizer</span> <span class="o">=</span> <span class="n">Normalizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features_norm&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">minmaxscalar</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features_minmax&quot;</span><span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">indexer</span><span class="p">,</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">vectorAssembler</span><span class="p">,</span> <span class="n">normalizer</span><span class="p">,</span><span class="n">minmaxscalar</span><span class="p">])</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">prediction</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+--------------------+-----------+----------+--------------+----------------+--------------------+--------------------+
+|  x|  y|  z|              source|      class|classIndex|   categoryVec|        features|       features_norm|     features_minmax|
++---+---+---+--------------------+-----------+----------+--------------+----------------+--------------------+--------------------+
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,49.0,35.0]|[0.20754716981132...|[0.34920634920634...|
+| 22| 49| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,49.0,35.0]|[0.20754716981132...|[0.34920634920634...|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,52.0,35.0]|[0.20183486238532...|[0.34920634920634...|
+| 22| 52| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,52.0,35.0]|[0.20183486238532...|[0.34920634920634...|
+| 21| 52| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[21.0,52.0,34.0]|[0.19626168224299...|[0.33333333333333...|
+| 22| 51| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,51.0,34.0]|[0.20560747663551...|[0.34920634920634...|
+| 20| 50| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[20.0,50.0,35.0]|[0.19047619047619...|[0.31746031746031...|
+| 22| 52| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,52.0,34.0]|[0.20370370370370...|[0.34920634920634...|
+| 22| 50| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,50.0,34.0]|[0.20754716981132...|[0.34920634920634...|
+| 22| 51| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[22.0,51.0,35.0]|[0.20370370370370...|[0.34920634920634...|
+| 21| 51| 33|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[21.0,51.0,33.0]|[0.2,0.4857142857...|[0.33333333333333...|
+| 20| 50| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[20.0,50.0,34.0]|[0.19230769230769...|[0.31746031746031...|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[21.0,49.0,33.0]|[0.20388349514563...|[0.33333333333333...|
+| 21| 49| 33|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[21.0,49.0,33.0]|[0.20388349514563...|[0.33333333333333...|
+| 20| 51| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[20.0,51.0,35.0]|[0.18867924528301...|[0.31746031746031...|
+| 18| 49| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[18.0,49.0,34.0]|[0.17821782178217...|[0.28571428571428...|
+| 19| 48| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[19.0,48.0,34.0]|[0.18811881188118...|[0.30158730158730...|
+| 16| 53| 34|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[16.0,53.0,34.0]|[0.15533980582524...|[0.25396825396825...|
+| 18| 52| 35|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[18.0,52.0,35.0]|[0.17142857142857...|[0.28571428571428...|
+| 18| 51| 32|Accelerometer-201...|Brush_teeth|       6.0|(13,[6],[1.0])|[18.0,51.0,32.0]|[0.17821782178217...|[0.28571428571428...|
++---+---+---+--------------------+-----------+----------+--------------+----------------+--------------------+--------------------+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
